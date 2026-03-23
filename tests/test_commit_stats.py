@@ -1,0 +1,95 @@
+import subprocess
+import pytest
+from git_tools.commit_stats import run_git_command, get_commits, get_commit_stats, main
+
+def test_run_git_command_success(mocker):
+    mock_run = mocker.patch("subprocess.run")
+    mock_run.return_value.stdout = "output"
+    mock_run.return_value.returncode = 0
+
+    assert run_git_command(["args"]) == "output"
+    mock_run.assert_called_with(["git", "args"], capture_output=True, text=True, check=True)
+
+def test_run_git_command_error(mocker):
+    mock_run = mocker.patch("subprocess.run")
+    mock_run.side_effect = subprocess.CalledProcessError(1, ["git", "args"])
+
+    with pytest.raises(SystemExit) as excinfo:
+        run_git_command(["args"])
+    assert excinfo.value.code == 1
+
+def test_run_git_command_not_found(mocker):
+    mock_run = mocker.patch("subprocess.run")
+    mock_run.side_effect = FileNotFoundError()
+
+    with pytest.raises(SystemExit) as excinfo:
+        run_git_command(["args"])
+    assert excinfo.value.code == 1
+
+def test_get_commits(mocker):
+    mocker.patch("git_tools.commit_stats.run_git_command", return_value="abc\ndef\n")
+    assert get_commits() == ["abc", "def"]
+
+def test_get_commits_empty(mocker):
+    mocker.patch("git_tools.commit_stats.run_git_command", return_value="")
+    assert get_commits() == []
+
+def test_get_commit_stats_basic(mocker):
+    output = (
+        ":100644 100644 123 456 M\tfile1\n"
+        ":000000 100644 000 789 A\tfile2\n"
+        ":100644 000000 456 000 D\tfile3\n"
+    )
+    mocker.patch("git_tools.commit_stats.run_git_command", return_value=output)
+
+    reg, sym = get_commit_stats("abc")
+    assert reg == {"A": 1, "M": 1, "D": 1}
+    assert sym == {"A": 0, "M": 0, "D": 0}
+
+def test_get_commit_stats_symlinks(mocker):
+    output = (
+        ":000000 120000 000 123 A\tsym1\n"
+        ":120000 120000 123 456 M\tsym2\n"
+        ":120000 000000 456 000 D\tsym3\n"
+    )
+    mocker.patch("git_tools.commit_stats.run_git_command", return_value=output)
+
+    reg, sym = get_commit_stats("abc")
+    assert reg == {"A": 0, "M": 0, "D": 0}
+    assert sym == {"A": 1, "M": 1, "D": 1}
+
+def test_get_commit_stats_advanced(mocker):
+    output = (
+        ":100644 100644 123 456 R100\told\tnew\n"
+        "\n" # This should trigger "if not line: continue"
+        ":100644 100644 123 456 C100\told2\tnew2\n"
+        ":100644 120000 123 456 T\tfile_to_sym\n"
+        ":120000 100644 123 456 T\tsym_to_file\n"
+        ":100755 100644 123 456 T\tmode_change\n"
+        "short_line\n"
+        ":100644 100644 123 456 X\tunknown\n"
+    )
+    mocker.patch("git_tools.commit_stats.run_git_command", return_value=output)
+
+    reg, sym = get_commit_stats("abc")
+    assert reg == {"A": 2, "M": 2, "D": 1}
+    assert sym == {"A": 1, "M": 0, "D": 1}
+
+def test_main_no_commits(mocker, capsys):
+    mocker.patch("git_tools.commit_stats.get_commits", return_value=[])
+    main()
+    captured = capsys.readouterr()
+    assert "No commits found." in captured.out
+
+def test_main_with_commits(mocker, capsys):
+    mocker.patch("git_tools.commit_stats.get_commits", return_value=["abc", "def"])
+    mocker.patch("git_tools.commit_stats.get_commit_stats", side_effect=[
+        ({"A": 1, "M": 0, "D": 0}, {"A": 0, "M": 0, "D": 0}),
+        ({"A": 0, "M": 1, "D": 1}, {"A": 1, "M": 0, "D": 0}),
+    ])
+
+    main()
+    captured = capsys.readouterr()
+    assert "Commit" in captured.out
+    assert "abc" in captured.out
+    assert "def" in captured.out
