@@ -209,11 +209,17 @@ def test_get_loose_info():
 
 
 def test_format_size():
-    assert format_size(500) == "500 B"
-    assert format_size(1024) == "1.00 KiB"
-    assert format_size(1536) == "1.50 KiB"
-    assert format_size(1024 * 1024) == "1.00 MiB"
-    assert format_size(1.5 * 1024 * 1024) == "1.50 MiB"
+    # Default (human=False)
+    assert format_size(500) == "500"
+    assert format_size(1024) == "1.024"
+    assert format_size(1000000) == "1.000.000"
+
+    # human=True
+    assert format_size(500, human=True) == "500 B"
+    assert format_size(1024, human=True) == "1.00 KiB"
+    assert format_size(1536, human=True) == "1.50 KiB"
+    assert format_size(1024 * 1024, human=True) == "1.00 MiB"
+    assert format_size(1.5 * 1024 * 1024, human=True) == "1.50 MiB"
 
 
 def test_main_no_packs(capsys):
@@ -230,7 +236,7 @@ def test_main_no_packs(capsys):
         main()
         captured = capsys.readouterr()
         assert "Total" in captured.out
-        assert "0 B" in captured.out
+        assert "0" in captured.out
 
 
 def test_main_with_data(capsys):
@@ -269,7 +275,26 @@ def test_main_with_loose_uncompressed(capsys):
 
         main()
         captured = capsys.readouterr()
+        assert "1.024" in captured.out
+
+
+def test_main_human_readable(capsys):
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "-H"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 1024, 2048)
+        mock_get_loose.return_value = (10, 1024, 2048)
+
+        main()
+        captured = capsys.readouterr()
         assert "1.00 KiB" in captured.out
+        assert "2.00 KiB" in captured.out
 
 
 def test_main_sorting(capsys):

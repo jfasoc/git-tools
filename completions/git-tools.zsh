@@ -54,6 +54,7 @@ _shtab_git_pack_stats_commands() {
 _shtab_git_pack_stats_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   "(- : *)"{-V,--version}"[Show the version and exit.]"
+  {-H,--human}"[Display human-readable sizes (e.g., KiB, MiB).]"
   "--loose-uncompressed[Include uncompressed size for loose objects (can be slow).]"
   ":Path to the git repository.:_files -/"
 )

@@ -126,7 +126,10 @@ def get_loose_info(repo_path=None, include_uncompressed=False):
     return count, size, uncompressed_size
 
 
-def format_size(size_bytes):
+def format_size(size_bytes, human=False):
+    if not human:
+        return f"{size_bytes:,}".replace(",", ".")
+
     if size_bytes < 1024:
         return f"{size_bytes} B"
     elif size_bytes < 1024 * 1024:
@@ -141,7 +144,14 @@ def get_parser():
     except Exception:
         ver = "unknown"
     parser = argparse.ArgumentParser(
-        description="List git pack files and loose objects."
+        description="List git pack files and loose objects.", add_help=False
+    )
+    parser.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="show this help message and exit",
     )
     parser.add_argument(
         "-V",
@@ -149,6 +159,12 @@ def get_parser():
         action="version",
         version=f"%(prog)s {ver}",
         help="Show the version and exit.",
+    )
+    parser.add_argument(
+        "-H",
+        "--human",
+        action="store_true",
+        help="Display human-readable sizes (e.g., KiB, MiB).",
     )
     parser.add_argument(
         "--loose-uncompressed",
@@ -213,7 +229,7 @@ def main():
             (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
         )
         print(
-            f"{data['name']:<60} {data['objects']:>10} {format_size(data['size']):>12} {format_size(data['uncompressed']):>12} {comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
+            f"{data['name']:<60} {data['objects']:>10} {format_size(data['size'], args.human):>12} {format_size(data['uncompressed'], args.human):>12} {comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
         )
 
     # Loose objects section
@@ -224,14 +240,14 @@ def main():
         comp_ratio_loose = (
             (loose_size / loose_uncompressed * 100) if loose_uncompressed else 0
         )
-        loose_uncompressed_str = format_size(loose_uncompressed)
+        loose_uncompressed_str = format_size(loose_uncompressed, args.human)
         comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
     else:
         loose_uncompressed_str = f"{'N/A':>12}"
         comp_ratio_loose_str = f"{'N/A':>8}"
 
     print(
-        f"{'Loose Objects':<60} {loose_count:>10} {format_size(loose_size):>12} {loose_uncompressed_str:>12} {comp_ratio_loose_str} {p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
+        f"{'Loose Objects':<60} {loose_count:>10} {format_size(loose_size, args.human):>12} {loose_uncompressed_str:>12} {comp_ratio_loose_str} {p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
     )
 
     # Total
@@ -244,11 +260,11 @@ def main():
         total_uncompressed_str = f"{'N/A':>12}"
         total_comp_ratio_str = f"{'N/A':>8}"
     else:
-        total_uncompressed_str = format_size(total_uncompressed)
+        total_uncompressed_str = format_size(total_uncompressed, args.human)
         total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
 
     print(
-        f"{'Total':<60} {total_objects:>10} {format_size(total_size):>12} {total_uncompressed_str:>12} {total_comp_ratio_str} {100.0:>7.1f}% {100.0:>7.1f}%"
+        f"{'Total':<60} {total_objects:>10} {format_size(total_size, args.human):>12} {total_uncompressed_str:>12} {total_comp_ratio_str} {100.0:>7.1f}% {100.0:>7.1f}%"
     )
 
 
