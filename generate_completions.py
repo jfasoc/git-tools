@@ -1,5 +1,6 @@
 import sys
 import os
+import re
 import shtab
 
 # Add src to path
@@ -39,22 +40,12 @@ def generate():
     pack_zsh = shtab.complete(pp, shell="zsh")
 
     def get_zsh_body(script):
-        lines = []
-        skip = False
-        for line in script.splitlines():
-            if line.strip().startswith("#compdef"):
-                continue
-            if line.startswith("typeset -A opt_args"):
-                continue
-            if line.startswith("if [[ $zsh_eval_context"):
-                skip = True
-                continue
-            if skip:
-                if line.startswith("fi"):
-                    skip = False
-                continue
-            lines.append(line)
-        return "\n".join(lines)
+        # Extract the main body of the shtab-generated zsh script
+        # Everything from the first _shtab_ up to the typeset -A opt_args line
+        match = re.search(r'(_shtab_.*)\ntypeset -A opt_args', script, re.DOTALL)
+        if match:
+            return match.group(1)
+        return script
 
     with open("completions/git-tools.zsh", "w") as f:
         f.write("#compdef git-commit-stats git-pack-stats\n\n")
@@ -67,9 +58,11 @@ def generate():
         f.write("  compdef _shtab_git_commit_stats git-commit-stats\n")
         f.write("  compdef _shtab_git_pack_stats git-pack-stats\n")
         f.write("else\n")
+        f.write("  local service=${service:-${1:-$words[1]}}\n")
         f.write("  case $service in\n")
         f.write("    git-commit-stats) _shtab_git_commit_stats \"$@\" ;;\n")
         f.write("    git-pack-stats) _shtab_git_pack_stats \"$@\" ;;\n")
+        f.write("    *) _shtab_git_commit_stats \"$@\" ;;  # Fallback\n")
         f.write("  esac\n")
         f.write("fi\n")
 
