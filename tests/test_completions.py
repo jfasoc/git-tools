@@ -34,9 +34,9 @@ def test_zsh_completion_content():
     assert "_shtab_git_pack_stats()" in content
 
     # Check for registration/dispatch logic
-    assert "compdef _shtab_git_commit_stats git-commit-stats" in content
-    assert "compdef _shtab_git_pack_stats git-pack-stats" in content
-    assert "local service=${service:-${1:-$words[1]}}" in content
+    assert "compdef _git_tools_handler git-commit-stats" in content
+    assert "compdef _git_tools_handler git-pack-stats" in content
+    assert "local service=${service:-${words[1]:t}}" in content
     assert "git-commit-stats) _shtab_git_commit_stats \"$@\" ;;" in content
     assert "git-pack-stats) _shtab_git_pack_stats \"$@\" ;;" in content
 

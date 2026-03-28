@@ -62,7 +62,7 @@ def generate():
         f.write("\n\n")
 
         # Robust dispatcher for Zsh
-        f.write("_git_tools_dispatch() {\n")
+        f.write("_git_tools_handler() {\n")
         f.write("  local service=${service:-${words[1]:t}}\n")
         f.write("  case $service in\n")
         f.write("    git-commit-stats) _shtab_git_commit_stats \"$@\" ;;\n")
@@ -71,9 +71,10 @@ def generate():
         f.write("}\n\n")
 
         f.write("if [[ $zsh_eval_context[-1] == eval ]]; then\n")
-        f.write("  compdef _git_tools_dispatch git-commit-stats git-pack-stats\n")
+        f.write("  compdef _git_tools_handler git-commit-stats\n")
+        f.write("  compdef _git_tools_handler git-pack-stats\n")
         f.write("else\n")
-        f.write("  _git_tools_dispatch \"$@\"\n")
+        f.write("  _git_tools_handler \"$@\"\n")
         f.write("fi\n")
 
 if __name__ == "__main__":

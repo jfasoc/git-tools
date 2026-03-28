@@ -84,7 +84,7 @@ _shtab_git_pack_stats() {
   esac
 }
 
-_git_tools_dispatch() {
+_git_tools_handler() {
   local service=${service:-${words[1]:t}}
   case $service in
     git-commit-stats) _shtab_git_commit_stats "$@" ;;
@@ -93,7 +93,8 @@ _git_tools_dispatch() {
 }
 
 if [[ $zsh_eval_context[-1] == eval ]]; then
-  compdef _git_tools_dispatch git-commit-stats git-pack-stats
+  compdef _git_tools_handler git-commit-stats
+  compdef _git_tools_handler git-pack-stats
 else
-  _git_tools_dispatch "$@"
+  _git_tools_handler "$@"
 fi
