@@ -1,5 +1,6 @@
 import os
 
+
 def test_bash_completion_content():
     path = "completions/git-tools.bash"
     assert os.path.exists(path)
@@ -7,7 +8,9 @@ def test_bash_completion_content():
         content = f.read()
 
     # Check for both commands
-    assert "complete -o filenames -F _shtab_git_commit_stats git-commit-stats" in content
+    assert (
+        "complete -o filenames -F _shtab_git_commit_stats git-commit-stats" in content
+    )
     assert "complete -o filenames -F _shtab_git_pack_stats git-pack-stats" in content
 
     # Check for version flags in Bash
@@ -16,6 +19,7 @@ def test_bash_completion_content():
 
     # Check for directory completion
     assert "_shtab_compgen_dirs" in content
+
 
 def test_zsh_completion_content():
     path = "completions/git-tools.zsh"
@@ -26,7 +30,7 @@ def test_zsh_completion_content():
     # Check for compdef header - ensure ONLY ONE such header exists
     assert content.count("#compdef git-commit-stats git-pack-stats") == 1
     # Ensure no other #compdef line exists that could cause issues
-    lines = [l for l in content.splitlines() if l.startswith("#compdef")]
+    lines = [line for line in content.splitlines() if line.startswith("#compdef")]
     assert len(lines) == 1
 
     # Check for both functions
@@ -37,8 +41,8 @@ def test_zsh_completion_content():
     assert "compdef _git_tools_handler git-commit-stats" in content
     assert "compdef _git_tools_handler git-pack-stats" in content
     assert "local service=${service:-${words[1]:t}}" in content
-    assert "git-commit-stats) _shtab_git_commit_stats \"$@\" ;;" in content
-    assert "git-pack-stats) _shtab_git_pack_stats \"$@\" ;;" in content
+    assert 'git-commit-stats) _shtab_git_commit_stats "$@" ;;' in content
+    assert 'git-pack-stats) _shtab_git_pack_stats "$@" ;;' in content
 
     # Check for version flags in Zsh
     assert "{-V,--version}" in content

@@ -2,11 +2,13 @@ import subprocess
 import os
 import shutil
 
+
 def test_bash_completion_integration():
     """Simulate a bash session and check completions for the tools."""
     bash_path = shutil.which("bash")
     if not bash_path:
         import pytest
+
         pytest.skip("bash not found")
 
     # Load the completion script and ask for completions
@@ -14,8 +16,6 @@ def test_bash_completion_integration():
     script_path = os.path.abspath("completions/git-tools.bash")
 
     # Test git-commit-stats
-    cmd = f'source {script_path} && _shtab_git_commit_stats git-commit-stats - && echo $COMPREPLY'
-    # Wait, _shtab_git_commit_stats is a function that sets COMPREPLY
     # Let's try a simpler approach by calling compgen directly if we know how shtab registers it
     # Registration is: complete -o filenames -F _shtab_git_commit_stats git-commit-stats
 
@@ -27,9 +27,7 @@ _shtab_git_commit_stats
 echo "${{COMPREPLY[@]}}"
 """
     result = subprocess.run(
-        [bash_path, "-c", test_script],
-        capture_output=True,
-        text=True
+        [bash_path, "-c", test_script], capture_output=True, text=True
     )
 
     output = result.stdout.strip()
@@ -46,9 +44,7 @@ _shtab_git_pack_stats
 echo "${{COMPREPLY[@]}}"
 """
     result_pack = subprocess.run(
-        [bash_path, "-c", test_script_pack],
-        capture_output=True,
-        text=True
+        [bash_path, "-c", test_script_pack], capture_output=True, text=True
     )
 
     output_pack = result_pack.stdout.strip()

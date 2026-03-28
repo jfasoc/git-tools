@@ -9,26 +9,28 @@ sys.path.insert(0, os.path.abspath("src"))
 from git_tools.commit_stats import get_parser as get_commit_parser
 from git_tools.pack_stats import get_parser as get_pack_parser
 
+
 def get_zsh_functions(script):
     """Extract only the _shtab functions from the generated script."""
     # Matches all lines between the first _shtab_ and the typeset -A line
-    match = re.search(r'(_shtab_.*)\ntypeset -A opt_args', script, re.DOTALL)
+    match = re.search(r"(_shtab_.*)\ntypeset -A opt_args", script, re.DOTALL)
     if match:
         return match.group(1).strip()
     return ""
+
 
 def generate():
     # Setup parsers
     cp = get_commit_parser()
     cp.prog = "git-commit-stats"
     for action in cp._actions:
-        if action.dest == 'repo':
+        if action.dest == "repo":
             action.complete = shtab.DIR
 
     pp = get_pack_parser()
     pp.prog = "git-pack-stats"
     for action in pp._actions:
-        if action.dest == 'repo':
+        if action.dest == "repo":
             action.complete = shtab.DIR
 
     # Bash
@@ -65,8 +67,8 @@ def generate():
         f.write("_git_tools_handler() {\n")
         f.write("  local service=${service:-${words[1]:t}}\n")
         f.write("  case $service in\n")
-        f.write("    git-commit-stats) _shtab_git_commit_stats \"$@\" ;;\n")
-        f.write("    git-pack-stats) _shtab_git_pack_stats \"$@\" ;;\n")
+        f.write('    git-commit-stats) _shtab_git_commit_stats "$@" ;;\n')
+        f.write('    git-pack-stats) _shtab_git_pack_stats "$@" ;;\n')
         f.write("  esac\n")
         f.write("}\n\n")
 
@@ -74,8 +76,9 @@ def generate():
         f.write("  compdef _git_tools_handler git-commit-stats\n")
         f.write("  compdef _git_tools_handler git-pack-stats\n")
         f.write("else\n")
-        f.write("  _git_tools_handler \"$@\"\n")
+        f.write('  _git_tools_handler "$@"\n')
         f.write("fi\n")
+
 
 if __name__ == "__main__":
     generate()
