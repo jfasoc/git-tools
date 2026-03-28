@@ -90,9 +90,8 @@ if [[ $zsh_eval_context[-1] == eval ]]; then
     compdef _shtab_git_commit_stats git-commit-stats
     compdef _shtab_git_pack_stats git-pack-stats
 else
-    # When autoloaded (fpath), dispatch based on $service or $words[1]
-    local service=${service:-${1:-$words[1]}}
-    case $service in
+    # When autoloaded (fpath), dispatch based on $service
+    case ${service:-${1:-$words[1]}} in
         git-commit-stats) _shtab_git_commit_stats "$@" ;;
         git-pack-stats) _shtab_git_pack_stats "$@" ;;
     esac
