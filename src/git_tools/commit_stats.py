@@ -81,9 +81,13 @@ def get_commit_stats(commit_hash, repo_path=None):
 
     return reg_stats, sym_stats
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(description="Lists all commits with file change counts (Regular vs Symlinks).")
     parser.add_argument("repo", nargs="?", default=".", help="Path to the git repository.")
+    return parser
+
+def main():
+    parser = get_parser()
     args = parser.parse_args()
 
     repo_path = args.repo

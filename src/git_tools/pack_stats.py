@@ -82,9 +82,13 @@ def format_size(size_bytes):
     else:
         return f"{size_bytes / (1024 * 1024):.2f} MiB"
 
-def main():
+def get_parser():
     parser = argparse.ArgumentParser(description="List git pack files and loose objects.")
     parser.add_argument("repo", nargs="?", default=".", help="Path to the git repository.")
+    return parser
+
+def main():
+    parser = get_parser()
     args = parser.parse_args()
 
     repo_path = args.repo

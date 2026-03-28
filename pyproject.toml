@@ -23,6 +23,8 @@ dev = [
     "pytest-mock",
     "pytest-cov",
     "ruff",
+    "argcomplete",
+    "shtab",
 ]
 
 [tool.pytest.ini_options]
