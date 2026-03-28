@@ -85,6 +85,7 @@ def test_get_commit_stats_advanced(mocker):
 
 def test_main_no_commits(mocker, capsys):
     mocker.patch("git_tools.commit_stats.get_commits", return_value=[])
+    mocker.patch("sys.argv", ["git-commit-stats"])
     main()
     captured = capsys.readouterr()
     assert "No commits found." in captured.out
@@ -95,6 +96,7 @@ def test_main_with_commits(mocker, capsys):
         ({"A": 1, "M": 0, "D": 0}, {"A": 0, "M": 0, "D": 0}),
         ({"A": 0, "M": 1, "D": 1}, {"A": 1, "M": 0, "D": 0}),
     ])
+    mocker.patch("sys.argv", ["git-commit-stats"])
 
     main()
     captured = capsys.readouterr()
@@ -111,3 +113,21 @@ def test_main_with_repo(mocker, capsys):
 
     mock_get_commits.assert_called_with("/path/to/repo")
     mock_get_stats.assert_called_with("abc", "/path/to/repo")
+
+def test_version_flag(mocker, capsys):
+    mocker.patch("git_tools.commit_stats.version", return_value="0.1.0")
+    mocker.patch("sys.argv", ["git-commit-stats", "--version"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 0
+    captured = capsys.readouterr()
+    assert "git-commit-stats 0.1.0" in captured.out
+
+def test_short_version_flag(mocker, capsys):
+    mocker.patch("git_tools.commit_stats.version", return_value="0.1.0")
+    mocker.patch("sys.argv", ["git-commit-stats", "-V"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 0
+    captured = capsys.readouterr()
+    assert "git-commit-stats 0.1.0" in captured.out

@@ -1,6 +1,6 @@
 [project]
 name = "jfasoc"
-version = "0.1.0"
+dynamic = ["version"]
 description = "Git helper tools"
 authors = [
     {name = "jfasoc", email = "7720125+jfasoc@users.noreply.github.com"},
@@ -16,6 +16,9 @@ git-pack-stats = "git_tools.pack_stats:main"
 
 [tool.pdm]
 distribution = true
+
+[tool.pdm.version]
+source = "scm"
 
 [tool.pdm.dev-dependencies]
 dev = [

@@ -1,6 +1,7 @@
 import subprocess
 import sys
 import argparse
+from importlib.metadata import version
 
 def run_git_command(args, repo_path=None):
     try:
@@ -82,7 +83,17 @@ def get_commit_stats(commit_hash, repo_path=None):
     return reg_stats, sym_stats
 
 def get_parser():
+    try:
+        ver = version("jfasoc")
+    except Exception:
+        ver = "unknown"
     parser = argparse.ArgumentParser(description="Lists all commits with file change counts (Regular vs Symlinks).")
+    parser.add_argument(
+        "-V", "--version",
+        action="version",
+        version=f"%(prog)s {ver}",
+        help="Show the version and exit."
+    )
     parser.add_argument("repo", nargs="?", default=".", help="Path to the git repository.")
     return parser
 

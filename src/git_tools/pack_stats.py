@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import argparse
+from importlib.metadata import version
 
 def run_git_command(args, repo_path=None):
     try:
@@ -83,7 +84,17 @@ def format_size(size_bytes):
         return f"{size_bytes / (1024 * 1024):.2f} MiB"
 
 def get_parser():
+    try:
+        ver = version("jfasoc")
+    except Exception:
+        ver = "unknown"
     parser = argparse.ArgumentParser(description="List git pack files and loose objects.")
+    parser.add_argument(
+        "-V", "--version",
+        action="version",
+        version=f"%(prog)s {ver}",
+        help="Show the version and exit."
+    )
     parser.add_argument("repo", nargs="?", default=".", help="Path to the git repository.")
     return parser
 
