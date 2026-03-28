@@ -6,8 +6,7 @@
 
 _shtab_git_commit_stats_option_strings=('-h' '--help' '-V' '--version')
 
-_shtab_git_commit_stats__V_COMPGEN=_shtab_compgen_dirs
-_shtab_git_commit_stats___version_COMPGEN=_shtab_compgen_dirs
+_shtab_git_commit_stats_pos_0_COMPGEN=_shtab_compgen_dirs
 
 
 
@@ -159,8 +158,7 @@ complete -o filenames -F _shtab_git_commit_stats git-commit-stats
 
 _shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version')
 
-_shtab_git_pack_stats__V_COMPGEN=_shtab_compgen_dirs
-_shtab_git_pack_stats___version_COMPGEN=_shtab_compgen_dirs
+_shtab_git_pack_stats_pos_0_COMPGEN=_shtab_compgen_dirs
 
 
 

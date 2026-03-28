@@ -13,12 +13,12 @@ def generate():
     cp = get_commit_parser()
     cp.prog = "git-commit-stats"
     # Use shtab's add_argument().complete to specify directory completion
-    cp._actions[1].complete = shtab.DIR
+    cp._actions[2].complete = shtab.DIR
 
     # Git pack stats
     pp = get_pack_parser()
     pp.prog = "git-pack-stats"
-    pp._actions[1].complete = shtab.DIR
+    pp._actions[2].complete = shtab.DIR
 
     commit_bash = shtab.complete(cp, shell="bash")
     pack_bash = shtab.complete(pp, shell="bash")
@@ -34,7 +34,7 @@ def generate():
     pack_zsh = shtab.complete(pp, shell="zsh")
 
     with open("completions/git-tools.zsh", "w") as f:
-        f.write("# Zsh completion for git-tools\n\n")
+        f.write("#compdef git-commit-stats git-pack-stats\n\n")
         f.write(commit_zsh)
         f.write("\n")
         f.write(pack_zsh)

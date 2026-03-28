@@ -1,4 +1,4 @@
-# Zsh completion for git-tools
+#compdef git-commit-stats git-pack-stats
 
 #compdef git-commit-stats
 
@@ -15,7 +15,7 @@ _shtab_git_commit_stats_commands() {
 _shtab_git_commit_stats_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   "(- : *)"{-V,--version}"[Show the version and exit.]"
-  ":Path to the git repository.:"
+  ":Path to the git repository.:_files -/"
 )
 
 # guard to ensure default positional specs are added only once per session
@@ -72,7 +72,7 @@ _shtab_git_pack_stats_commands() {
 _shtab_git_pack_stats_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   "(- : *)"{-V,--version}"[Show the version and exit.]"
-  ":Path to the git repository.:"
+  ":Path to the git repository.:_files -/"
 )
 
 # guard to ensure default positional specs are added only once per session
