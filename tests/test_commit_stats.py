@@ -123,6 +123,15 @@ def test_version_flag(mocker, capsys):
     captured = capsys.readouterr()
     assert "git-commit-stats 0.1.0" in captured.out
 
+def test_version_unknown(mocker, capsys):
+    mocker.patch("git_tools.commit_stats.version", side_effect=Exception())
+    mocker.patch("sys.argv", ["git-commit-stats", "--version"])
+    with pytest.raises(SystemExit) as excinfo:
+        main()
+    assert excinfo.value.code == 0
+    captured = capsys.readouterr()
+    assert "git-commit-stats unknown" in captured.out
+
 def test_short_version_flag(mocker, capsys):
     mocker.patch("git_tools.commit_stats.version", return_value="0.1.0")
     mocker.patch("sys.argv", ["git-commit-stats", "-V"])

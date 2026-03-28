@@ -208,6 +208,15 @@ def test_version_flag(capsys):
         captured = capsys.readouterr()
         assert "git-pack-stats 0.1.0" in captured.out
 
+def test_version_unknown(capsys):
+    with patch("git_tools.pack_stats.version", side_effect=Exception()), \
+         patch("sys.argv", ["git-pack-stats", "--version"]):
+        with pytest.raises(SystemExit) as excinfo:
+            main()
+        assert excinfo.value.code == 0
+        captured = capsys.readouterr()
+        assert "git-pack-stats unknown" in captured.out
+
 def test_short_version_flag(capsys):
     with patch("git_tools.pack_stats.version", return_value="0.1.0"), \
          patch("sys.argv", ["git-pack-stats", "-V"]):
