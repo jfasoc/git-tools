@@ -4,6 +4,7 @@
 
 
 
+
 _shtab_git_commit_stats_option_strings=('-h' '--help' '-V' '--version')
 
 _shtab_git_commit_stats_pos_0_COMPGEN=_shtab_compgen_dirs
