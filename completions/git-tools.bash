@@ -151,7 +151,7 @@ _shtab_git_commit_stats() {
 
 complete -o filenames -F _shtab_git_commit_stats git-commit-stats
 
-_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version')
+_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version' '--loose-uncompressed')
 
 _shtab_git_pack_stats_pos_0_COMPGEN=_shtab_compgen_dirs
 
@@ -161,6 +161,7 @@ _shtab_git_pack_stats__h_nargs=0
 _shtab_git_pack_stats___help_nargs=0
 _shtab_git_pack_stats__V_nargs=0
 _shtab_git_pack_stats___version_nargs=0
+_shtab_git_pack_stats___loose_uncompressed_nargs=0
 
 
 # $1=COMP_WORDS[1]
