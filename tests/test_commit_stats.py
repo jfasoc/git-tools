@@ -10,9 +10,17 @@ def test_run_git_command_success(mocker):
     assert run_git_command(["args"]) == "output"
     mock_run.assert_called_with(["git", "args"], capture_output=True, text=True, check=True)
 
+def test_run_git_command_with_repo(mocker):
+    mock_run = mocker.patch("subprocess.run")
+    mock_run.return_value.stdout = "output"
+    mock_run.return_value.returncode = 0
+
+    assert run_git_command(["args"], repo_path="/tmp/repo") == "output"
+    mock_run.assert_called_with(["git", "-C", "/tmp/repo", "args"], capture_output=True, text=True, check=True)
+
 def test_run_git_command_error(mocker):
     mock_run = mocker.patch("subprocess.run")
-    mock_run.side_effect = subprocess.CalledProcessError(1, ["git", "args"])
+    mock_run.side_effect = subprocess.CalledProcessError(1, ["git", "args"], stderr="error message")
 
     with pytest.raises(SystemExit) as excinfo:
         run_git_command(["args"])
@@ -93,3 +101,13 @@ def test_main_with_commits(mocker, capsys):
     assert "Commit" in captured.out
     assert "abc" in captured.out
     assert "def" in captured.out
+
+def test_main_with_repo(mocker, capsys):
+    mock_get_commits = mocker.patch("git_tools.commit_stats.get_commits", return_value=["abc"])
+    mock_get_stats = mocker.patch("git_tools.commit_stats.get_commit_stats", return_value=({"A": 1, "M": 0, "D": 0}, {"A": 0, "M": 0, "D": 0}))
+
+    mocker.patch("sys.argv", ["git-commit-stats", "/path/to/repo"])
+    main()
+
+    mock_get_commits.assert_called_with("/path/to/repo")
+    mock_get_stats.assert_called_with("abc", "/path/to/repo")
