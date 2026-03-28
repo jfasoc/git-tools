@@ -12,6 +12,7 @@ license = {text = "MIT"}
 
 [project.scripts]
 git-commit-stats = "git_tools.commit_stats:main"
+git-pack-stats = "git_tools.pack_stats:main"
 
 [tool.pdm]
 distribution = true
