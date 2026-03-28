@@ -20,15 +20,15 @@ To manually load and test Bash completions:
     source completions/git-tools.bash
     ```
 2.  **Verify:**
-    Type `git-commit-stats -` and press `Tab`. You should see `--help`, `--version`, and `-V`.
-    Type `git-pack-stats -` and press `Tab`. You should see the same options.
-    Type `git-commit-stats ` (with a space) and press `Tab`. It should suggest directories.
+    - Type `git-commit-stats -` and press `Tab`. You should see `--help`, `--version`, and `-V`.
+    - Type `git-pack-stats -` and press `Tab`. You should see the same options.
+    - Type `git-commit-stats ` (with a space) and press `Tab`. It should suggest directories.
 
 ## Zsh
 
 Zsh completions are more complex because they can be loaded via `source` (eval) or via the `fpath` (autoload).
 
-### Method 1: Sourcing (Easy for testing)
+### Method 1: Sourcing (Recommended for testing)
 
 1.  **Initialize completion system (if not already done):**
     ```zsh
@@ -39,8 +39,8 @@ Zsh completions are more complex because they can be loaded via `source` (eval) 
     source completions/git-tools.zsh
     ```
 3.  **Verify:**
-    Type `git-commit-stats -<TAB>`. It should show the options with descriptions.
-    Type `git-pack-stats -<TAB>`. It should also work.
+    - Type `git-commit-stats -<TAB>`. It should show the options with descriptions.
+    - Type `git-pack-stats -<TAB>`. It should also work.
 
 ### Method 2: Using fpath (Production-like)
 
@@ -49,7 +49,7 @@ Zsh completions are more complex because they can be loaded via `source` (eval) 
     mkdir -p ~/.zfunc
     ```
 2.  **Copy and rename the script:**
-    The file **must** be named `_git-tools` (or similar, but it must match one of the `#compdef` names if not specified otherwise, though typically we use a name starting with an underscore).
+    The file **must** be named `_git-tools`.
     ```zsh
     cp completions/git-tools.zsh ~/.zfunc/_git-tools
     ```
@@ -63,6 +63,7 @@ Zsh completions are more complex because they can be loaded via `source` (eval) 
 
 ## Troubleshooting
 
-*   **"command not found: _shtab_..."**: This usually means the functions weren't correctly defined before `compdef` was called. Our `git-tools.zsh` script is designed to avoid this by wrapping registration in a check for the `eval` context.
-*   **No completions shown**: Ensure `compinit` has been run. In some environments, you might need to run `rm -f ~/.zcompdump; compinit` to clear the completion cache.
-*   **Permission denied**: Ensure the completion scripts are readable.
+- **"command not found: _shtab_..."**: This usually means the functions weren't correctly defined before `compdef` was called. Our `git-tools.zsh` script is designed to avoid this by using a robust dispatcher.
+- **No completions shown**: Ensure `compinit` has been run. In some environments, you might need to run `rm -f ~/.zcompdump; compinit` to clear the completion cache.
+- **Permission denied**: Ensure the completion scripts are readable.
+- **Command is not in PATH**: If the completion script is loaded but the command itself is not in your `PATH`, Zsh might not trigger the completion function.

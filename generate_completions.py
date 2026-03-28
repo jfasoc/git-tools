@@ -61,18 +61,19 @@ def generate():
         f.write(get_zsh_functions(pack_zsh))
         f.write("\n\n")
 
-        # Single dispatcher/registration
-        f.write("# Dispatcher/Registration\n")
+        # Robust dispatcher for Zsh
+        f.write("_git_tools_dispatch() {\n")
+        f.write("  local service=${service:-${words[1]:t}}\n")
+        f.write("  case $service in\n")
+        f.write("    git-commit-stats) _shtab_git_commit_stats \"$@\" ;;\n")
+        f.write("    git-pack-stats) _shtab_git_pack_stats \"$@\" ;;\n")
+        f.write("  esac\n")
+        f.write("}\n\n")
+
         f.write("if [[ $zsh_eval_context[-1] == eval ]]; then\n")
-        f.write("    # When sourced/evaled, register both functions\n")
-        f.write("    compdef _shtab_git_commit_stats git-commit-stats\n")
-        f.write("    compdef _shtab_git_pack_stats git-pack-stats\n")
+        f.write("  compdef _git_tools_dispatch git-commit-stats git-pack-stats\n")
         f.write("else\n")
-        f.write("    # When autoloaded (fpath), dispatch based on $service\n")
-        f.write("    case ${service:-${1:-$words[1]}} in\n")
-        f.write("        git-commit-stats) _shtab_git_commit_stats \"$@\" ;;\n")
-        f.write("        git-pack-stats) _shtab_git_pack_stats \"$@\" ;;\n")
-        f.write("    esac\n")
+        f.write("  _git_tools_dispatch \"$@\"\n")
         f.write("fi\n")
 
 if __name__ == "__main__":

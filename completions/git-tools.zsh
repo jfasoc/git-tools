@@ -84,15 +84,16 @@ _shtab_git_pack_stats() {
   esac
 }
 
-# Dispatcher/Registration
+_git_tools_dispatch() {
+  local service=${service:-${words[1]:t}}
+  case $service in
+    git-commit-stats) _shtab_git_commit_stats "$@" ;;
+    git-pack-stats) _shtab_git_pack_stats "$@" ;;
+  esac
+}
+
 if [[ $zsh_eval_context[-1] == eval ]]; then
-    # When sourced/evaled, register both functions
-    compdef _shtab_git_commit_stats git-commit-stats
-    compdef _shtab_git_pack_stats git-pack-stats
+  compdef _git_tools_dispatch git-commit-stats git-pack-stats
 else
-    # When autoloaded (fpath), dispatch based on $service
-    case ${service:-${1:-$words[1]}} in
-        git-commit-stats) _shtab_git_commit_stats "$@" ;;
-        git-pack-stats) _shtab_git_pack_stats "$@" ;;
-    esac
+  _git_tools_dispatch "$@"
 fi
