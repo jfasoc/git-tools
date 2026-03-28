@@ -162,6 +162,23 @@ def test_main_with_data(capsys):
         assert "Loose Objects" in captured.out
         assert "50.0%" in captured.out
 
+def test_main_sorting(capsys):
+    with patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir, \
+         patch("git_tools.pack_stats.get_pack_files") as mock_get_packs, \
+         patch("git_tools.pack_stats.get_pack_info") as mock_get_info, \
+         patch("git_tools.pack_stats.get_loose_info") as mock_get_loose, \
+         patch("sys.argv", ["git-pack-stats"]):
+
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["small.pack", "large.pack"]
+        mock_get_info.side_effect = [(10, 100), (100, 1000)]
+        mock_get_loose.return_value = (0, 0)
+
+        main()
+        captured = capsys.readouterr()
+        # "large.pack" should come before "small.pack"
+        assert captured.out.find("large.pack") < captured.out.find("small.pack")
+
 def test_main_system_exit():
     with patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir, \
          patch("sys.argv", ["git-pack-stats"]):

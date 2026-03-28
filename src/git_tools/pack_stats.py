@@ -116,6 +116,9 @@ def main():
     total_objects += loose_count
     total_size += loose_size
 
+    # Sort pack data by object count (descending)
+    pack_data.sort(key=lambda x: x["objects"], reverse=True)
+
     # Header
     header = f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} {'% Obj':>8} {'% Size':>8}"
     print(header)
