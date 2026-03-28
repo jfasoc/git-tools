@@ -1,6 +1,8 @@
 import subprocess
 import sys
 import argparse
+from importlib.metadata import version
+
 
 def run_git_command(args, repo_path=None):
     try:
@@ -8,12 +10,7 @@ def run_git_command(args, repo_path=None):
         if repo_path:
             cmd.extend(["-C", repo_path])
         cmd.extend(args)
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            check=True
-        )
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         return result.stdout
     except subprocess.CalledProcessError as e:
         print(f"Error running git command: {e}", file=sys.stderr)
@@ -24,9 +21,11 @@ def run_git_command(args, repo_path=None):
         print("Error: git command not found.", file=sys.stderr)
         sys.exit(1)
 
+
 def get_commits(repo_path=None):
     output = run_git_command(["rev-list", "--all", "--abbrev-commit"], repo_path)
     return output.strip().split("\n") if output.strip() else []
+
 
 def get_commit_stats(commit_hash, repo_path=None):
     # -r: recurse into subdirectories
@@ -35,8 +34,16 @@ def get_commit_stats(commit_hash, repo_path=None):
     # --root: show the root commit as a big creation event
     # --find-renames: detect renames
     output = run_git_command(
-        ["diff-tree", "-r", "--no-commit-id", "-m", "--root", "--find-renames", commit_hash],
-        repo_path
+        [
+            "diff-tree",
+            "-r",
+            "--no-commit-id",
+            "-m",
+            "--root",
+            "--find-renames",
+            commit_hash,
+        ],
+        repo_path,
     )
 
     reg_stats = {"A": 0, "M": 0, "D": 0}
@@ -51,10 +58,10 @@ def get_commit_stats(commit_hash, repo_path=None):
         if len(parts) < 5:
             continue
 
-        old_mode = parts[0][1:] # strip leading ':'
+        old_mode = parts[0][1:]  # strip leading ':'
         new_mode = parts[1]
         status_full = parts[4]
-        status = status_full[0] # A, M, D, R, T, etc.
+        status = status_full[0]  # A, M, D, R, T, etc.
 
         is_symlink = (new_mode == "120000") or (old_mode == "120000")
         stats = sym_stats if is_symlink else reg_stats
@@ -81,10 +88,27 @@ def get_commit_stats(commit_hash, repo_path=None):
 
     return reg_stats, sym_stats
 
+
 def get_parser():
-    parser = argparse.ArgumentParser(description="Lists all commits with file change counts (Regular vs Symlinks).")
-    parser.add_argument("repo", nargs="?", default=".", help="Path to the git repository.")
+    try:
+        ver = version("jfasoc")
+    except Exception:
+        ver = "unknown"
+    parser = argparse.ArgumentParser(
+        description="Lists all commits with file change counts (Regular vs Symlinks)."
+    )
+    parser.add_argument(
+        "-V",
+        "--version",
+        action="version",
+        version=f"%(prog)s {ver}",
+        help="Show the version and exit.",
+    )
+    parser.add_argument(
+        "repo", nargs="?", default=".", help="Path to the git repository."
+    )
     return parser
+
 
 def main():
     parser = get_parser()
@@ -108,5 +132,6 @@ def main():
         sym_str = f"{sym['A']:>3} / {sym['M']:>3} / {sym['D']:>3}"
         print(f"{commit:<10} {reg_str:<18} {sym_str:<18}")
 
-if __name__ == "__main__": # pragma: no cover
+
+if __name__ == "__main__":  # pragma: no cover
     main()
