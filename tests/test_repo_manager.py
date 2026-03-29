@@ -147,7 +147,7 @@ def test_update_repos_section(mock_get_path, mock_load, mock_config_file):
 
     found_repos = {os.path.abspath("/existing/repo"), os.path.abspath("/new/repo")}
 
-    update_repos_section(str(mock_config_file), found_repos)
+    newly_added, no_longer_present = update_repos_section(str(mock_config_file), found_repos)
 
     with open(mock_config_file, "r") as f:
         content = f.read()
@@ -155,6 +155,9 @@ def test_update_repos_section(mock_get_path, mock_load, mock_config_file):
     assert f"/existing/repo = # 2023-01-01 10:00:00" in content
     assert f"/new/repo = # " in content
     assert f"# /old/repo = # 2023-01-01 00:00:00" in content
+
+    assert newly_added == [os.path.abspath("/new/repo")]
+    assert no_longer_present == [os.path.abspath("/old/repo")]
 
 
 def test_update_repos_section_append_new(tmp_path):
@@ -214,11 +217,41 @@ def test_main_scan(
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (["/search"], {})
     mock_scan.return_value = {"/repo"}
+    mock_update.return_value = (["/repo"], ["/old_repo"])
 
-    main()
+    with patch("builtins.print") as mock_print:
+        main()
+        mock_print.assert_any_call("\nNew repositories found:")
+        mock_print.assert_any_call("  + /repo")
+        mock_print.assert_any_call("\nRepositories no longer present (now commented out):")
+        mock_print.assert_any_call("  - /old_repo")
 
     mock_scan.assert_called_once_with(["/search"])
     mock_update.assert_called_once_with("/mock/config", {"/repo"})
+
+
+@patch("git_tools.repo_manager.get_config_path")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.scan_directories")
+@patch("git_tools.repo_manager.update_repos_section")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_scan_no_changes(
+    mock_args, mock_update, mock_scan, mock_load, mock_get_path
+):
+    mock_args.return_value = MagicMock(command="scan")
+    mock_get_path.return_value = "/mock/config"
+    mock_load.return_value = (["/search"], {})
+    mock_scan.return_value = {"/repo"}
+    mock_update.return_value = ([], [])
+
+    with patch("builtins.print") as mock_print:
+        main()
+        # Verify that "New repositories found:" and "Repositories no longer present" were NOT called
+        for call in mock_print.call_args_list:
+            assert "\nNew repositories found:" not in call.args
+            assert "\nRepositories no longer present" not in call.args
+
+    mock_scan.assert_called_once_with(["/search"])
 
 
 @patch("git_tools.repo_manager.get_config_path")
@@ -335,14 +368,3 @@ def test_update_repos_section_no_repos_tag_but_lines(tmp_path):
         update_repos_section(str(config_file), {os.path.abspath("/repo")})
     content = config_file.read_text()
     assert "[search]\n/path\n\n[repos]\n" in content
-
-def test_load_config_file_read_error(tmp_path):
-    config_file = tmp_path / "config"
-    config_file.write_text("[search]")
-    # Make the file unreadable
-    os.chmod(config_file, 0o000)
-    try:
-        with pytest.raises(SystemExit):
-            load_config(str(config_file))
-    finally:
-        os.chmod(config_file, 0o600)

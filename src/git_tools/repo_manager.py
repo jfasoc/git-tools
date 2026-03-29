@@ -161,11 +161,16 @@ def update_repos_section(config_path, found_repos):
     Args:
         config_path (str): Path to the config file.
         found_repos (set): Set of found repository paths.
+
+    Returns:
+        tuple: (newly_added, no_longer_present)
     """
     _, existing_repos = load_config(config_path)
     now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     updated_repos = {}
+    newly_added = []
+    no_longer_present = []
 
     # Process existing entries
     for path, data in existing_repos.items():
@@ -176,10 +181,13 @@ def update_repos_section(config_path, found_repos):
         else:
             # Not found in this scan, comment out
             updated_repos[path] = {"timestamp": data["timestamp"], "active": False}
+            if data["active"]:
+                no_longer_present.append(path)
 
     # Add newly found repos
     for path in found_repos:
         updated_repos[path] = {"timestamp": now_str, "active": True}
+        newly_added.append(path)
 
     # Read the file to preserve the [search] section and other sections/comments
     lines = []
@@ -230,6 +238,8 @@ def update_repos_section(config_path, found_repos):
         print(f"Error writing configuration: {e}", file=sys.stderr)
         sys.exit(1)
 
+    return sorted(newly_added), sorted(no_longer_present)
+
 
 def get_parser():
     """
@@ -276,10 +286,21 @@ def main():
 
         print(f"Scanning {len(search_dirs)} directories...")
         found = scan_directories(search_dirs)
-        print(f"Found {len(found)} repositories.")
+        print(f"Found {len(found)} active repositories.")
 
-        update_repos_section(config_path, found)
-        print("Configuration updated.")
+        newly_added, no_longer_present = update_repos_section(config_path, found)
+
+        if newly_added:
+            print("\nNew repositories found:")
+            for path in newly_added:
+                print(f"  + {path}")
+
+        if no_longer_present:
+            print("\nRepositories no longer present (now commented out):")
+            for path in no_longer_present:
+                print(f"  - {path}")
+
+        print("\nConfiguration updated.")
     else:
         parser.print_help()
 
