@@ -2,6 +2,7 @@ import os
 import subprocess
 import sys
 import argparse
+import time
 from importlib.metadata import version
 
 
@@ -162,6 +163,12 @@ def get_parser():
         help="Include uncompressed size for loose objects (can be slow).",
     )
     parser.add_argument(
+        "-v",
+        "--verbose",
+        action="store_true",
+        help="Print how long time it took to obtain each set of data.",
+    )
+    parser.add_argument(
         "repo", nargs="?", default=".", help="Path to the git repository."
     )
     return parser
@@ -173,9 +180,15 @@ def main():
 
     repo_path = args.repo
 
+    total_time_start = time.perf_counter()
+
     try:
+        start_time = time.perf_counter()
         git_dir = get_git_dir(repo_path)
         pack_files = get_pack_files(git_dir)
+        duration = (time.perf_counter() - start_time) * 1000
+        if args.verbose:
+            print(f"{duration:10.3f} ms get info for git repository")
     except SystemExit:
         sys.exit(1)
     except Exception as e:
@@ -188,7 +201,12 @@ def main():
     total_uncompressed = 0
 
     for pf in pack_files:
+        start_time = time.perf_counter()
         count, size, uncompressed = get_pack_info(git_dir, pf, repo_path)
+        duration = (time.perf_counter() - start_time) * 1000
+        if args.verbose:
+            print(f"{duration:10.3f} ms get info for {pf}")
+
         pack_data.append(
             {"name": pf, "objects": count, "size": size, "uncompressed": uncompressed}
         )
@@ -196,9 +214,18 @@ def main():
         total_size += size
         total_uncompressed += uncompressed
 
+    start_time = time.perf_counter()
     loose_count, loose_size, loose_uncompressed = get_loose_info(
         repo_path, args.loose_uncompressed
     )
+    duration = (time.perf_counter() - start_time) * 1000
+    if args.verbose:
+        print(f"{duration:10.3f} ms get info for loose objects")
+
+    total_duration = (time.perf_counter() - total_time_start) * 1000
+    if args.verbose:
+        print(f"{total_duration:10.3f} ms total time")
+        print()
     total_objects += loose_count
     total_size += loose_size
     if loose_uncompressed is not None:
