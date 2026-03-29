@@ -29,9 +29,9 @@ This represents the size of the packed data relative to its original, uncompress
 For loose objects (stored individually in `.git/objects/??/`), the statistics are obtained using different methods.
 
 ### Compressed Size
-The compressed size for loose objects is reported by `git count-objects -v`.
-- The `size` value in the output of this command represents the disk space occupied by loose objects, including their compressed data and file system overhead.
-- `git count-objects` reports this value in KiB, which `git-pack-stats` converts to bytes.
+The compressed size for loose objects is the **sum of the actual sizes of the loose object files** in `.git/objects/??/`.
+- Unlike `git count-objects`, which reports "size on disk" (including filesystem block overhead), `git-pack-stats` manually walks the objects directory and uses `os.path.getsize()` on each file.
+- This provides a more accurate representation of the actual compressed data stored, independent of the underlying filesystem's block size.
 
 ### Uncompressed Size
 Calculating the uncompressed size of loose objects can be a slow operation in repositories with many objects. Therefore, it is only performed when the `--loose-uncompressed` flag is used.

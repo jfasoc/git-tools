@@ -8,7 +8,6 @@ from git_tools.pack_stats import (
     get_pack_files,
     get_pack_info,
     get_loose_info,
-    get_loose_uncompressed_size,
     format_size,
     main,
 )
@@ -146,66 +145,74 @@ def test_get_pack_info_parsing_error():
         assert uncompressed == 0
 
 
-def test_get_loose_uncompressed_size_empty():
+def test_get_loose_info_empty():
     with (
         patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
         patch("os.listdir") as mock_listdir,
     ):
         mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = True
         mock_listdir.return_value = []
-        assert get_loose_uncompressed_size() == 0
+        count, compressed, uncompressed = get_loose_info()
+        assert count == 0
+        assert compressed == 0
+        assert uncompressed is None
 
 
-def test_get_loose_uncompressed_size_with_data():
+def test_get_loose_info_with_data():
     with (
         patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
         patch("os.listdir") as mock_listdir,
+        patch("os.path.getsize") as mock_getsize,
         patch("subprocess.run") as mock_run,
     ):
         mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = True
         mock_listdir.side_effect = [
-            ["ab", "cd", "info", "pack"],  # Inside .git/objects for call 1
-            ["1234"],  # Inside .git/objects/ab for call 1
-            ["5678"],  # Inside .git/objects/cd for call 1
-            ["ab", "cd", "info", "pack"],  # Inside .git/objects for call 2
-            ["1234"],  # Inside .git/objects/ab for call 2
-            ["5678"],  # Inside .git/objects/cd for call 2
+            ["ab", "cd", "info", "pack"],  # Inside .git/objects (call 1)
+            ["1234"],  # Inside .git/objects/ab (call 1)
+            ["5678"],  # Inside .git/objects/cd (call 1)
+            ["ab", "cd", "info", "pack"],  # Inside .git/objects (call 2)
+            ["1234"],  # Inside .git/objects/ab (call 2)
+            ["5678"],  # Inside .git/objects/cd (call 2)
         ]
-        mock_run.return_value = MagicMock(stdout="100\n200\n", returncode=0)
+        mock_getsize.side_effect = [100, 200, 100, 200]
+        mock_run.return_value = MagicMock(stdout="1000\n2000\n", returncode=0)
 
-        size = get_loose_uncompressed_size()
-        assert size == 300
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 2
+        assert compressed == 300
+        assert uncompressed == 3000
         mock_run.assert_called()
 
-        size = get_loose_uncompressed_size(repo_path="/some/repo")
-        assert size == 300
-        # Check if -C /some/repo was passed
+        # Test with repo_path to cover line 96
+        get_loose_info(repo_path="/some/repo", include_uncompressed=True)
         args, kwargs = mock_run.call_args
         assert "-C" in args[0]
         assert "/some/repo" in args[0]
 
 
-def test_get_loose_uncompressed_size_exception():
+def test_get_loose_info_exception():
     with patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir:
         mock_get_git_dir.side_effect = Exception()
-        assert get_loose_uncompressed_size() == 0
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 0
+        assert compressed == 0
+        assert uncompressed == 0
 
 
-def test_get_loose_info():
+def test_get_loose_info_no_obj_dir():
     with (
-        patch("git_tools.pack_stats.run_git_command") as mock_git,
-        patch("git_tools.pack_stats.get_loose_uncompressed_size") as mock_get_uncompressed,
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
     ):
-        mock_git.return_value = "count: 5\nsize: 10\nin-pack: 100\n"
-        mock_get_uncompressed.return_value = 500
-
-        count, size, uncompressed = get_loose_info(include_uncompressed=True)
-        assert count == 5
-        assert size == 10 * 1024
-        assert uncompressed == 500
-
-        count, size, uncompressed = get_loose_info(include_uncompressed=False)
-        assert uncompressed is None
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = False
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 0
+        assert uncompressed == 0
 
 
 def test_format_size():

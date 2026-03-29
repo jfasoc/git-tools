@@ -67,63 +67,53 @@ def get_pack_info(git_dir, pack_file, repo_path=None):
     return object_count, size, uncompressed_size
 
 
-def get_loose_uncompressed_size(repo_path=None):
-    # Get list of all objects, then get their sizes
+def get_loose_info(repo_path=None, include_uncompressed=False):
+    # We walk the objects directory to get the count and the sum of actual file sizes.
+    # This avoids "size on disk" (which includes filesystem overhead/blocks).
     try:
-        # Use git rev-list --all --objects --disk-size is for packed
-        # To get all loose objects, we can't easily distinguish from packed ones via rev-list
-        # But we can use git for-each-ref to get some, or just find in .git/objects
         git_dir = get_git_dir(repo_path)
         obj_dir = os.path.join(git_dir, "objects")
+        count = 0
+        compressed_size = 0
         loose_objects = []
-        for d in os.listdir(obj_dir):
-            if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
-                d_path = os.path.join(obj_dir, d)
-                for f in os.listdir(d_path):
-                    loose_objects.append(d + f)
 
-        if not loose_objects:
-            return 0
+        if os.path.exists(obj_dir):
+            for d in os.listdir(obj_dir):
+                if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
+                    d_path = os.path.join(obj_dir, d)
+                    for f in os.listdir(d_path):
+                        f_path = os.path.join(d_path, f)
+                        count += 1
+                        compressed_size += os.path.getsize(f_path)
+                        if include_uncompressed:
+                            loose_objects.append(d + f)
 
-        # Use git cat-file --batch-check to get sizes efficiently
-        cmd = ["git"]
-        if repo_path:
-            cmd.extend(["-C", repo_path])
-        cmd.extend(["cat-file", "--batch-check=%(objectsize)"])
+        uncompressed_size = None
+        if include_uncompressed and loose_objects:
+            # Use git cat-file --batch-check to get sizes efficiently
+            cmd = ["git"]
+            if repo_path:
+                cmd.extend(["-C", repo_path])
+            cmd.extend(["cat-file", "--batch-check=%(objectsize)"])
 
-        result = subprocess.run(
-            cmd,
-            input="\n".join(loose_objects),
-            capture_output=True,
-            text=True,
-            check=True,
-        )
+            result = subprocess.run(
+                cmd,
+                input="\n".join(loose_objects),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
 
-        total_uncompressed = 0
-        for line in result.stdout.strip().split("\n"):
-            if line:
-                total_uncompressed += int(line)
-        return total_uncompressed
+            uncompressed_size = 0
+            for line in result.stdout.strip().split("\n"):
+                if line:
+                    uncompressed_size += int(line)
+        elif include_uncompressed:
+            uncompressed_size = 0
+
+        return count, compressed_size, uncompressed_size
     except Exception:
-        return 0
-
-
-def get_loose_info(repo_path=None, include_uncompressed=False):
-    output = run_git_command(["count-objects", "-v"], repo_path)
-    stats = {}
-    for line in output.strip().split("\n"):
-        if ":" in line:
-            key, value = line.split(":", 1)
-            stats[key.strip()] = value.strip()
-
-    count = int(stats.get("count", 0))
-    size = int(stats.get("size", 0)) * 1024  # count-objects reports size in KiB
-
-    uncompressed_size = None
-    if include_uncompressed:
-        uncompressed_size = get_loose_uncompressed_size(repo_path)
-
-    return count, size, uncompressed_size
+        return 0, 0, 0 if include_uncompressed else None
 
 
 def format_size(size_bytes, human=False):
