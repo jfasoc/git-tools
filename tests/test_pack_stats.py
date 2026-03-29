@@ -323,6 +323,27 @@ def test_main_sorting(capsys):
         assert captured.out.find("large.pack") < captured.out.find("small.pack")
 
 
+def test_main_verbose(capsys):
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "--verbose"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 512, 1024)
+        mock_get_loose.return_value = (10, 512, 1024)
+
+        main()
+        captured = capsys.readouterr()
+        assert "ms get info for git repository" in captured.out
+        assert "ms get info for pack-1.pack" in captured.out
+        assert "ms get info for loose objects" in captured.out
+        assert "ms total time" in captured.out
+
+
 def test_main_system_exit():
     with (
         patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
