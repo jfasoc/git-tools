@@ -9,6 +9,7 @@ from git_tools.repo_manager import (
     scan_directories,
     update_repos_section,
     get_parser,
+    get_repo_status,
     main,
 )
 
@@ -376,6 +377,112 @@ def test_update_repos_section_no_repos_tag_but_lines(tmp_path):
     assert "[search]\n/path\n\n[repos]\n" in content
 
 
+def test_get_repo_status_path_not_found(tmp_path):
+    res = get_repo_status(str(tmp_path / "nonexistent"))
+    assert res == {"error": "Path not found"}
+
+
+def test_get_repo_status_not_a_repo(tmp_path):
+    res = get_repo_status(str(tmp_path))
+    assert res == {"error": "Not a Git repository"}
+
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
+    def side_effect(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        if args[0] == "rev-parse" and "@{u}" in args[-1]:
+            return "origin/main"
+        if args[0] == "rev-list":
+            if "@{u}..HEAD" in args[-1]:
+                return "1"
+            if "HEAD..@{u}" in args[-1]:
+                return "0"
+        if args[0] == "status":
+            return " M file1\n?? file2"
+        return None
+
+    mock_run.side_effect = side_effect
+    res = get_repo_status("/mock/repo")
+    assert res == {
+        "branch": "main",
+        "remote_status": "Ahead 1",
+        "modified": 1,
+        "untracked": 1,
+        "error": None,
+    }
+
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+def test_get_repo_status_fetch(mock_isdir, mock_is_git, mock_run):
+    def side_effect(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        return None
+
+    mock_run.side_effect = side_effect
+    get_repo_status("/mock/repo", fetch_remote="upstream")
+    mock_run.assert_any_call(["fetch", "upstream"], "/mock/repo")
+
+
+@patch("git_tools.repo_manager.get_config_path")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_get_path.return_value = "/mock/config"
+    mock_load.return_value = (
+        ["/search", "/other_search"],
+        {
+            os.path.abspath("/search/repo"): {"timestamp": "...", "active": True},
+            os.path.abspath("/outside/repo"): {"timestamp": "...", "active": True},
+            os.path.abspath("/search/error_repo"): {"timestamp": "...", "active": True},
+        },
+    )
+
+    def status_side_effect(path, fetch):
+        if "error_repo" in path:
+            return {"error": "Some error"}
+        return {
+            "branch": "main",
+            "remote_status": "Up-to-date",
+            "modified": 0,
+            "untracked": 0,
+            "error": None,
+        }
+
+    mock_status.side_effect = status_side_effect
+
+    with patch("builtins.print") as mock_print:
+        main()
+        mock_print.assert_any_call("\n[" + os.path.abspath("/search") + "]")
+        mock_print.assert_any_call("\n[Other]")
+        # Check if table header or data was printed (partial match)
+        calls = [call.args[0] for call in mock_print.call_args_list if call.args]
+        assert any("Remote Status" in c for c in calls)
+        assert any("repo" in c and "main" in c and "Up-to-date" in c for c in calls)
+        assert any("error_repo" in c and "ERROR: Some error" in c for c in calls)
+
+
+@patch("git_tools.repo_manager.get_config_path")
+@patch("git_tools.repo_manager.load_config")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status_no_active(mock_args, mock_load, mock_get_path):
+    mock_args.return_value = MagicMock(command="status")
+    mock_get_path.return_value = "/mock/config"
+    mock_load.return_value = (["/search"], {"/repo": {"active": False}})
+
+    with patch("builtins.print") as mock_print:
+        main()
+        mock_print.assert_any_call("No active repositories found in configuration.")
+
+
 @patch("builtins.open")
 def test_load_config_iteration_exception(mock_open_func, tmp_path):
     config_file = tmp_path / "config"
@@ -389,3 +496,130 @@ def test_load_config_iteration_exception(mock_open_func, tmp_path):
     with patch("os.path.exists", return_value=True):
         with pytest.raises(SystemExit):
             load_config(str(config_file))
+
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_run):
+    # Test Behind
+    def side_effect_behind(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        if args[0] == "rev-parse" and "@{u}" in args[-1]:
+            return "origin/main"
+        if args[0] == "rev-list":
+            if "@{u}..HEAD" in args[-1]:
+                return "0"
+            if "HEAD..@{u}" in args[-1]:
+                return "1"
+        if args[0] == "status":
+            return ""
+        return None
+
+    mock_run.side_effect = side_effect_behind
+    res = get_repo_status("/mock/repo")
+    assert res["remote_status"] == "Behind 1"
+
+    # Test Ahead and Behind
+    def side_effect_both(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        if args[0] == "rev-parse" and "@{u}" in args[-1]:
+            return "origin/main"
+        if args[0] == "rev-list":
+            if "@{u}..HEAD" in args[-1]:
+                return "1"
+            if "HEAD..@{u}" in args[-1]:
+                return "1"
+        if args[0] == "status":
+            return ""
+        return None
+
+    mock_run.side_effect = side_effect_both
+    res = get_repo_status("/mock/repo")
+    assert res["remote_status"] == "Ahead 1, Behind 1"
+
+    # Test Up-to-date
+    def side_effect_uptodate(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        if args[0] == "rev-parse" and "@{u}" in args[-1]:
+            return "origin/main"
+        if args[0] == "rev-list":
+            return "0"
+        if args[0] == "status":
+            return ""
+        return None
+
+    mock_run.side_effect = side_effect_uptodate
+    res = get_repo_status("/mock/repo")
+    assert res["remote_status"] == "Up-to-date"
+
+    # Test No upstream
+    def side_effect_no_upstream(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        if args[0] == "status":
+            return ""
+        return None
+
+    mock_run.side_effect = side_effect_no_upstream
+    res = get_repo_status("/mock/repo")
+    assert res["remote_status"] == "N/A"
+
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+def test_get_repo_status_errors(mock_isdir, mock_is_git, mock_run):
+    # Branch error
+    mock_run.return_value = None
+    res = get_repo_status("/mock/repo")
+    assert res == {"error": "Could not determine branch"}
+
+    # Status error
+    def side_effect_status_error(args, repo_path=None):
+        if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
+            return "main"
+        return None
+
+    mock_run.side_effect = side_effect_status_error
+    res = get_repo_status("/mock/repo")
+    assert res == {"error": "Could not get status"}
+
+
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_config_path")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
+    mock_status.side_effect = Exception("Status fail")
+
+    with patch("builtins.print") as mock_print:
+        main()
+        calls = [call.args[0] for call in mock_print.call_args_list if call.args]
+        assert any("ERROR: Status fail" in c for c in calls)
+
+
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_config_path")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_status):
+    # Test repo path that doesn't match any search dir
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
+    mock_status.return_value = {
+        "branch": "main",
+        "remote_status": "Up-to-date",
+        "modified": 0,
+        "untracked": 0,
+        "error": None,
+    }
+
+    with patch("builtins.print") as mock_print:
+        main()
+        mock_print.assert_any_call("\n[Other]")
