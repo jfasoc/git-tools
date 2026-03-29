@@ -1,9 +1,7 @@
 import os
 import sys
-import subprocess
 import pytest
 from unittest.mock import MagicMock, patch, mock_open
-from datetime import datetime
 from git_tools.repo_manager import (
     get_config_path,
     is_git_repo,
@@ -152,9 +150,9 @@ def test_update_repos_section(mock_get_path, mock_load, mock_config_file):
     with open(mock_config_file, "r") as f:
         content = f.read()
 
-    assert f"/existing/repo = # 2023-01-01 10:00:00" in content
-    assert f"/new/repo = # " in content
-    assert f"# /old/repo = # 2023-01-01 00:00:00" in content
+    assert "/existing/repo = # 2023-01-01 10:00:00" in content
+    assert "/new/repo = # " in content
+    assert "# /old/repo = # 2023-01-01 00:00:00" in content
 
     assert newly_added == [os.path.abspath("/new/repo")]
     assert no_longer_present == [os.path.abspath("/old/repo")]
