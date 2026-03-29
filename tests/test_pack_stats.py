@@ -108,13 +108,14 @@ def test_get_pack_info():
         patch("os.path.getsize") as mock_getsize,
     ):
         mock_git.return_value = (
-            "sha1 commit ...\nsha2 blob ...\nsha3 tree ...\nnon delta: 3 objects\n"
+            "sha1 commit 100 ...\nsha2 blob 200 ...\nsha3 tree 300 ...\nnon delta: 3 objects\n"
         )
         mock_getsize.return_value = 1024
 
-        count, size = get_pack_info("/abs/path/.git", "pack-1.pack")
+        count, size, uncompressed = get_pack_info("/abs/path/.git", "pack-1.pack")
         assert count == 3
         assert size == 1024
+        assert uncompressed == 600
 
 
 def test_get_pack_info_with_tag():
@@ -122,28 +123,110 @@ def test_get_pack_info_with_tag():
         patch("git_tools.pack_stats.run_git_command") as mock_git,
         patch("os.path.getsize") as mock_getsize,
     ):
-        mock_git.return_value = "sha1 tag ...\nnon delta: 1 objects\n"
+        mock_git.return_value = "sha1 tag 50 ...\nnon delta: 1 objects\n"
         mock_getsize.return_value = 100
 
-        count, size = get_pack_info("/abs/path/.git", "pack-1.pack")
+        count, size, uncompressed = get_pack_info("/abs/path/.git", "pack-1.pack")
         assert count == 1
+        assert uncompressed == 50
 
 
-def test_get_loose_info():
-    with patch("git_tools.pack_stats.run_git_command") as mock_git:
-        mock_git.return_value = "count: 5\nsize: 10\nin-pack: 100\n"
+def test_get_pack_info_parsing_error():
+    with (
+        patch("git_tools.pack_stats.run_git_command") as mock_git,
+        patch("os.path.getsize") as mock_getsize,
+    ):
+        # Third column is not an integer
+        mock_git.return_value = "sha1 commit not_a_number ...\nnon delta: 1 objects\n"
+        mock_getsize.return_value = 100
 
-        count, size = get_loose_info()
-        assert count == 5
-        assert size == 10 * 1024
+        count, size, uncompressed = get_pack_info("/abs/path/.git", "pack-1.pack")
+        assert count == 1
+        assert uncompressed == 0
+
+
+def test_get_loose_info_empty():
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
+        patch("os.listdir") as mock_listdir,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = True
+        mock_listdir.return_value = []
+        count, compressed, uncompressed = get_loose_info()
+        assert count == 0
+        assert compressed == 0
+        assert uncompressed is None
+
+
+def test_get_loose_info_with_data():
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
+        patch("os.listdir") as mock_listdir,
+        patch("os.path.getsize") as mock_getsize,
+        patch("subprocess.run") as mock_run,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = True
+        mock_listdir.side_effect = [
+            ["ab", "cd", "info", "pack"],  # Inside .git/objects (call 1)
+            ["1234"],  # Inside .git/objects/ab (call 1)
+            ["5678"],  # Inside .git/objects/cd (call 1)
+            ["ab", "cd", "info", "pack"],  # Inside .git/objects (call 2)
+            ["1234"],  # Inside .git/objects/ab (call 2)
+            ["5678"],  # Inside .git/objects/cd (call 2)
+        ]
+        mock_getsize.side_effect = [100, 200, 100, 200]
+        mock_run.return_value = MagicMock(stdout="1000\n2000\n", returncode=0)
+
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 2
+        assert compressed == 300
+        assert uncompressed == 3000
+        mock_run.assert_called()
+
+        # Test with repo_path to cover line 96
+        get_loose_info(repo_path="/some/repo", include_uncompressed=True)
+        args, kwargs = mock_run.call_args
+        assert "-C" in args[0]
+        assert "/some/repo" in args[0]
+
+
+def test_get_loose_info_exception():
+    with patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir:
+        mock_get_git_dir.side_effect = Exception()
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 0
+        assert compressed == 0
+        assert uncompressed == 0
+
+
+def test_get_loose_info_no_obj_dir():
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = False
+        count, compressed, uncompressed = get_loose_info(include_uncompressed=True)
+        assert count == 0
+        assert uncompressed == 0
 
 
 def test_format_size():
-    assert format_size(500) == "500 B"
-    assert format_size(1024) == "1.00 KiB"
-    assert format_size(1536) == "1.50 KiB"
-    assert format_size(1024 * 1024) == "1.00 MiB"
-    assert format_size(1.5 * 1024 * 1024) == "1.50 MiB"
+    # Default (human=False)
+    assert format_size(500) == "500"
+    assert format_size(1024) == "1.024"
+    assert format_size(1000000) == "1.000.000"
+
+    # human=True
+    assert format_size(500, human=True) == "500 B"
+    assert format_size(1024, human=True) == "1.00 KiB"
+    assert format_size(1536, human=True) == "1.50 KiB"
+    assert format_size(1024 * 1024, human=True) == "1.00 MiB"
+    assert format_size(1.5 * 1024 * 1024, human=True) == "1.50 MiB"
 
 
 def test_main_no_packs(capsys):
@@ -155,12 +238,12 @@ def test_main_no_packs(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = []
-        mock_get_loose.return_value = (0, 0)
+        mock_get_loose.return_value = (0, 0, None)
 
         main()
         captured = capsys.readouterr()
         assert "Total" in captured.out
-        assert "0 B" in captured.out
+        assert "0" in captured.out
 
 
 def test_main_with_data(capsys):
@@ -173,14 +256,52 @@ def test_main_with_data(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = ["pack-1.pack"]
-        mock_get_info.return_value = (10, 1024)
-        mock_get_loose.return_value = (10, 1024)
+        mock_get_info.return_value = (10, 512, 1024)
+        mock_get_loose.return_value = (10, 512, None)
 
         main()
         captured = capsys.readouterr()
         assert "pack-1.pack" in captured.out
         assert "Loose Objects" in captured.out
         assert "50.0%" in captured.out
+        assert "50.0%" in captured.out
+
+
+def test_main_with_loose_uncompressed(capsys):
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "--loose-uncompressed"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 512, 1024)
+        mock_get_loose.return_value = (10, 512, 1024)
+
+        main()
+        captured = capsys.readouterr()
+        assert "1.024" in captured.out
+
+
+def test_main_human_readable(capsys):
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "-H"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 1024, 2048)
+        mock_get_loose.return_value = (10, 1024, 2048)
+
+        main()
+        captured = capsys.readouterr()
+        assert "1.00 KiB" in captured.out
+        assert "2.00 KiB" in captured.out
 
 
 def test_main_sorting(capsys):
@@ -193,8 +314,8 @@ def test_main_sorting(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = ["small.pack", "large.pack"]
-        mock_get_info.side_effect = [(10, 100), (100, 1000)]
-        mock_get_loose.return_value = (0, 0)
+        mock_get_info.side_effect = [(10, 100, 200), (100, 1000, 2000)]
+        mock_get_loose.return_value = (0, 0, None)
 
         main()
         captured = capsys.readouterr()

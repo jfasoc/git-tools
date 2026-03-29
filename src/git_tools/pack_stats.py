@@ -51,32 +51,75 @@ def get_pack_info(git_dir, pack_file, repo_path=None):
 
     lines = output.strip().split("\n")
     object_count = 0
+    uncompressed_size = 0
     for line in lines:
         parts = line.split()
-        if len(parts) >= 2 and parts[1] in ("commit", "tree", "blob", "tag"):
+        if len(parts) >= 3 and parts[1] in ("commit", "tree", "blob", "tag"):
             object_count += 1
+            try:
+                uncompressed_size += int(parts[2])
+            except (ValueError, IndexError):
+                pass
 
     # Get size
     size = os.path.getsize(pack_path)
 
-    return object_count, size
+    return object_count, size, uncompressed_size
 
 
-def get_loose_info(repo_path=None):
-    output = run_git_command(["count-objects", "-v"], repo_path)
-    stats = {}
-    for line in output.strip().split("\n"):
-        if ":" in line:
-            key, value = line.split(":", 1)
-            stats[key.strip()] = value.strip()
+def get_loose_info(repo_path=None, include_uncompressed=False):
+    # We walk the objects directory to get the count and the sum of actual file sizes.
+    # This avoids "size on disk" (which includes filesystem overhead/blocks).
+    try:
+        git_dir = get_git_dir(repo_path)
+        obj_dir = os.path.join(git_dir, "objects")
+        count = 0
+        compressed_size = 0
+        loose_objects = []
 
-    count = int(stats.get("count", 0))
-    size = int(stats.get("size", 0)) * 1024  # count-objects reports size in KiB
+        if os.path.exists(obj_dir):
+            for d in os.listdir(obj_dir):
+                if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
+                    d_path = os.path.join(obj_dir, d)
+                    for f in os.listdir(d_path):
+                        f_path = os.path.join(d_path, f)
+                        count += 1
+                        compressed_size += os.path.getsize(f_path)
+                        if include_uncompressed:
+                            loose_objects.append(d + f)
 
-    return count, size
+        uncompressed_size = None
+        if include_uncompressed and loose_objects:
+            # Use git cat-file --batch-check to get sizes efficiently
+            cmd = ["git"]
+            if repo_path:
+                cmd.extend(["-C", repo_path])
+            cmd.extend(["cat-file", "--batch-check=%(objectsize)"])
+
+            result = subprocess.run(
+                cmd,
+                input="\n".join(loose_objects),
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+
+            uncompressed_size = 0
+            for line in result.stdout.strip().split("\n"):
+                if line:
+                    uncompressed_size += int(line)
+        elif include_uncompressed:
+            uncompressed_size = 0
+
+        return count, compressed_size, uncompressed_size
+    except Exception:
+        return 0, 0, 0 if include_uncompressed else None
 
 
-def format_size(size_bytes):
+def format_size(size_bytes, human=False):
+    if not human:
+        return f"{size_bytes:,}".replace(",", ".")
+
     if size_bytes < 1024:
         return f"{size_bytes} B"
     elif size_bytes < 1024 * 1024:
@@ -91,7 +134,14 @@ def get_parser():
     except Exception:
         ver = "unknown"
     parser = argparse.ArgumentParser(
-        description="List git pack files and loose objects."
+        description="List git pack files and loose objects.", add_help=False
+    )
+    parser.add_argument(
+        "-h",
+        "--help",
+        action="help",
+        default=argparse.SUPPRESS,
+        help="show this help message and exit",
     )
     parser.add_argument(
         "-V",
@@ -99,6 +149,17 @@ def get_parser():
         action="version",
         version=f"%(prog)s {ver}",
         help="Show the version and exit.",
+    )
+    parser.add_argument(
+        "-H",
+        "--human",
+        action="store_true",
+        help="Display human-readable sizes (e.g., KiB, MiB).",
+    )
+    parser.add_argument(
+        "--loose-uncompressed",
+        action="store_true",
+        help="Include uncompressed size for loose objects (can be slow).",
     )
     parser.add_argument(
         "repo", nargs="?", default=".", help="Path to the git repository."
@@ -124,46 +185,76 @@ def main():
     pack_data = []
     total_objects = 0
     total_size = 0
+    total_uncompressed = 0
 
     for pf in pack_files:
-        count, size = get_pack_info(git_dir, pf, repo_path)
-        pack_data.append({"name": pf, "objects": count, "size": size})
+        count, size, uncompressed = get_pack_info(git_dir, pf, repo_path)
+        pack_data.append(
+            {"name": pf, "objects": count, "size": size, "uncompressed": uncompressed}
+        )
         total_objects += count
         total_size += size
+        total_uncompressed += uncompressed
 
-    loose_count, loose_size = get_loose_info(repo_path)
+    loose_count, loose_size, loose_uncompressed = get_loose_info(
+        repo_path, args.loose_uncompressed
+    )
     total_objects += loose_count
     total_size += loose_size
+    if loose_uncompressed is not None:
+        total_uncompressed += loose_uncompressed
 
     # Sort pack data by object count (descending)
     pack_data.sort(key=lambda x: x["objects"], reverse=True)
 
     # Header
-    header = (
-        f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} {'% Obj':>8} {'% Size':>8}"
-    )
+    header = f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} {'Uncompressed':>12} {'Comp %':>8} {'% Obj':>8} {'% Size':>8}"
     print(header)
     print("-" * len(header))
 
     for data in pack_data:
         p_obj = (data["objects"] / total_objects * 100) if total_objects > 0 else 0
         p_size = (data["size"] / total_size * 100) if total_size > 0 else 0
+        comp_ratio = (
+            (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
+        )
         print(
-            f"{data['name']:<60} {data['objects']:>10} {format_size(data['size']):>12} {p_obj:>7.1f}% {p_size:>7.1f}%"
+            f"{data['name']:<60} {data['objects']:>10} {format_size(data['size'], args.human):>12} {format_size(data['uncompressed'], args.human):>12} {comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
         )
 
     # Loose objects section
     print("-" * len(header))
     p_obj_loose = (loose_count / total_objects * 100) if total_objects > 0 else 0
     p_size_loose = (loose_size / total_size * 100) if total_size > 0 else 0
+    if loose_uncompressed is not None:
+        comp_ratio_loose = (
+            (loose_size / loose_uncompressed * 100) if loose_uncompressed else 0
+        )
+        loose_uncompressed_str = format_size(loose_uncompressed, args.human)
+        comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
+    else:
+        loose_uncompressed_str = f"{'N/A':>12}"
+        comp_ratio_loose_str = f"{'N/A':>8}"
+
     print(
-        f"{'Loose Objects':<60} {loose_count:>10} {format_size(loose_size):>12} {p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
+        f"{'Loose Objects':<60} {loose_count:>10} {format_size(loose_size, args.human):>12} {loose_uncompressed_str:>12} {comp_ratio_loose_str} {p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
     )
 
     # Total
     print("=" * len(header))
+    total_comp_ratio = (
+        (total_size / total_uncompressed * 100) if total_uncompressed else 0
+    )
+    # If loose_uncompressed is N/A, the total uncompressed is also incomplete/N/A
+    if loose_uncompressed is None and loose_count > 0:
+        total_uncompressed_str = f"{'N/A':>12}"
+        total_comp_ratio_str = f"{'N/A':>8}"
+    else:
+        total_uncompressed_str = format_size(total_uncompressed, args.human)
+        total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
+
     print(
-        f"{'Total':<60} {total_objects:>10} {format_size(total_size):>12} {100.0:>7.1f}% {100.0:>7.1f}%"
+        f"{'Total':<60} {total_objects:>10} {format_size(total_size, args.human):>12} {total_uncompressed_str:>12} {total_comp_ratio_str} {100.0:>7.1f}% {100.0:>7.1f}%"
     )
 
 
