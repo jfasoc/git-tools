@@ -287,6 +287,7 @@ def test_main_entry_point():
             main()
             mock_parser.print_help.assert_called_once()
 
+
 def test_load_config_multiple_sections(tmp_path):
     config_file = tmp_path / "config"
     config_file.write_text("""
@@ -301,6 +302,7 @@ something = else
     assert "/search/path" in search_dirs
     assert os.path.abspath("/active/repo") in repos
 
+
 def test_load_config_duplicate_repos(tmp_path):
     config_file = tmp_path / "config"
     config_file.write_text("""
@@ -311,6 +313,7 @@ def test_load_config_duplicate_repos(tmp_path):
     search_dirs, repos = load_config(str(config_file))
     assert repos[os.path.abspath("/repo")]["active"] is True
     assert repos[os.path.abspath("/repo")]["timestamp"] == "2023-01-01 01:00:00"
+
 
 def test_load_config_duplicate_repos_inactive_first(tmp_path):
     config_file = tmp_path / "config"
@@ -323,11 +326,13 @@ def test_load_config_duplicate_repos_inactive_first(tmp_path):
     assert repos[os.path.abspath("/repo")]["active"] is True
     assert repos[os.path.abspath("/repo")]["timestamp"] == "2023-01-01 01:00:00"
 
+
 def test_load_config_empty_path(tmp_path):
     config_file = tmp_path / "config"
     config_file.write_text("[repos]\n = # 2023-01-01 00:00:00\n")
     search_dirs, repos = load_config(str(config_file))
     assert len(repos) == 0
+
 
 def test_update_repos_section_no_lines(tmp_path):
     config_file = tmp_path / "config"
@@ -336,6 +341,7 @@ def test_update_repos_section_no_lines(tmp_path):
         update_repos_section(str(config_file), {os.path.abspath("/repo")})
     content = config_file.read_text()
     assert "[repos]\n/repo =" in content
+
 
 @patch("git_tools.repo_manager.load_config")
 def test_update_repos_section_repos_not_at_end(mock_load, tmp_path):
@@ -348,6 +354,7 @@ def test_update_repos_section_repos_not_at_end(mock_load, tmp_path):
     content = config_file.read_text()
     assert "[repos]\n/repo1 = # 2023-01-01 00:00:00\n[other]" in content
 
+
 @patch("git_tools.repo_manager.load_config")
 def test_update_repos_section_repos_not_found_but_exists_in_file(mock_load, tmp_path):
     config_file = tmp_path / "config"
@@ -359,6 +366,7 @@ def test_update_repos_section_repos_not_found_but_exists_in_file(mock_load, tmp_
     content = config_file.read_text()
     assert "# " + os.path.abspath("/repo1") + " = # 2023-01-01 00:00:00" in content
 
+
 def test_update_repos_section_no_repos_tag_but_lines(tmp_path):
     config_file = tmp_path / "config"
     config_file.write_text("[search]\n/path\n")
@@ -366,3 +374,18 @@ def test_update_repos_section_no_repos_tag_but_lines(tmp_path):
         update_repos_section(str(config_file), {os.path.abspath("/repo")})
     content = config_file.read_text()
     assert "[search]\n/path\n\n[repos]\n" in content
+
+
+@patch("builtins.open")
+def test_load_config_iteration_exception(mock_open_func, tmp_path):
+    config_file = tmp_path / "config"
+    config_file.write_text("[search]\n/path")
+
+    # Mock context manager to return an iterator that raises
+    mock_f = MagicMock()
+    mock_f.__enter__.return_value = iter(["[search]\n", Exception("Iteration error")])
+    mock_open_func.return_value = mock_f
+
+    with patch("os.path.exists", return_value=True):
+        with pytest.raises(SystemExit):
+            load_config(str(config_file))
