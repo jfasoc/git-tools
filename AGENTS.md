@@ -34,4 +34,6 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * For data output, use formatted tables with clear headers.
 * When presenting statistics (like object counts or sizes), include total counts and calculate percentage distribution where applicable.
 * Sort results by the most significant metric (e.g., object count in descending order) by default.
+* **Scope Integrity:** DO NOT modify or remove code in functions or tools unrelated to your current task. Accidentally deleting existing features is a major failure.
+* **Verification over Feedback:** Prioritize the actual source code as the ground truth. If a code review or external feedback contradicts the existing code (e.g., claiming a feature is "unimplemented" when it is clearly present), you must verify the code before taking action.
 * **Update Completion Files:** Whenever CLI parameters are added, removed, or modified, you MUST regenerate the shell completion scripts (e.g., by running `python3 generate_completions.py`).
