@@ -330,6 +330,12 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {ver}")
+    parser.add_argument(
+        "-c",
+        "--config",
+        default=get_config_path(),
+        help="Path to the configuration file (default: %(default)s).",
+    )
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
@@ -367,7 +373,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "scan":
-        config_path = get_config_path()
+        config_path = os.path.abspath(os.path.expanduser(args.config))
         search_dirs, _ = load_config(config_path)
 
         if not search_dirs:
@@ -392,7 +398,7 @@ def main():
 
         print("\nConfiguration updated.")
     elif args.command == "status":
-        config_path = get_config_path()
+        config_path = os.path.abspath(os.path.expanduser(args.config))
         search_dirs, repos = load_config(config_path)
 
         active_repos = [path for path, data in repos.items() if data["active"]]

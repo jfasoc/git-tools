@@ -212,7 +212,7 @@ def test_update_repos_section_write_exception(mock_open_func):
 def test_main_scan(
     mock_args, mock_update, mock_scan, mock_load, mock_get_path
 ):
-    mock_args.return_value = MagicMock(command="scan")
+    mock_args.return_value = MagicMock(command="scan", config="/mock/config")
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (["/search"], {})
     mock_scan.return_value = {"/repo"}
@@ -237,7 +237,7 @@ def test_main_scan(
 def test_main_scan_no_changes(
     mock_args, mock_update, mock_scan, mock_load, mock_get_path
 ):
-    mock_args.return_value = MagicMock(command="scan")
+    mock_args.return_value = MagicMock(command="scan", config="/mock/config")
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (["/search"], {})
     mock_scan.return_value = {"/repo"}
@@ -257,7 +257,7 @@ def test_main_scan_no_changes(
 @patch("git_tools.repo_manager.load_config")
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_scan_no_search_dirs(mock_args, mock_load, mock_get_path):
-    mock_args.return_value = MagicMock(command="scan")
+    mock_args.return_value = MagicMock(command="scan", config="/mock/config")
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = ([], {})
 
@@ -435,7 +435,7 @@ def test_get_repo_status_fetch(mock_isdir, mock_is_git, mock_run):
 @patch("git_tools.repo_manager.get_repo_status")
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (
         ["/search", "/other_search"],
@@ -474,7 +474,7 @@ def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
 @patch("git_tools.repo_manager.load_config")
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_no_active(mock_args, mock_load, mock_get_path):
-    mock_args.return_value = MagicMock(command="status")
+    mock_args.return_value = MagicMock(command="status", config="/mock/config")
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (["/search"], {"/repo": {"active": False}})
 
@@ -594,7 +594,7 @@ def test_get_repo_status_errors(mock_isdir, mock_is_git, mock_run):
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
     mock_status.side_effect = Exception("Status fail")
 
@@ -610,7 +610,7 @@ def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_status):
     # Test repo path that doesn't match any search dir
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1)
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
     mock_status.return_value = {
         "branch": "main",
