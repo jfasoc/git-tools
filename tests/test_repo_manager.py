@@ -637,6 +637,22 @@ def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_s
 @patch("git_tools.repo_manager.load_config")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
+def test_main_status_other_error(mock_args, mock_path, mock_load, mock_status):
+    # Test error in "Other" section
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
+    mock_status.return_value = {"error": "Some error"}
+
+    with patch("builtins.print") as mock_print:
+        main()
+        calls = [call.args[0] for call in mock_print.call_args_list if call.args]
+        assert any("ERROR: Some error" in c for c in calls)
+
+
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_config_path")
+@patch("argparse.ArgumentParser.parse_args")
 def test_main_status_truncation(mock_args, mock_path, mock_load, mock_status):
     # Test that long paths and branches are truncated
     long_path = "/search/" + "a" * 50

@@ -502,9 +502,9 @@ def main():
                         f"{truncate_string(res['remote_status'], 20):<20} "
                         f"{res['modified']:<5} {res['untracked']:<5}"
                     )
-    else:  # pragma: no cover
+    else:
         parser.print_help()
 
 
 if __name__ == "__main__":  # pragma: no cover
-    main()
+    main()  # pragma: no cover
