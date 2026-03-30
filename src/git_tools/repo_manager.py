@@ -27,6 +27,22 @@ def get_config_path():
     return os.path.expanduser("~/.config/git-tools/git-repo-manager")
 
 
+def truncate_string(s, width):
+    """
+    Truncate a string to a specific width, adding an ellipsis if necessary.
+
+    Args:
+        s (str): The string to truncate.
+        width (int): Maximum width.
+
+    Returns:
+        str: The truncated string.
+    """
+    if len(s) <= width:
+        return s
+    return s[: width - 3] + "..."
+
+
 def run_git_command(args, repo_path=None):
     """
     Run a git command and return its output.
@@ -333,7 +349,7 @@ def get_parser():
     parser.add_argument(
         "-c",
         "--config",
-        default=get_config_path(),
+        default="~/.config/git-tools/git-repo-manager",
         help="Path to the configuration file (default: %(default)s).",
     )
 
@@ -358,7 +374,6 @@ def get_parser():
         "-j",
         "--jobs",
         type=int,
-        default=multiprocessing.cpu_count(),
         help="Number of parallel jobs to use (default: CPU count).",
     )
 
@@ -408,7 +423,8 @@ def main():
 
         # Parallel status gathering
         results = {}
-        with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as executor:
+        jobs = args.jobs if args.jobs is not None else multiprocessing.cpu_count()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
             future_to_path = {
                 executor.submit(get_repo_status, path, args.fetch): path
                 for path in active_repos
@@ -460,10 +476,13 @@ def main():
                 rel_path = os.path.relpath(path, sd)
                 res = results[path]
                 if res.get("error"):
-                    print(f"{rel_path:<40} ERROR: {res['error']}")
+                    print(f"{truncate_string(rel_path, 40):<40} ERROR: {res['error']}")
                 else:
                     print(
-                        f"{rel_path:<40} {res['branch']:<20} {res['remote_status']:<20} {res['modified']:<5} {res['untracked']:<5}"
+                        f"{truncate_string(rel_path, 40):<40} "
+                        f"{truncate_string(res['branch'], 20):<20} "
+                        f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{res['modified']:<5} {res['untracked']:<5}"
                     )
 
         if others:
@@ -475,10 +494,13 @@ def main():
             for path in others:
                 res = results[path]
                 if res.get("error"):
-                    print(f"{path:<40} ERROR: {res['error']}")
+                    print(f"{truncate_string(path, 40):<40} ERROR: {res['error']}")
                 else:
                     print(
-                        f"{path:<40} {res['branch']:<20} {res['remote_status']:<20} {res['modified']:<5} {res['untracked']:<5}"
+                        f"{truncate_string(path, 40):<40} "
+                        f"{truncate_string(res['branch'], 20):<20} "
+                        f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{res['modified']:<5} {res['untracked']:<5}"
                     )
     else:  # pragma: no cover
         parser.print_help()

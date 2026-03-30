@@ -10,6 +10,7 @@ from git_tools.repo_manager import (
     update_repos_section,
     get_parser,
     get_repo_status,
+    truncate_string,
     main,
 )
 
@@ -377,6 +378,13 @@ def test_update_repos_section_no_repos_tag_but_lines(tmp_path):
     assert "[search]\n/path\n\n[repos]\n" in content
 
 
+def test_truncate_string():
+    assert truncate_string("short", 10) == "short"
+    assert truncate_string("exactly ten", 11) == "exactly ten"
+    assert truncate_string("this is a long string", 10) == "this is..."
+    assert truncate_string("another long string", 10) == "another..."
+
+
 def test_get_repo_status_path_not_found(tmp_path):
     res = get_repo_status(str(tmp_path / "nonexistent"))
     assert res == {"error": "Path not found"}
@@ -623,3 +631,49 @@ def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_s
     with patch("builtins.print") as mock_print:
         main()
         mock_print.assert_any_call("\n[Other]")
+
+
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_config_path")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status_truncation(mock_args, mock_path, mock_load, mock_status):
+    # Test that long paths and branches are truncated
+    long_path = "/search/" + "a" * 50
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_load.return_value = (["/search"], {os.path.abspath(long_path): {"active": True}})
+    mock_status.return_value = {
+        "branch": "a_very_long_branch_name_that_should_be_truncated",
+        "remote_status": "Ahead 100, Behind 100",
+        "modified": 0,
+        "untracked": 0,
+        "error": None,
+    }
+
+    with patch("builtins.print") as mock_print:
+        main()
+        # calls = [call.args[0] for call in mock_print.call_args_list if call.args]
+        # Check for truncated path (length 40)
+        # assert any("a" * 37 + "..." in c for c in calls)
+        # Check for truncated branch (length 20)
+        # assert any("a_very_long_branch_..." in c for c in calls)
+        # Check for truncated remote status (length 20)
+        # assert any("Ahead 100, Behind 1..." in c for c in calls)
+
+        # Print the actual calls for debugging
+        # for c in calls:
+        #     print(f"DEBUG: {c}")
+
+        found_path = False
+        found_branch = False
+        found_remote = False
+        for call in mock_print.call_args_list:
+            if not call.args: continue
+            arg = call.args[0]
+            if "a" * 37 + "..." in arg: found_path = True
+            if "a_very_long_branc..." in arg: found_branch = True
+            if "Ahead 100, Behind..." in arg: found_remote = True
+
+        assert found_path
+        assert found_branch
+        assert found_remote

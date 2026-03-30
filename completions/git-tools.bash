@@ -151,7 +151,7 @@ _shtab_git_commit_stats() {
 
 complete -o filenames -F _shtab_git_commit_stats git-commit-stats
 
-_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version' '-H' '--human' '--loose-uncompressed')
+_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version' '-H' '--human' '--loose-uncompressed' '-v' '--verbose')
 
 _shtab_git_pack_stats_pos_0_COMPGEN=_shtab_compgen_dirs
 
@@ -164,6 +164,8 @@ _shtab_git_pack_stats___version_nargs=0
 _shtab_git_pack_stats__H_nargs=0
 _shtab_git_pack_stats___human_nargs=0
 _shtab_git_pack_stats___loose_uncompressed_nargs=0
+_shtab_git_pack_stats__v_nargs=0
+_shtab_git_pack_stats___verbose_nargs=0
 
 
 # $1=COMP_WORDS[1]
@@ -303,14 +305,15 @@ _shtab_git_pack_stats() {
 
 complete -o filenames -F _shtab_git_pack_stats git-pack-stats
 
-_shtab_git_repo_manager_subparsers=('scan')
+_shtab_git_repo_manager_subparsers=('scan' 'status')
 
-_shtab_git_repo_manager_option_strings=('-h' '--help' '-V' '--version')
+_shtab_git_repo_manager_option_strings=('-h' '--help' '-V' '--version' '-c' '--config')
 _shtab_git_repo_manager_scan_option_strings=('-h' '--help')
+_shtab_git_repo_manager_status_option_strings=('-h' '--help' '--fetch' '-j' '--jobs')
 
 
 
-_shtab_git_repo_manager_pos_0_choices=('scan')
+_shtab_git_repo_manager_pos_0_choices=('scan' 'status')
 
 _shtab_git_repo_manager_pos_0_nargs=A...
 _shtab_git_repo_manager__h_nargs=0
@@ -319,6 +322,9 @@ _shtab_git_repo_manager__V_nargs=0
 _shtab_git_repo_manager___version_nargs=0
 _shtab_git_repo_manager_scan__h_nargs=0
 _shtab_git_repo_manager_scan___help_nargs=0
+_shtab_git_repo_manager_status__h_nargs=0
+_shtab_git_repo_manager_status___help_nargs=0
+_shtab_git_repo_manager_status___fetch_nargs=?
 
 
 # $1=COMP_WORDS[1]
