@@ -43,13 +43,15 @@ def truncate_string(s, width):
     return s[: width - 3] + "..."
 
 
-def run_git_command(args, repo_path=None):
+def run_git_command(args, repo_path=None, capture_stderr=False):
     """
     Run a git command and return its output.
 
     Args:
         args (list): List of command line arguments for git.
         repo_path (str, optional): Path to the repository.
+        capture_stderr (bool, optional): Whether to capture stderr instead of
+                                         piping it to the process stderr.
 
     Returns:
         str: The stripped stdout of the command, or None if it failed.
@@ -59,7 +61,12 @@ def run_git_command(args, repo_path=None):
         if repo_path:
             cmd.extend(["-C", repo_path])
         cmd.extend(args)
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        # If capture_stderr is False, stderr will go to the current process's stderr
+        # which might be visible to the user. For some commands we want to hide it.
+        stderr_dest = subprocess.PIPE if capture_stderr else subprocess.DEVNULL
+        result = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=stderr_dest, text=True, check=True
+        )
         return result.stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None
@@ -94,7 +101,9 @@ def get_repo_status(repo_path, fetch_remote=None):
     # Get remote status
     remote_status = "N/A"
     upstream = run_git_command(
-        ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"], repo_path
+        ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+        repo_path,
+        capture_stderr=True,
     )
     if upstream:
         ahead = run_git_command(["rev-list", "--count", "@{u}..HEAD"], repo_path)

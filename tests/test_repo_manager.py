@@ -400,7 +400,7 @@ def test_get_repo_status_not_a_repo(tmp_path):
 @patch("git_tools.repo_manager.is_git_repo", return_value=True)
 @patch("os.path.isdir", return_value=True)
 def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
-    def side_effect(args, repo_path=None):
+    def side_effect(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         if args[0] == "rev-parse" and "@{u}" in args[-1]:
@@ -429,7 +429,7 @@ def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
 @patch("git_tools.repo_manager.is_git_repo", return_value=True)
 @patch("os.path.isdir", return_value=True)
 def test_get_repo_status_fetch(mock_isdir, mock_is_git, mock_run):
-    def side_effect(args, repo_path=None):
+    def side_effect(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         return None
@@ -531,7 +531,7 @@ def test_get_parser_version_exception_extended(mock_version):
 @patch("os.path.isdir", return_value=True)
 def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_run):
     # Test Behind
-    def side_effect_behind(args, repo_path=None):
+    def side_effect_behind(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         if args[0] == "rev-parse" and "@{u}" in args[-1]:
@@ -550,7 +550,7 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
     assert res["remote_status"] == "Behind 1"
 
     # Test Ahead and Behind
-    def side_effect_both(args, repo_path=None):
+    def side_effect_both(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         if args[0] == "rev-parse" and "@{u}" in args[-1]:
@@ -569,7 +569,7 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
     assert res["remote_status"] == "Ahead 1, Behind 1"
 
     # Test Up-to-date
-    def side_effect_uptodate(args, repo_path=None):
+    def side_effect_uptodate(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         if args[0] == "rev-parse" and "@{u}" in args[-1]:
@@ -585,7 +585,7 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
     assert res["remote_status"] == "Up-to-date"
 
     # Test No upstream
-    def side_effect_no_upstream(args, repo_path=None):
+    def side_effect_no_upstream(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         if args[0] == "status":
@@ -607,7 +607,7 @@ def test_get_repo_status_errors(mock_isdir, mock_is_git, mock_run):
     assert res == {"error": "Could not determine branch"}
 
     # Status error
-    def side_effect_status_error(args, repo_path=None):
+    def side_effect_status_error(args, repo_path=None, **kwargs):
         if args[0] == "rev-parse" and "--abbrev-ref" in args and "HEAD" in args:
             return "main"
         return None
