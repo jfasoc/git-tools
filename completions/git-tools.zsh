@@ -56,6 +56,7 @@ _shtab_git_pack_stats_options=(
   "(- : *)"{-V,--version}"[Show the version and exit.]"
   {-H,--human}"[Display human-readable sizes (e.g., KiB, MiB).]"
   "--loose-uncompressed[Include uncompressed size for loose objects (can be slow).]"
+  {-v,--verbose}"[Print how long time it took to obtain each set of data.]"
   ":Path to the git repository.:_files -/"
 )
 
@@ -89,6 +90,7 @@ _shtab_git_pack_stats() {
 _shtab_git_repo_manager_commands() {
   local _commands=(
     "scan:"
+    "status:"
   )
   _describe 'git-repo-manager commands' _commands
 }
@@ -96,6 +98,7 @@ _shtab_git_repo_manager_commands() {
 _shtab_git_repo_manager_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   "(- : *)"{-V,--version}"[show program\'s version number and exit]"
+  {-c,--config}"[Path to the configuration file (default\: \~\/.config\/git-tools\/git-repo-manager).]:config:"
 )
 
 # guard to ensure default positional specs are added only once per session
@@ -107,6 +110,15 @@ _shtab_git_repo_manager_scan_options=(
 
 # guard to ensure default positional specs are added only once per session
 _shtab_git_repo_manager_scan_defaults_added=0
+
+_shtab_git_repo_manager_status_options=(
+  "(- : *)"{-h,--help}"[show this help message and exit]"
+  "--fetch[Fetch from remote before checking status (default\: origin). (default\: None)]:fetch:"
+  {-j,--jobs}"[Number of parallel jobs to use (default\: CPU count). (default\: None)]:jobs:"
+)
+
+# guard to ensure default positional specs are added only once per session
+_shtab_git_repo_manager_status_defaults_added=0
 
 
 _shtab_git_repo_manager() {
@@ -128,6 +140,7 @@ _shtab_git_repo_manager() {
       curcontext="${curcontext%:*:*}:_shtab_git_repo_manager-$line[1]:"
       case $line[1] in
         scan) _arguments -C -s $_shtab_git_repo_manager_scan_options ;;
+        status) _arguments -C -s $_shtab_git_repo_manager_status_options ;;
       esac
   esac
 }

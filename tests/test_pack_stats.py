@@ -1,5 +1,6 @@
 import pytest
 import subprocess
+import runpy
 from unittest.mock import patch, MagicMock
 import os
 from git_tools.pack_stats import (
@@ -378,6 +379,13 @@ def test_version_flag(capsys):
         assert excinfo.value.code == 0
         captured = capsys.readouterr()
         assert "git-pack-stats 0.1.0" in captured.out
+
+
+def test_main_entry_point_pack_stats():
+    # Triggers the 'if __name__ == "__main__":' block
+    with patch("sys.argv", ["git-pack-stats", "-h"]):
+        with pytest.raises(SystemExit):
+            runpy.run_module("git_tools.pack_stats", run_name="__main__")
 
 
 def test_version_unknown(capsys):

@@ -9,6 +9,8 @@ import os
 import sys
 import argparse
 import subprocess
+import concurrent.futures
+import multiprocessing
 from datetime import datetime
 from importlib.metadata import version
 
@@ -25,13 +27,31 @@ def get_config_path():
     return os.path.expanduser("~/.config/git-tools/git-repo-manager")
 
 
-def run_git_command(args, repo_path=None):
+def truncate_string(s, width):
+    """
+    Truncate a string to a specific width, adding an ellipsis if necessary.
+
+    Args:
+        s (str): The string to truncate.
+        width (int): Maximum width.
+
+    Returns:
+        str: The truncated string.
+    """
+    if len(s) <= width:
+        return s
+    return s[: width - 3] + "..."
+
+
+def run_git_command(args, repo_path=None, capture_stderr=False):
     """
     Run a git command and return its output.
 
     Args:
         args (list): List of command line arguments for git.
         repo_path (str, optional): Path to the repository.
+        capture_stderr (bool, optional): Whether to capture stderr instead of
+                                         piping it to the process stderr.
 
     Returns:
         str: The stripped stdout of the command, or None if it failed.
@@ -41,10 +61,87 @@ def run_git_command(args, repo_path=None):
         if repo_path:
             cmd.extend(["-C", repo_path])
         cmd.extend(args)
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        # If capture_stderr is False, stderr will go to the current process's stderr
+        # which might be visible to the user. For some commands we want to hide it.
+        stderr_dest = subprocess.PIPE if capture_stderr else subprocess.DEVNULL
+        result = subprocess.run(
+            cmd, stdout=subprocess.PIPE, stderr=stderr_dest, text=True, check=True
+        )
         return result.stdout.strip()
     except (subprocess.CalledProcessError, FileNotFoundError):
         return None
+
+
+def get_repo_status(repo_path, fetch_remote=None):
+    """
+    Gather status information for a Git repository.
+
+    Args:
+        repo_path (str): Path to the repository.
+        fetch_remote (str, optional): Remote to fetch from before checking status.
+
+    Returns:
+        dict: A dictionary containing 'branch', 'remote_status', 'modified',
+              'untracked', and 'error' (if any).
+    """
+    if not os.path.isdir(repo_path):
+        return {"error": "Path not found"}
+
+    if not is_git_repo(repo_path):
+        return {"error": "Not a Git repository"}
+
+    if fetch_remote:
+        run_git_command(["fetch", fetch_remote], repo_path)
+
+    # Get current branch
+    branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"], repo_path)
+    if branch is None:
+        return {"error": "Could not determine branch"}
+
+    # Get remote status
+    remote_status = "N/A"
+    upstream = run_git_command(
+        ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
+        repo_path,
+        capture_stderr=True,
+    )
+    if upstream:
+        ahead = run_git_command(["rev-list", "--count", "@{u}..HEAD"], repo_path)
+        behind = run_git_command(["rev-list", "--count", "HEAD..@{u}"], repo_path)
+
+        if ahead is not None and behind is not None:
+            a = int(ahead)
+            b = int(behind)
+            if a > 0 and b > 0:
+                remote_status = f"Ahead {a}, Behind {b}"
+            elif a > 0:
+                remote_status = f"Ahead {a}"
+            elif b > 0:
+                remote_status = f"Behind {b}"
+            else:
+                remote_status = "Up-to-date"
+
+    # Get modified and untracked counts
+    status_out = run_git_command(["status", "--porcelain"], repo_path)
+    if status_out is None:
+        return {"error": "Could not get status"}
+
+    modified = 0
+    untracked = 0
+    if status_out:
+        for line in status_out.splitlines():
+            if line.startswith("??"):
+                untracked += 1
+            else:
+                modified += 1
+
+    return {
+        "branch": branch,
+        "remote_status": remote_status,
+        "modified": modified,
+        "untracked": untracked,
+        "error": None,
+    }
 
 
 def is_git_repo(path):
@@ -194,7 +291,7 @@ def update_repos_section(config_path, found_repos):
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             lines = [line.rstrip() for line in f]
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         print(f"Error reading configuration for update: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -234,7 +331,7 @@ def update_repos_section(config_path, found_repos):
     try:
         with open(config_path, "w", encoding="utf-8") as f:
             f.write("\n".join(final_lines) + "\n")
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         print(f"Error writing configuration: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -250,7 +347,7 @@ def get_parser():
     """
     try:
         ver = version("jfasoc")
-    except Exception:  # pragma: no cover
+    except Exception:
         ver = "unknown"
 
     parser = argparse.ArgumentParser(
@@ -258,12 +355,36 @@ def get_parser():
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {ver}")
+    parser.add_argument(
+        "-c",
+        "--config",
+        default="~/.config/git-tools/git-repo-manager",
+        help="Path to the configuration file (default: %(default)s).",
+    )
 
     subparsers = parser.add_subparsers(dest="command", help="Commands")
 
     # Scan command
     subparsers.add_parser(
         "scan", help="Scan configured directories for Git repositories."
+    )
+
+    # Status command
+    status_parser = subparsers.add_parser(
+        "status", help="Show the status of all active repositories."
+    )
+    status_parser.add_argument(
+        "--fetch",
+        nargs="?",
+        const="origin",
+        help="Fetch from remote before checking status (default: origin).",
+    )
+    status_parser.add_argument(
+        "-j",
+        "--jobs",
+        type=int,
+        nargs="?",
+        help="Number of parallel jobs to use (default: CPU count).",
     )
 
     return parser
@@ -277,7 +398,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "scan":
-        config_path = get_config_path()
+        config_path = os.path.abspath(os.path.expanduser(args.config))
         search_dirs, _ = load_config(config_path)
 
         if not search_dirs:
@@ -301,9 +422,99 @@ def main():
                 print(f"  - {path}")
 
         print("\nConfiguration updated.")
+    elif args.command == "status":
+        config_path = os.path.abspath(os.path.expanduser(args.config))
+        search_dirs, repos = load_config(config_path)
+
+        active_repos = [path for path, data in repos.items() if data["active"]]
+        if not active_repos:
+            print("No active repositories found in configuration.")
+            return
+
+        # Parallel status gathering
+        results = {}
+        jobs = args.jobs if args.jobs is not None else multiprocessing.cpu_count()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
+            future_to_path = {
+                executor.submit(get_repo_status, path, args.fetch): path
+                for path in active_repos
+            }
+            for future in concurrent.futures.as_completed(future_to_path):
+                path = future_to_path[future]
+                try:
+                    results[path] = future.result()
+                except Exception as e:
+                    results[path] = {"error": str(e)}
+
+        # Group by search directory
+        groups = {}
+        abs_search_dirs = [
+            os.path.abspath(os.path.expanduser(d)) for d in search_dirs
+        ]
+        for sd in abs_search_dirs:
+            groups[sd] = []
+
+        others = []
+        for path in active_repos:
+            found_group = False
+            # Check which search directory it belongs to (prefer longest match)
+            matching_dirs = [
+                sd
+                for sd in abs_search_dirs
+                if path == sd or path.startswith(sd + os.sep)
+            ]
+            if matching_dirs:
+                best_match = max(matching_dirs, key=len)
+                groups[best_match].append(path)
+                found_group = True
+
+            if not found_group:
+                others.append(path)
+
+        # Print tables
+        for sd in abs_search_dirs:
+            group_repos = groups[sd]
+            if not group_repos:
+                continue
+
+            print(f"\n[{sd}]")
+            print(
+                f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
+            )
+            print("-" * 95)
+            for path in group_repos:
+                rel_path = os.path.relpath(path, sd)
+                res = results[path]
+                if res.get("error"):
+                    print(f"{truncate_string(rel_path, 40):<40} ERROR: {res['error']}")
+                else:
+                    print(
+                        f"{truncate_string(rel_path, 40):<40} "
+                        f"{truncate_string(res['branch'], 20):<20} "
+                        f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{res['modified']:<5} {res['untracked']:<5}"
+                    )
+
+        if others:
+            print("\n[Other]")
+            print(
+                f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
+            )
+            print("-" * 95)
+            for path in others:
+                res = results[path]
+                if res.get("error"):
+                    print(f"{truncate_string(path, 40):<40} ERROR: {res['error']}")
+                else:
+                    print(
+                        f"{truncate_string(path, 40):<40} "
+                        f"{truncate_string(res['branch'], 20):<20} "
+                        f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{res['modified']:<5} {res['untracked']:<5}"
+                    )
     else:
         parser.print_help()
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

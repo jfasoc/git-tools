@@ -133,5 +133,5 @@ def main():
         print(f"{commit:<10} {reg_str:<18} {sym_str:<18}")
 
 
-if __name__ == "__main__":  # pragma: no cover
+if __name__ == "__main__":
     main()

@@ -17,9 +17,11 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 
 ## 3. Testing and Quality Assurance
 * Maintain **100% test coverage** for all new and existing code. This is enforced by `pytest-cov`.
+* **No Coverage Exclusions:** The use of `# pragma: no cover` or any other method to exclude code from test coverage is strictly prohibited. 100% of the code must be exercised by tests.
 * Use `pytest` for functional testing and `ruff` for linting.
 * For every code change, include steps in your plan to verify correctness and coverage.
-* Always check the existing GitHub Actions workflows (`.github/workflows/`) for additional CI requirements.
+* **Mandatory CI Verification:** Before pushing any code, you MUST run all tools and checks that are part of the GitHub Actions workflow (e.g., `ruff check .` and `pytest`).
+* A failure in the GitHub Actions workflow is **unacceptable**. You are responsible for ensuring all CI checks pass locally in the sandbox before submission.
 
 ## 4. Metadata and Identification
 * Use the following metadata for project configuration:
@@ -32,3 +34,6 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * For data output, use formatted tables with clear headers.
 * When presenting statistics (like object counts or sizes), include total counts and calculate percentage distribution where applicable.
 * Sort results by the most significant metric (e.g., object count in descending order) by default.
+* **Scope Integrity:** DO NOT modify or remove code in functions or tools unrelated to your current task. Accidentally deleting existing features is a major failure.
+* **Verification over Feedback:** Prioritize the actual source code as the ground truth. If a code review or external feedback contradicts the existing code (e.g., claiming a feature is "unimplemented" when it is clearly present), you must verify the code before taking action.
+* **Update Completion Files:** Whenever CLI parameters are added, removed, or modified, you MUST regenerate the shell completion scripts (e.g., by running `python3 generate_completions.py`).

@@ -1,5 +1,7 @@
 import subprocess
 import pytest
+import runpy
+from unittest.mock import patch
 from git_tools.commit_stats import run_git_command, get_commits, get_commit_stats, main
 
 
@@ -149,6 +151,13 @@ def test_version_flag(mocker, capsys):
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
     assert "git-commit-stats 0.1.0" in captured.out
+
+
+def test_main_entry_point_commit_stats():
+    # Triggers the 'if __name__ == "__main__":' block
+    with patch("sys.argv", ["git-commit-stats", "-h"]):
+        with pytest.raises(SystemExit):
+            runpy.run_module("git_tools.commit_stats", run_name="__main__")
 
 
 def test_version_unknown(mocker, capsys):
