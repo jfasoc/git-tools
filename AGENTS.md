@@ -17,6 +17,7 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 
 ## 3. Testing and Quality Assurance
 * Maintain **100% test coverage** for all new and existing code. This is enforced by `pytest-cov`.
+* **No Coverage Exclusions:** The use of `# pragma: no cover` or any other method to exclude code from test coverage is strictly prohibited. 100% of the code must be exercised by tests.
 * Use `pytest` for functional testing and `ruff` for linting.
 * For every code change, include steps in your plan to verify correctness and coverage.
 * **Mandatory CI Verification:** Before pushing any code, you MUST run all tools and checks that are part of the GitHub Actions workflow (e.g., `ruff check .` and `pytest`).

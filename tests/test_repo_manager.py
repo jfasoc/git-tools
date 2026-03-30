@@ -1,6 +1,7 @@
 import os
 import sys
 import pytest
+import runpy
 from unittest.mock import MagicMock, patch, mock_open
 from git_tools.repo_manager import (
     get_config_path,
@@ -506,6 +507,25 @@ def test_load_config_iteration_exception(mock_open_func, tmp_path):
             load_config(str(config_file))
 
 
+@patch("builtins.open", side_effect=Exception("Update read error"))
+def test_update_repos_section_read_exception_extended(mock_open_func):
+    # This specifically targets the try-except block in update_repos_section
+    with patch("git_tools.repo_manager.load_config", return_value=([], {})):
+        with pytest.raises(SystemExit):
+            update_repos_section("/path", set())
+
+
+@patch("git_tools.repo_manager.version", side_effect=Exception("Version error"))
+def test_get_parser_version_exception_extended(mock_version):
+    from git_tools.repo_manager import get_parser
+    parser = get_parser()
+    # When version() fails, ver is set to "unknown"
+    # The version action uses f"%(prog)s {ver}"
+    # We can check the action itself
+    version_action = [a for a in parser._actions if a.dest == "version"][0]
+    assert "unknown" in version_action.version
+
+
 @patch("git_tools.repo_manager.run_git_command")
 @patch("git_tools.repo_manager.is_git_repo", return_value=True)
 @patch("os.path.isdir", return_value=True)
@@ -597,11 +617,18 @@ def test_get_repo_status_errors(mock_isdir, mock_is_git, mock_run):
     assert res == {"error": "Could not get status"}
 
 
-@patch("git_tools.repo_manager.get_repo_status")
+def test_main_entry_point_real():
+    # To cover 'if __name__ == "__main__": main()', we need to actually let main() run
+    with patch("sys.argv", ["git-repo-manager", "-h"]):
+        with pytest.raises(SystemExit):
+            runpy.run_module("git_tools.repo_manager", run_name="__main__")
+
+
 @patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
-def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
+def test_main_status_exception(mock_args, mock_get_path, mock_status, mock_load):
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
     mock_status.side_effect = Exception("Status fail")
@@ -612,11 +639,11 @@ def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
         assert any("ERROR: Status fail" in c for c in calls)
 
 
-@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
-def test_main_status_jobs_optional(mock_args, mock_path, mock_load, mock_status):
+def test_main_status_jobs_optional(mock_args, mock_path, mock_status, mock_load):
     # Test status -j without value
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=None, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
@@ -633,11 +660,11 @@ def test_main_status_jobs_optional(mock_args, mock_path, mock_load, mock_status)
         mock_print.assert_any_call("\n[" + os.path.abspath("/search") + "]")
 
 
-@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
-def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_status):
+def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_status, mock_load):
     # Test repo path that doesn't match any search dir
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
@@ -654,11 +681,11 @@ def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_s
         mock_print.assert_any_call("\n[Other]")
 
 
-@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
-def test_main_status_other_error(mock_args, mock_path, mock_load, mock_status):
+def test_main_status_other_error(mock_args, mock_path, mock_status, mock_load):
     # Test error in "Other" section
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
     mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
@@ -670,11 +697,11 @@ def test_main_status_other_error(mock_args, mock_path, mock_load, mock_status):
         assert any("ERROR: Some error" in c for c in calls)
 
 
-@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
-def test_main_status_truncation(mock_args, mock_path, mock_load, mock_status):
+def test_main_status_truncation(mock_args, mock_path, mock_status, mock_load):
     # Test that long paths and branches are truncated
     long_path = "/search/" + "a" * 50
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")

@@ -282,7 +282,7 @@ def update_repos_section(config_path, found_repos):
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             lines = [line.rstrip() for line in f]
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         print(f"Error reading configuration for update: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -322,7 +322,7 @@ def update_repos_section(config_path, found_repos):
     try:
         with open(config_path, "w", encoding="utf-8") as f:
             f.write("\n".join(final_lines) + "\n")
-    except Exception as e:  # pragma: no cover
+    except Exception as e:
         print(f"Error writing configuration: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -338,7 +338,7 @@ def get_parser():
     """
     try:
         ver = version("jfasoc")
-    except Exception:  # pragma: no cover
+    except Exception:
         ver = "unknown"
 
     parser = argparse.ArgumentParser(
@@ -507,5 +507,5 @@ def main():
         parser.print_help()
 
 
-if __name__ == "__main__":  # pragma: no cover
-    main()  # pragma: no cover
+if __name__ == "__main__":
+    main()
