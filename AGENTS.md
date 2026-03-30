@@ -19,7 +19,8 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * Maintain **100% test coverage** for all new and existing code. This is enforced by `pytest-cov`.
 * Use `pytest` for functional testing and `ruff` for linting.
 * For every code change, include steps in your plan to verify correctness and coverage.
-* Always check the existing GitHub Actions workflows (`.github/workflows/`) for additional CI requirements.
+* **Mandatory CI Verification:** Before pushing any code, you MUST run all tools and checks that are part of the GitHub Actions workflow (e.g., `ruff check .` and `pytest`).
+* A failure in the GitHub Actions workflow is **unacceptable**. You are responsible for ensuring all CI checks pass locally in the sandbox before submission.
 
 ## 4. Metadata and Identification
 * Use the following metadata for project configuration:

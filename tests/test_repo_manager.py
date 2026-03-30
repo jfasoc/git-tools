@@ -668,11 +668,15 @@ def test_main_status_truncation(mock_args, mock_path, mock_load, mock_status):
         found_branch = False
         found_remote = False
         for call in mock_print.call_args_list:
-            if not call.args: continue
+            if not call.args:
+                continue
             arg = call.args[0]
-            if "a" * 37 + "..." in arg: found_path = True
-            if "a_very_long_branc..." in arg: found_branch = True
-            if "Ahead 100, Behind..." in arg: found_remote = True
+            if "a" * 37 + "..." in arg:
+                found_path = True
+            if "a_very_long_branc..." in arg:
+                found_branch = True
+            if "Ahead 100, Behind..." in arg:
+                found_remote = True
 
         assert found_path
         assert found_branch
