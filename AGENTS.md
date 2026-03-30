@@ -33,3 +33,4 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * For data output, use formatted tables with clear headers.
 * When presenting statistics (like object counts or sizes), include total counts and calculate percentage distribution where applicable.
 * Sort results by the most significant metric (e.g., object count in descending order) by default.
+* **Update Completion Files:** Whenever CLI parameters are added, removed, or modified, you MUST regenerate the shell completion scripts (e.g., by running `python3 generate_completions.py`).
