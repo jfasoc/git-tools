@@ -8,6 +8,7 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * Use `request_user_input` and `message_user` to ask as many clarifying questions as needed to eliminate all doubts and verify assumptions.
 * Do not proceed to the planning phase until you have confirmation from the user on all critical aspects.
 * Once requirements are crystal clear, set a detailed plan using `set_plan`.
+* If the user requests changes after initial plan approval, you must restart deep planning to clarify the new requirements and then present an updated plan for approval. Never begin making code changes without an approved plan.
 * After the plan is approved, execute it autonomously. Do not ask for further confirmation or status updates unless you hit a significant blocker that requires a decision from the user.
 
 ## 2. Dependency Management and Runtime
@@ -25,7 +26,8 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 
 ## 4. Metadata and Identification
 * Use the following metadata for project configuration:
-    * **Name:** jfasoc
+    * **Project Name:** git-tools
+    * **Author Name:** jfasoc
     * **Email:** 7720125+jfasoc@users.noreply.github.com
 
 ## 5. Tool Implementation Best Practices

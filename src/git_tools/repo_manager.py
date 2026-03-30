@@ -346,7 +346,7 @@ def get_parser():
         argparse.ArgumentParser: The configured argument parser.
     """
     try:
-        ver = version("jfasoc")
+        ver = version("git-tools")
     except Exception:
         ver = "unknown"
 
