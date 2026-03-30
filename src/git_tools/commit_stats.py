@@ -91,7 +91,7 @@ def get_commit_stats(commit_hash, repo_path=None):
 
 def get_parser():
     try:
-        ver = version("jfasoc")
+        ver = version("git-tools")
     except Exception:
         ver = "unknown"
     parser = argparse.ArgumentParser(

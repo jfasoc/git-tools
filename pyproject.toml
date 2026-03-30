@@ -1,5 +1,5 @@
 [project]
-name = "jfasoc"
+name = "git-tools"
 dynamic = ["version"]
 description = "Git helper tools"
 authors = [

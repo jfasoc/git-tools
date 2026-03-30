@@ -131,7 +131,7 @@ def format_size(size_bytes, human=False):
 
 def get_parser():
     try:
-        ver = version("jfasoc")
+        ver = version("git-tools")
     except Exception:
         ver = "unknown"
     parser = argparse.ArgumentParser(

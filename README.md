@@ -10,11 +10,15 @@ Lists all commits with file change counts (Regular vs Symlinks).
 
 ### git-pack-stats
 
-Lists all pack files and loose objects with their object counts and disk sizes. It also shows a summary total and percentage distribution for both objects and sizes. The pack files are sorted by object count, with the largest first.
+Lists all pack files and loose objects with their object counts and disk sizes. It also shows a summary total and percentage distribution for both objects and sizes. The pack files are sorted by object count, with the largest first. See [SIZES.md](doc/SIZES.md) for details on size calculations.
+
+### git-repo-manager
+
+A tool for managing multiple Git repositories. See [REPO_MANAGER.md](doc/REPO_MANAGER.md) for more information.
 
 ## Shell Completion
 
-To enable shell completion for the `git-commit-stats` and `git-pack-stats` commands, you can source the completion scripts in your shell's configuration file.
+To enable shell completion for the `git-commit-stats`, `git-pack-stats`, and `git-repo-manager` commands, you can source the completion scripts in your shell's configuration file. See [COMPLETIONS.md](doc/COMPLETIONS.md) for detailed instructions.
 
 ### Bash
 
