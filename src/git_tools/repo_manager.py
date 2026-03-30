@@ -374,6 +374,7 @@ def get_parser():
         "-j",
         "--jobs",
         type=int,
+        nargs="?",
         help="Number of parallel jobs to use (default: CPU count).",
     )
 

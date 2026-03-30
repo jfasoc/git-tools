@@ -616,6 +616,27 @@ def test_main_status_exception(mock_args, mock_path, mock_load, mock_status):
 @patch("git_tools.repo_manager.load_config")
 @patch("git_tools.repo_manager.get_config_path")
 @patch("argparse.ArgumentParser.parse_args")
+def test_main_status_jobs_optional(mock_args, mock_path, mock_load, mock_status):
+    # Test status -j without value
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=None, config="/mock/config")
+    mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
+    mock_status.return_value = {
+        "branch": "main",
+        "remote_status": "Up-to-date",
+        "modified": 0,
+        "untracked": 0,
+        "error": None,
+    }
+
+    with patch("builtins.print") as mock_print:
+        main()
+        mock_print.assert_any_call("\n[" + os.path.abspath("/search") + "]")
+
+
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_config_path")
+@patch("argparse.ArgumentParser.parse_args")
 def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_load, mock_status):
     # Test repo path that doesn't match any search dir
     mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")

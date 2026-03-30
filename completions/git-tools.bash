@@ -325,6 +325,8 @@ _shtab_git_repo_manager_scan___help_nargs=0
 _shtab_git_repo_manager_status__h_nargs=0
 _shtab_git_repo_manager_status___help_nargs=0
 _shtab_git_repo_manager_status___fetch_nargs=?
+_shtab_git_repo_manager_status__j_nargs=?
+_shtab_git_repo_manager_status___jobs_nargs=?
 
 
 # $1=COMP_WORDS[1]
