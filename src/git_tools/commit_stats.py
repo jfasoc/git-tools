@@ -129,16 +129,14 @@ def get_parser():
     return parser
 
 
-def main():
+def print_stats(commits, repo_path):
     """
-    Main entry point for the git-commit-stats tool.
+    Print the collected commit statistics in a table.
+
+    Args:
+        commits (list): List of commit hashes.
+        repo_path (str): Path to the git repository.
     """
-    parser = get_parser()
-    args = parser.parse_args()
-
-    repo_path = args.repo
-
-    commits = get_commits(repo_path)
     if not commits:
         print("No commits found.")
         return
@@ -153,6 +151,24 @@ def main():
         reg_str = f"{reg['A']:>3} / {reg['M']:>3} / {reg['D']:>3}"
         sym_str = f"{sym['A']:>3} / {sym['M']:>3} / {sym['D']:>3}"
         print(f"{commit:<10} {reg_str:<18} {sym_str:<18}")
+
+
+def run(args):
+    """
+    Execute the commit-stats tool with the provided arguments.
+
+    Args:
+        args (argparse.Namespace): The parsed command-line arguments.
+    """
+    commits = get_commits(args.repo)
+    print_stats(commits, args.repo)
+
+
+def main():
+    """
+    Main entry point for the git-commit-stats tool.
+    """
+    run(get_parser().parse_args())
 
 
 if __name__ == "__main__":
