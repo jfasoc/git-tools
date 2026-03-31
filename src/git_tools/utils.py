@@ -1,3 +1,10 @@
+"""
+Shared utility functions for git-tools.
+
+This module provides common functionality used across multiple Git helper tools
+within the git_tools package.
+"""
+
 import subprocess
 import sys
 
@@ -8,8 +15,8 @@ def run_git_command(args, repo_path=None, input=None):
 
     Args:
         args (list): List of command line arguments for git.
-        repo_path (str, optional): Path to the repository.
-        input (str, optional): String to be passed to stdin.
+        repo_path (str, optional): Path to the repository. Defaults to None (CWD).
+        input (str, optional): String to be passed to stdin. Defaults to None.
 
     Returns:
         str: The stdout of the command.

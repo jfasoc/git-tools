@@ -1,14 +1,46 @@
+"""
+List all commits with file change counts (Regular vs Symlinks).
+
+This module provides a command-line tool to analyze git history and report
+the number of additions, modifications, and deletions for both regular files
+and symlinks in each commit.
+"""
+
 import argparse
 from importlib.metadata import version
 from .utils import run_git_command
 
 
 def get_commits(repo_path=None):
+    """
+    Retrieve a list of commit hashes from the repository.
+
+    Args:
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        list: A list of commit hashes (abbreviated).
+    """
     output = run_git_command(["rev-list", "--all", "--abbrev-commit"], repo_path)
     return output.strip().split("\n") if output.strip() else []
 
 
 def get_commit_stats(commit_hash, repo_path=None):
+    """
+    Calculate file change statistics for a specific commit.
+
+    Categorizes changes into additions, modifications, and deletions,
+    and distinguishes between regular files and symbolic links.
+
+    Args:
+        commit_hash (str): The hash of the commit to analyze.
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        tuple: (reg_stats, sym_stats)
+            reg_stats (dict): Counts for regular files {'A': int, 'M': int, 'D': int}.
+            sym_stats (dict): Counts for symbolic links {'A': int, 'M': int, 'D': int}.
+    """
     # -r: recurse into subdirectories
     # --no-commit-id: do not print the commit hash again
     # -m: handle merge commits
@@ -71,6 +103,12 @@ def get_commit_stats(commit_hash, repo_path=None):
 
 
 def get_parser():
+    """
+    Construct the argument parser for the commit-stats tool.
+
+    Returns:
+        argparse.ArgumentParser: The configured argument parser.
+    """
     try:
         ver = version("git-tools")
     except Exception:
@@ -92,6 +130,9 @@ def get_parser():
 
 
 def main():
+    """
+    Main entry point for the git-commit-stats tool.
+    """
     parser = get_parser()
     args = parser.parse_args()
 

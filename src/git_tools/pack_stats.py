@@ -1,3 +1,11 @@
+"""
+List git pack files and loose objects.
+
+This module provides a command-line tool to analyze the storage efficiency of
+a Git repository by reporting object counts and sizes for pack files and
+loose objects.
+"""
+
 import os
 import sys
 import argparse
@@ -7,6 +15,15 @@ from .utils import run_git_command
 
 
 def get_git_dir(repo_path=None):
+    """
+    Retrieve the absolute path to the .git directory.
+
+    Args:
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        str: The absolute path to the .git directory.
+    """
     git_dir = run_git_command(["rev-parse", "--git-dir"], repo_path).strip()
     if not os.path.isabs(git_dir) and repo_path:
         git_dir = os.path.abspath(os.path.join(repo_path, git_dir))
@@ -14,6 +31,15 @@ def get_git_dir(repo_path=None):
 
 
 def get_pack_files(git_dir):
+    """
+    List all .pack files in the repository.
+
+    Args:
+        git_dir (str): Absolute path to the .git directory.
+
+    Returns:
+        list: A list of filenames of the pack files.
+    """
     pack_dir = os.path.join(git_dir, "objects", "pack")
     if not os.path.exists(pack_dir):
         return []
@@ -22,6 +48,23 @@ def get_pack_files(git_dir):
 
 
 def get_pack_info(git_dir, pack_file, repo_path=None):
+    """
+    Gather statistics for a specific pack file.
+
+    Calculates the number of objects, the total uncompressed size, and
+    the compressed size of the pack file.
+
+    Args:
+        git_dir (str): Absolute path to the .git directory.
+        pack_file (str): Filename of the pack file.
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        tuple: (object_count, size, uncompressed_size)
+            object_count (int): Number of objects in the pack file.
+            size (int): Compressed size of the pack file in bytes.
+            uncompressed_size (int): Total uncompressed size of all objects in bytes.
+    """
     pack_path = os.path.join(git_dir, "objects", "pack", pack_file)
 
     # Get number of objects
@@ -51,6 +94,24 @@ def get_pack_info(git_dir, pack_file, repo_path=None):
 
 
 def get_loose_info(repo_path=None, include_uncompressed=False):
+    """
+    Gather statistics for loose objects in the repository.
+
+    Calculates the number of loose objects and their total size. Optionally
+    calculates the total uncompressed size.
+
+    Args:
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+        include_uncompressed (bool, optional): Whether to calculate uncompressed
+                                                size. Defaults to False.
+
+    Returns:
+        tuple: (count, compressed_size, uncompressed_size)
+            count (int): Number of loose objects.
+            compressed_size (int): Total size of loose objects on disk in bytes.
+            uncompressed_size (int or None): Total uncompressed size in bytes,
+                                            or None if not calculated.
+    """
     # We walk the objects directory to get the count and the sum of actual file sizes.
     # This avoids "size on disk" (which includes filesystem overhead/blocks).
     try:
@@ -93,6 +154,17 @@ def get_loose_info(repo_path=None, include_uncompressed=False):
 
 
 def format_size(size_bytes, human=False):
+    """
+    Format a size in bytes into a string.
+
+    Args:
+        size_bytes (int): Size in bytes.
+        human (bool, optional): Whether to use human-readable format (KiB, MiB).
+                                Defaults to False.
+
+    Returns:
+        str: Formatted size string.
+    """
     if not human:
         return f"{size_bytes:,}".replace(",", ".")
 
@@ -105,6 +177,12 @@ def format_size(size_bytes, human=False):
 
 
 def get_parser():
+    """
+    Construct the argument parser for the pack-stats tool.
+
+    Returns:
+        argparse.ArgumentParser: The configured argument parser.
+    """
     try:
         ver = version("git-tools")
     except Exception:
@@ -150,6 +228,9 @@ def get_parser():
 
 
 def main():
+    """
+    Main entry point for the git-pack-stats tool.
+    """
     parser = get_parser()
     args = parser.parse_args()
 
