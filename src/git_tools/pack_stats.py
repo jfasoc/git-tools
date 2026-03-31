@@ -4,24 +4,7 @@ import sys
 import argparse
 import time
 from importlib.metadata import version
-
-
-def run_git_command(args, repo_path=None):
-    try:
-        cmd = ["git"]
-        if repo_path:
-            cmd.extend(["-C", repo_path])
-        cmd.extend(args)
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running git command: {e}", file=sys.stderr)
-        if e.stderr:
-            print(e.stderr, file=sys.stderr)
-        sys.exit(1)
-    except FileNotFoundError:
-        print("Error: git command not found.", file=sys.stderr)
-        sys.exit(1)
+from .utils import run_git_command
 
 
 def get_git_dir(repo_path=None):
