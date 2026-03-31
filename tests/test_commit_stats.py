@@ -12,7 +12,7 @@ def test_run_git_command_success(mocker):
 
     assert run_git_command(["args"]) == "output"
     mock_run.assert_called_with(
-        ["git", "args"], capture_output=True, text=True, check=True
+        ["git", "args"], capture_output=True, text=True, check=True, input=None
     )
 
 
@@ -23,7 +23,11 @@ def test_run_git_command_with_repo(mocker):
 
     assert run_git_command(["args"], repo_path="/tmp/repo") == "output"
     mock_run.assert_called_with(
-        ["git", "-C", "/tmp/repo", "args"], capture_output=True, text=True, check=True
+        ["git", "-C", "/tmp/repo", "args"],
+        capture_output=True,
+        text=True,
+        check=True,
+        input=None,
     )
 
 
