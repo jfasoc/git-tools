@@ -32,6 +32,12 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 
 ## 5. Tool Implementation Best Practices
 * Helper tools should be located in `src/git_tools/` and registered as scripts in `pyproject.toml`.
+* **Minimal Main Pattern:** The `main()` function should be as simple as possible, typically a single call to a `run()` function. For example:
+    ```python
+    def main():
+        run(get_parser().parse_args())
+    ```
+    The `run()` function should handle high-level orchestration, such as argument processing and error handling (e.g., `try-except` blocks for `SystemExit` or general `Exception`), while delegating data collection to a `collect_stats()` function and output formatting to a `print_stats()` function.
 * Tools must default to scanning the **current working directory (CWD)** for a Git repository but should also support an **optional repository path** as a command-line argument.
 * For data output, use formatted tables with clear headers.
 * When presenting statistics (like object counts or sizes), include total counts and calculate percentage distribution where applicable.
