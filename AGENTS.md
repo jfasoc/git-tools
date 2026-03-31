@@ -39,3 +39,8 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * **Scope Integrity:** DO NOT modify or remove code in functions or tools unrelated to your current task. Accidentally deleting existing features is a major failure.
 * **Verification over Feedback:** Prioritize the actual source code as the ground truth. If a code review or external feedback contradicts the existing code (e.g., claiming a feature is "unimplemented" when it is clearly present), you must verify the code before taking action.
 * **Update Completion Files:** Whenever CLI parameters are added, removed, or modified, you MUST regenerate the shell completion scripts (e.g., by running `python3 generate_completions.py`).
+
+## 6. Documentation
+* All Python source code must be thoroughly documented using **Google-style docstrings**.
+* Every module, class, and function (except for simple internal helpers if they are truly self-explanatory) must have a docstring.
+* Docstrings should include a summary, arguments (if any), and return values (if any).
