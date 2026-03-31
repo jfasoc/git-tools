@@ -227,29 +227,28 @@ def get_parser():
     return parser
 
 
-def main():
+def collect_stats(repo_path, verbose=False, loose_uncompressed=False):
     """
-    Main entry point for the git-pack-stats tool.
+    Gather storage statistics for the Git repository.
+
+    Args:
+        repo_path (str): Path to the git repository.
+        verbose (bool, optional): Whether to print timing info. Defaults to False.
+        loose_uncompressed (bool, optional): Whether to calculate uncompressed
+                                            size for loose objects.
+                                            Defaults to False.
+
+    Returns:
+        dict: A dictionary containing all collected statistics and total duration.
     """
-    parser = get_parser()
-    args = parser.parse_args()
-
-    repo_path = args.repo
-
     total_time_start = time.perf_counter()
 
-    try:
-        start_time = time.perf_counter()
-        git_dir = get_git_dir(repo_path)
-        pack_files = get_pack_files(git_dir)
-        duration = (time.perf_counter() - start_time) * 1000
-        if args.verbose:
-            print(f"{duration:10.3f} ms get info for git repository")
-    except SystemExit:
-        sys.exit(1)
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    start_time = time.perf_counter()
+    git_dir = get_git_dir(repo_path)
+    pack_files = get_pack_files(git_dir)
+    duration = (time.perf_counter() - start_time) * 1000
+    if verbose:
+        print(f"{duration:10.3f} ms get info for git repository")
 
     pack_data = []
     total_objects = 0
@@ -260,7 +259,7 @@ def main():
         start_time = time.perf_counter()
         count, size, uncompressed = get_pack_info(git_dir, pf, repo_path)
         duration = (time.perf_counter() - start_time) * 1000
-        if args.verbose:
+        if verbose:
             print(f"{duration:10.3f} ms get info for {pf}")
 
         pack_data.append(
@@ -271,27 +270,61 @@ def main():
         total_uncompressed += uncompressed
 
     start_time = time.perf_counter()
-    loose_count, loose_size, loose_uncompressed = get_loose_info(
-        repo_path, args.loose_uncompressed
-    )
+    loose_count, loose_size, loose_uncomp = get_loose_info(repo_path, loose_uncompressed)
     duration = (time.perf_counter() - start_time) * 1000
-    if args.verbose:
+    if verbose:
         print(f"{duration:10.3f} ms get info for loose objects")
 
     total_duration = (time.perf_counter() - total_time_start) * 1000
-    if args.verbose:
-        print(f"{total_duration:10.3f} ms total time")
-        print()
+
     total_objects += loose_count
     total_size += loose_size
-    if loose_uncompressed is not None:
-        total_uncompressed += loose_uncompressed
+    if loose_uncomp is not None:
+        total_uncompressed += loose_uncomp
 
     # Sort pack data by object count (descending)
     pack_data.sort(key=lambda x: x["objects"], reverse=True)
 
+    return {
+        "pack_data": pack_data,
+        "total_objects": total_objects,
+        "total_size": total_size,
+        "total_uncompressed": total_uncompressed,
+        "loose_count": loose_count,
+        "loose_size": loose_size,
+        "loose_uncomp": loose_uncomp,
+        "total_duration": total_duration,
+    }
+
+
+def print_stats(stats, human=False, verbose=False):
+    """
+    Print the collected storage statistics in a table.
+
+    Args:
+        stats (dict): The dictionary of collected statistics.
+        human (bool, optional): Whether to use human-readable format.
+                                Defaults to False.
+        verbose (bool, optional): Whether to print the total duration.
+                                  Defaults to False.
+    """
+    if verbose:
+        print(f"{stats['total_duration']:10.3f} ms total time")
+        print()
+
+    pack_data = stats["pack_data"]
+    total_objects = stats["total_objects"]
+    total_size = stats["total_size"]
+    total_uncompressed = stats["total_uncompressed"]
+    loose_count = stats["loose_count"]
+    loose_size = stats["loose_size"]
+    loose_uncomp = stats["loose_uncomp"]
+
     # Header
-    header = f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} {'Uncompressed':>12} {'Comp %':>8} {'% Obj':>8} {'% Size':>8}"
+    header = (
+        f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} "
+        f"{'Uncompressed':>12} {'Comp %':>8} {'% Obj':>8} {'% Size':>8}"
+    )
     print(header)
     print("-" * len(header))
 
@@ -302,25 +335,29 @@ def main():
             (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
         )
         print(
-            f"{data['name']:<60} {data['objects']:>10} {format_size(data['size'], args.human):>12} {format_size(data['uncompressed'], args.human):>12} {comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
+            f"{data['name']:<60} {data['objects']:>10} "
+            f"{format_size(data['size'], human):>12} "
+            f"{format_size(data['uncompressed'], human):>12} "
+            f"{comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
         )
 
     # Loose objects section
     print("-" * len(header))
     p_obj_loose = (loose_count / total_objects * 100) if total_objects > 0 else 0
     p_size_loose = (loose_size / total_size * 100) if total_size > 0 else 0
-    if loose_uncompressed is not None:
-        comp_ratio_loose = (
-            (loose_size / loose_uncompressed * 100) if loose_uncompressed else 0
-        )
-        loose_uncompressed_str = format_size(loose_uncompressed, args.human)
+    if loose_uncomp is not None:
+        comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
+        loose_uncomp_str = format_size(loose_uncomp, human)
         comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
     else:
-        loose_uncompressed_str = f"{'N/A':>12}"
+        loose_uncomp_str = f"{'N/A':>12}"
         comp_ratio_loose_str = f"{'N/A':>8}"
 
     print(
-        f"{'Loose Objects':<60} {loose_count:>10} {format_size(loose_size, args.human):>12} {loose_uncompressed_str:>12} {comp_ratio_loose_str} {p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
+        f"{'Loose Objects':<60} {loose_count:>10} "
+        f"{format_size(loose_size, human):>12} "
+        f"{loose_uncomp_str:>12} {comp_ratio_loose_str} "
+        f"{p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
     )
 
     # Total
@@ -328,17 +365,44 @@ def main():
     total_comp_ratio = (
         (total_size / total_uncompressed * 100) if total_uncompressed else 0
     )
-    # If loose_uncompressed is N/A, the total uncompressed is also incomplete/N/A
-    if loose_uncompressed is None and loose_count > 0:
+    # If loose_uncomp is N/A, the total uncompressed is also incomplete/N/A
+    if loose_uncomp is None and loose_count > 0:
         total_uncompressed_str = f"{'N/A':>12}"
         total_comp_ratio_str = f"{'N/A':>8}"
     else:
-        total_uncompressed_str = format_size(total_uncompressed, args.human)
+        total_uncompressed_str = format_size(total_uncompressed, human)
         total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
 
     print(
-        f"{'Total':<60} {total_objects:>10} {format_size(total_size, args.human):>12} {total_uncompressed_str:>12} {total_comp_ratio_str} {100.0:>7.1f}% {100.0:>7.1f}%"
+        f"{'Total':<60} {total_objects:>10} "
+        f"{format_size(total_size, human):>12} "
+        f"{total_uncompressed_str:>12} {total_comp_ratio_str} "
+        f"{100.0:>7.1f}% {100.0:>7.1f}%"
     )
+
+
+def run(args):
+    """
+    Execute the pack-stats tool with the provided arguments.
+
+    Args:
+        args (argparse.Namespace): The parsed command-line arguments.
+    """
+    try:
+        stats = collect_stats(args.repo, args.verbose, args.loose_uncompressed)
+        print_stats(stats, args.human, args.verbose)
+    except SystemExit:
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+def main():
+    """
+    Main entry point for the git-pack-stats tool.
+    """
+    run(get_parser().parse_args())
 
 
 if __name__ == "__main__":
