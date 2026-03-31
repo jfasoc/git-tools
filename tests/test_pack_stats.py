@@ -20,7 +20,11 @@ def test_run_git_command_success():
         output = run_git_command(["rev-parse", "HEAD"])
         assert output == "test output\n"
         mock_run.assert_called_with(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+            ["git", "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            check=True,
+            input=None,
         )
 
 
@@ -34,6 +38,7 @@ def test_run_git_command_with_repo():
             capture_output=True,
             text=True,
             check=True,
+            input=None,
         )
 
 
@@ -193,6 +198,7 @@ def test_get_loose_info_with_data():
         args, kwargs = mock_run.call_args
         assert "-C" in args[0]
         assert "/some/repo" in args[0]
+        assert kwargs["input"] == "ab1234\ncd5678"
 
 
 def test_get_loose_info_exception():

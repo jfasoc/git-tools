@@ -1,27 +1,9 @@
 import os
-import subprocess
 import sys
 import argparse
 import time
 from importlib.metadata import version
-
-
-def run_git_command(args, repo_path=None):
-    try:
-        cmd = ["git"]
-        if repo_path:
-            cmd.extend(["-C", repo_path])
-        cmd.extend(args)
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        return result.stdout
-    except subprocess.CalledProcessError as e:
-        print(f"Error running git command: {e}", file=sys.stderr)
-        if e.stderr:
-            print(e.stderr, file=sys.stderr)
-        sys.exit(1)
-    except FileNotFoundError:
-        print("Error: git command not found.", file=sys.stderr)
-        sys.exit(1)
+from .utils import run_git_command
 
 
 def get_git_dir(repo_path=None):
@@ -92,21 +74,14 @@ def get_loose_info(repo_path=None, include_uncompressed=False):
         uncompressed_size = None
         if include_uncompressed and loose_objects:
             # Use git cat-file --batch-check to get sizes efficiently
-            cmd = ["git"]
-            if repo_path:
-                cmd.extend(["-C", repo_path])
-            cmd.extend(["cat-file", "--batch-check=%(objectsize)"])
-
-            result = subprocess.run(
-                cmd,
+            output = run_git_command(
+                ["cat-file", "--batch-check=%(objectsize)"],
+                repo_path=repo_path,
                 input="\n".join(loose_objects),
-                capture_output=True,
-                text=True,
-                check=True,
             )
 
             uncompressed_size = 0
-            for line in result.stdout.strip().split("\n"):
+            for line in output.strip().split("\n"):
                 if line:
                     uncompressed_size += int(line)
         elif include_uncompressed:
