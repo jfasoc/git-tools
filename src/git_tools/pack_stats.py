@@ -317,8 +317,6 @@ def collect_stats(
         total_size += size
         total_uncompressed += uncompressed
         if actual is not None:
-            if total_actual is None:
-                total_actual = 0
             total_actual += actual
 
     start_time = time.perf_counter()
@@ -335,8 +333,6 @@ def collect_stats(
     if l_uncomp is not None:
         total_uncompressed += l_uncomp
         if include_actual:
-            if total_actual is None:
-                total_actual = 0
             total_actual += l_uncomp
 
     # Sort pack data by object count (descending)

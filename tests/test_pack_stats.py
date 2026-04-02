@@ -153,6 +153,32 @@ def test_get_pack_info_include_actual():
         assert uncompressed == 300
         assert actual == 1100
 
+    # Test include_actual with empty pack
+    with (
+        patch("git_tools.pack_stats.run_git_command") as mock_git,
+        patch("os.path.getsize") as mock_getsize,
+    ):
+        mock_git.return_value = ""
+        mock_getsize.return_value = 0
+        count, deltas, size, uncompressed, actual = get_pack_info(
+            "/abs/path/.git", "empty.pack", include_actual=True
+        )
+        assert count == 0
+        assert actual == 0
+
+    # Test include_actual with objects but empty cat-file output
+    with (
+        patch("git_tools.pack_stats.run_git_command") as mock_git,
+        patch("os.path.getsize") as mock_getsize,
+    ):
+        mock_git.side_effect = ["sha1 commit 100 100 0\n", ""]
+        mock_getsize.return_value = 100
+        count, deltas, size, uncompressed, actual = get_pack_info(
+            "/abs/path/.git", "pack-1.pack", include_actual=True
+        )
+        assert count == 1
+        assert actual == 0
+
 
 def test_get_pack_info_with_tag():
     with (
@@ -335,6 +361,40 @@ def test_main_with_loose_uncompressed(capsys):
         captured = capsys.readouterr()
         assert "1.024" in captured.out
 
+    # Test actual size with both pack and loose
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "--actual-size", "--loose-uncompressed"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 5, 512, 1024, 2048)
+        mock_get_loose.return_value = (10, 0, 512, 1024)
+
+        main()
+        captured = capsys.readouterr()
+        assert "3.072" in captured.out
+
+    # Test actual size with both pack and loose, but pack actual is 0 (coverage)
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "--actual-size", "--loose-uncompressed"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info.return_value = (10, 5, 512, 1024, None)
+        mock_get_loose.return_value = (10, 0, 512, 1024)
+
+        main()
+        captured = capsys.readouterr()
+        assert "1.024" in captured.out
+
 
 def test_main_with_actual_size(capsys):
     with (
@@ -352,6 +412,22 @@ def test_main_with_actual_size(capsys):
         main()
         captured = capsys.readouterr()
         assert "2.048" in captured.out
+
+    # Test actual size with loose objects uncompressed
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("sys.argv", ["git-pack-stats", "--actual-size", "--loose-uncompressed"]),
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = []
+        mock_get_loose.return_value = (10, 0, 512, 1024)
+
+        main()
+        captured = capsys.readouterr()
+        assert "1.024" in captured.out
 
 
 def test_main_human_readable(capsys):
@@ -402,7 +478,7 @@ def test_main_verbose(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = ["pack-1.pack"]
-        mock_get_info.return_value = (10, 5, 512, 1024, 1024)
+        mock_get_info.return_value = (10, 5, 512, 1024, None)
         mock_get_loose.return_value = (10, 0, 512, 1024)
 
         main()
