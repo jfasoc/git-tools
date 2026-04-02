@@ -151,7 +151,7 @@ _shtab_git_commit_stats() {
 
 complete -o filenames -F _shtab_git_commit_stats git-commit-stats
 
-_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version' '-H' '--human' '--loose-uncompressed' '-v' '--verbose')
+_shtab_git_pack_stats_option_strings=('-h' '--help' '-V' '--version' '-H' '--human' '--loose-uncompressed' '--actual-size' '-v' '--verbose')
 
 _shtab_git_pack_stats_pos_0_COMPGEN=_shtab_compgen_dirs
 
@@ -164,6 +164,7 @@ _shtab_git_pack_stats___version_nargs=0
 _shtab_git_pack_stats__H_nargs=0
 _shtab_git_pack_stats___human_nargs=0
 _shtab_git_pack_stats___loose_uncompressed_nargs=0
+_shtab_git_pack_stats___actual_size_nargs=0
 _shtab_git_pack_stats__v_nargs=0
 _shtab_git_pack_stats___verbose_nargs=0
 
@@ -470,7 +471,7 @@ _shtab_git_stats_subparsers=('commit' 'pack')
 
 _shtab_git_stats_option_strings=('-h' '--help' '-V' '--version')
 _shtab_git_stats_commit_option_strings=('-h' '--help')
-_shtab_git_stats_pack_option_strings=('-h' '--help' '-H' '--human' '--loose-uncompressed' '-v' '--verbose')
+_shtab_git_stats_pack_option_strings=('-h' '--help' '-H' '--human' '--loose-uncompressed' '--actual-size' '-v' '--verbose')
 
 _shtab_git_stats_commit_pos_0_COMPGEN=_shtab_compgen_dirs
 _shtab_git_stats_pack_pos_0_COMPGEN=_shtab_compgen_dirs
@@ -489,6 +490,7 @@ _shtab_git_stats_pack___help_nargs=0
 _shtab_git_stats_pack__H_nargs=0
 _shtab_git_stats_pack___human_nargs=0
 _shtab_git_stats_pack___loose_uncompressed_nargs=0
+_shtab_git_stats_pack___actual_size_nargs=0
 _shtab_git_stats_pack__v_nargs=0
 _shtab_git_stats_pack___verbose_nargs=0
 

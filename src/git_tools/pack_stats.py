@@ -47,50 +47,76 @@ def get_pack_files(git_dir):
     return [f for f in os.listdir(pack_dir) if f.endswith(".pack")]
 
 
-def get_pack_info(git_dir, pack_file, repo_path=None):
+def get_pack_info(git_dir, pack_file, repo_path=None, include_actual=False):
     """
     Gather statistics for a specific pack file.
 
-    Calculates the number of objects, the total uncompressed size, and
-    the compressed size of the pack file.
+    Calculates the number of objects, deltas, total uncompressed size,
+    and compressed size of the pack file. Optionally calculates the
+    total actual uncompressed size of all objects.
 
     Args:
         git_dir (str): Absolute path to the .git directory.
         pack_file (str): Filename of the pack file.
         repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+        include_actual (bool, optional): Whether to calculate actual uncompressed
+                                          size. Defaults to False.
 
     Returns:
-        tuple: (object_count, size, uncompressed_size)
+        tuple: (object_count, delta_count, size, uncompressed_size, actual_size)
             object_count (int): Number of objects in the pack file.
+            delta_count (int): Number of delta objects in the pack file.
             size (int): Compressed size of the pack file in bytes.
-            uncompressed_size (int): Total uncompressed size of all objects in bytes.
+            uncompressed_size (int): Total uncompressed size of all objects (deltas)
+                                      in bytes.
+            actual_size (int or None): Total actual uncompressed size of all
+                                        objects in bytes, or None if not calculated.
     """
     pack_path = os.path.join(git_dir, "objects", "pack", pack_file)
 
     # Get number of objects
     output = run_git_command(["verify-pack", "-v", pack_path], repo_path)
 
-    # The output of verify-pack -v ends with something like:
-    # non delta: 15 objects
-    # chain length = 1: 2 objects
-    # .git/objects/pack/pack-xxx.pack: ok
+    # The output of verify-pack -v lists objects:
+    # SHA-1 type size size-in-pack-file offset-in-pack-file [depth base-SHA-1]
 
     lines = output.strip().split("\n")
     object_count = 0
+    delta_count = 0
     uncompressed_size = 0
+    object_shas = []
     for line in lines:
         parts = line.split()
         if len(parts) >= 3 and parts[1] in ("commit", "tree", "blob", "tag"):
             object_count += 1
+            if len(parts) >= 7:
+                delta_count += 1
             try:
                 uncompressed_size += int(parts[2])
+                if include_actual:
+                    object_shas.append(parts[0])
             except (ValueError, IndexError):
                 pass
+
+    actual_size = None
+    if include_actual and object_shas:
+        # Use git cat-file --batch-check to get full sizes efficiently
+        output = run_git_command(
+            ["cat-file", "--batch-check=%(objectsize)"],
+            repo_path=repo_path,
+            input="\n".join(object_shas),
+        )
+        actual_size = 0
+        for line in output.strip().split("\n"):
+            if line:
+                actual_size += int(line)
+    elif include_actual:
+        actual_size = 0
 
     # Get size
     size = os.path.getsize(pack_path)
 
-    return object_count, size, uncompressed_size
+    return object_count, delta_count, size, uncompressed_size, actual_size
 
 
 def get_loose_info(repo_path=None, include_uncompressed=False):
@@ -106,8 +132,9 @@ def get_loose_info(repo_path=None, include_uncompressed=False):
                                                 size. Defaults to False.
 
     Returns:
-        tuple: (count, compressed_size, uncompressed_size)
+        tuple: (count, deltas, compressed_size, uncompressed_size)
             count (int): Number of loose objects.
+            deltas (int): Number of delta loose objects (always 0).
             compressed_size (int): Total size of loose objects on disk in bytes.
             uncompressed_size (int or None): Total uncompressed size in bytes,
                                             or None if not calculated.
@@ -148,9 +175,9 @@ def get_loose_info(repo_path=None, include_uncompressed=False):
         elif include_uncompressed:
             uncompressed_size = 0
 
-        return count, compressed_size, uncompressed_size
+        return count, 0, compressed_size, uncompressed_size
     except Exception:
-        return 0, 0, 0 if include_uncompressed else None
+        return 0, 0, 0, 0 if include_uncompressed else None
 
 
 def format_size(size_bytes, human=False):
@@ -216,6 +243,11 @@ def get_parser():
         help="Include uncompressed size for loose objects (can be slow).",
     )
     parser.add_argument(
+        "--actual-size",
+        action="store_true",
+        help="Include the actual full uncompressed size of all objects (can be slow).",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
@@ -227,7 +259,9 @@ def get_parser():
     return parser
 
 
-def collect_stats(repo_path, verbose=False, loose_uncompressed=False):
+def collect_stats(
+    repo_path, verbose=False, loose_uncompressed=False, include_actual=False
+):
     """
     Gather storage statistics for the Git repository.
 
@@ -237,6 +271,8 @@ def collect_stats(repo_path, verbose=False, loose_uncompressed=False):
         loose_uncompressed (bool, optional): Whether to calculate uncompressed
                                             size for loose objects.
                                             Defaults to False.
+        include_actual (bool, optional): Whether to calculate actual uncompressed
+                                          size for objects. Defaults to False.
 
     Returns:
         dict: A dictionary containing all collected statistics and total duration.
@@ -252,35 +288,56 @@ def collect_stats(repo_path, verbose=False, loose_uncompressed=False):
 
     pack_data = []
     total_objects = 0
+    total_deltas = 0
     total_size = 0
     total_uncompressed = 0
+    total_actual = 0 if include_actual else None
 
     for pf in pack_files:
         start_time = time.perf_counter()
-        count, size, uncompressed = get_pack_info(git_dir, pf, repo_path)
+        count, deltas, size, uncompressed, actual = get_pack_info(
+            git_dir, pf, repo_path, include_actual
+        )
         duration = (time.perf_counter() - start_time) * 1000
         if verbose:
             print(f"{duration:10.3f} ms get info for {pf}")
 
         pack_data.append(
-            {"name": pf, "objects": count, "size": size, "uncompressed": uncompressed}
+            {
+                "name": pf,
+                "objects": count,
+                "deltas": deltas,
+                "size": size,
+                "uncompressed": uncompressed,
+                "actual": actual,
+            }
         )
         total_objects += count
+        total_deltas += deltas
         total_size += size
         total_uncompressed += uncompressed
+        if actual is not None:
+            if total_actual is None:
+                total_actual = 0
+            total_actual += actual
 
     start_time = time.perf_counter()
-    loose_count, loose_size, loose_uncomp = get_loose_info(repo_path, loose_uncompressed)
+    l_count, l_deltas, l_size, l_uncomp = get_loose_info(repo_path, loose_uncompressed)
     duration = (time.perf_counter() - start_time) * 1000
     if verbose:
         print(f"{duration:10.3f} ms get info for loose objects")
 
     total_duration = (time.perf_counter() - total_time_start) * 1000
 
-    total_objects += loose_count
-    total_size += loose_size
-    if loose_uncomp is not None:
-        total_uncompressed += loose_uncomp
+    total_objects += l_count
+    total_deltas += l_deltas
+    total_size += l_size
+    if l_uncomp is not None:
+        total_uncompressed += l_uncomp
+        if include_actual:
+            if total_actual is None:
+                total_actual = 0
+            total_actual += l_uncomp
 
     # Sort pack data by object count (descending)
     pack_data.sort(key=lambda x: x["objects"], reverse=True)
@@ -288,11 +345,14 @@ def collect_stats(repo_path, verbose=False, loose_uncompressed=False):
     return {
         "pack_data": pack_data,
         "total_objects": total_objects,
+        "total_deltas": total_deltas,
         "total_size": total_size,
         "total_uncompressed": total_uncompressed,
-        "loose_count": loose_count,
-        "loose_size": loose_size,
-        "loose_uncomp": loose_uncomp,
+        "total_actual": total_actual,
+        "loose_count": l_count,
+        "loose_deltas": l_deltas,
+        "loose_size": l_size,
+        "loose_uncomp": l_uncomp,
         "total_duration": total_duration,
     }
 
@@ -314,16 +374,20 @@ def print_stats(stats, human=False, verbose=False):
 
     pack_data = stats["pack_data"]
     total_objects = stats["total_objects"]
+    total_deltas = stats["total_deltas"]
     total_size = stats["total_size"]
     total_uncompressed = stats["total_uncompressed"]
+    total_actual = stats["total_actual"]
     loose_count = stats["loose_count"]
+    loose_deltas = stats["loose_deltas"]
     loose_size = stats["loose_size"]
     loose_uncomp = stats["loose_uncomp"]
 
     # Header
     header = (
-        f"{'Pack Name':<60} {'Objects':>10} {'Size':>12} "
-        f"{'Uncompressed':>12} {'Comp %':>8} {'% Obj':>8} {'% Size':>8}"
+        f"{'Pack Name':<60} {'Objects':>10} {'Deltas':>10} {'Size':>12} "
+        f"{'Uncompressed':>12} {'Actual':>12} {'Comp %':>8} {'Act %':>8} "
+        f"{'% Obj':>8} {'% Size':>8}"
     )
     print(header)
     print("-" * len(header))
@@ -334,29 +398,44 @@ def print_stats(stats, human=False, verbose=False):
         comp_ratio = (
             (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
         )
+        if data["actual"] is not None:
+            act_ratio = (data["size"] / data["actual"] * 100) if data["actual"] else 0
+            actual_str = format_size(data["actual"], human)
+            act_ratio_str = f"{act_ratio:>7.1f}%"
+        else:
+            actual_str = f"{'N/A':>12}"
+            act_ratio_str = f"{'N/A':>8}"
+
         print(
-            f"{data['name']:<60} {data['objects']:>10} "
+            f"{data['name']:<60} {data['objects']:>10} {data['deltas']:>10} "
             f"{format_size(data['size'], human):>12} "
             f"{format_size(data['uncompressed'], human):>12} "
-            f"{comp_ratio:>7.1f}% {p_obj:>7.1f}% {p_size:>7.1f}%"
+            f"{actual_str:>12} {comp_ratio:>7.1f}% {act_ratio_str} "
+            f"{p_obj:>7.1f}% {p_size:>7.1f}%"
         )
 
     # Loose objects section
     print("-" * len(header))
     p_obj_loose = (loose_count / total_objects * 100) if total_objects > 0 else 0
     p_size_loose = (loose_size / total_size * 100) if total_size > 0 else 0
+
     if loose_uncomp is not None:
         comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
         loose_uncomp_str = format_size(loose_uncomp, human)
         comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
+        actual_loose_str = loose_uncomp_str
+        act_ratio_loose_str = comp_ratio_loose_str
     else:
         loose_uncomp_str = f"{'N/A':>12}"
         comp_ratio_loose_str = f"{'N/A':>8}"
+        actual_loose_str = f"{'N/A':>12}"
+        act_ratio_loose_str = f"{'N/A':>8}"
 
     print(
-        f"{'Loose Objects':<60} {loose_count:>10} "
+        f"{'Loose Objects':<60} {loose_count:>10} {loose_deltas:>10} "
         f"{format_size(loose_size, human):>12} "
-        f"{loose_uncomp_str:>12} {comp_ratio_loose_str} "
+        f"{loose_uncomp_str:>12} {actual_loose_str:>12} "
+        f"{comp_ratio_loose_str} {act_ratio_loose_str} "
         f"{p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
     )
 
@@ -369,14 +448,26 @@ def print_stats(stats, human=False, verbose=False):
     if loose_uncomp is None and loose_count > 0:
         total_uncompressed_str = f"{'N/A':>12}"
         total_comp_ratio_str = f"{'N/A':>8}"
+        total_actual_str = f"{'N/A':>12}"
+        total_act_ratio_str = f"{'N/A':>8}"
     else:
         total_uncompressed_str = format_size(total_uncompressed, human)
         total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
+        if total_actual is not None:
+            total_act_ratio = (
+                (total_size / total_actual * 100) if total_actual else 0
+            )
+            total_actual_str = format_size(total_actual, human)
+            total_act_ratio_str = f"{total_act_ratio:>7.1f}%"
+        else:
+            total_actual_str = f"{'N/A':>12}"
+            total_act_ratio_str = f"{'N/A':>8}"
 
     print(
-        f"{'Total':<60} {total_objects:>10} "
+        f"{'Total':<60} {total_objects:>10} {total_deltas:>10} "
         f"{format_size(total_size, human):>12} "
-        f"{total_uncompressed_str:>12} {total_comp_ratio_str} "
+        f"{total_uncompressed_str:>12} {total_actual_str:>12} "
+        f"{total_comp_ratio_str} {total_act_ratio_str} "
         f"{100.0:>7.1f}% {100.0:>7.1f}%"
     )
 
@@ -389,7 +480,9 @@ def run(args):
         args (argparse.Namespace): The parsed command-line arguments.
     """
     try:
-        stats = collect_stats(args.repo, args.verbose, args.loose_uncompressed)
+        stats = collect_stats(
+            args.repo, args.verbose, args.loose_uncompressed, args.actual_size
+        )
         print_stats(stats, args.human, args.verbose)
     except SystemExit:
         sys.exit(1)
