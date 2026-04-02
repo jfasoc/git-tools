@@ -67,6 +67,11 @@ def get_parser():
         help="Include uncompressed size for loose objects (can be slow).",
     )
     pack_parser.add_argument(
+        "--actual-size",
+        action="store_true",
+        help="Include the actual full uncompressed size of all objects (can be slow).",
+    )
+    pack_parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",

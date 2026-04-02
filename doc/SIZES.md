@@ -13,14 +13,30 @@ The compressed size shown for a pack file is the actual size of the `.pack` file
 The uncompressed size is calculated by parsing the output of `git verify-pack -v <pack_path>`.
 - The command lists each object in the pack with several columns of data.
 - The **third column** in this output represents the uncompressed size of the object.
-- `git-pack-stats` sums these values for all objects in the pack (commits, trees, blobs, and tags).
+- For non-delta objects, this is their full size.
+- For delta objects, this is the size of the delta data itself.
+- `git-pack-stats` sums these values for all objects in the pack.
 
-### Compression %
-The compression percentage for a pack is calculated as:
+### Actual Size
+Calculating the actual full uncompressed size of all objects can be a slow operation. Therefore, it is only performed when the `--actual-size` flag is used.
+- When requested, `git-pack-stats` uses `git cat-file --batch-check='%(objectsize)'` to retrieve the full size of every object in the pack.
+- This represents the total size the objects would occupy if they were not stored as deltas.
+
+### Deltas
+The number of delta objects in the pack is counted by parsing the output of `git verify-pack -v`. Objects with more than 5 columns in the output are identified as deltas.
+
+### Compression % (Comp %)
+The compression percentage relative to the delta-compressed data:
 ```
 (Compressed Size / Uncompressed Size) * 100
 ```
-This represents the size of the packed data relative to its original, uncompressed state. A lower percentage indicates better compression.
+
+### Actual Compression % (Act %)
+The compression percentage relative to the full uncompressed data (only available with `--actual-size`):
+```
+(Compressed Size / Actual Size) * 100
+```
+This provides a measure of the total space saved by both delta compression and zlib compression.
 
 ---
 

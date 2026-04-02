@@ -56,6 +56,7 @@ _shtab_git_pack_stats_options=(
   "(- : *)"{-V,--version}"[Show the version and exit.]"
   {-H,--human}"[Display human-readable sizes (e.g., KiB, MiB).]"
   "--loose-uncompressed[Include uncompressed size for loose objects (can be slow).]"
+  "--actual-size[Include the actual full uncompressed size of all objects (can be slow).]"
   {-v,--verbose}"[Print how long time it took to obtain each set of data.]"
   ":Path to the git repository.:_files -/"
 )
@@ -173,6 +174,7 @@ _shtab_git_stats_pack_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   {-H,--human}"[Display human-readable sizes (e.g., KiB, MiB).]"
   "--loose-uncompressed[Include uncompressed size for loose objects (can be slow).]"
+  "--actual-size[Include the actual full uncompressed size of all objects (can be slow).]"
   {-v,--verbose}"[Print how long time it took to obtain each set of data.]"
   ":Path to the git repository.:_files -/"
 )
