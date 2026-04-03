@@ -8,7 +8,7 @@ Ensure you have the tools available in your `PATH`. If you are developing locall
 
 ```bash
 # Example of making the tools available (in a Bash-like shell)
-export PATH="$PATH:$(pdm run which git-commit-stats | xargs dirname)"
+export PATH="$PATH:$(pdm run which git-stats | xargs dirname)"
 ```
 
 ## Bash
@@ -20,9 +20,10 @@ To manually load and test Bash completions:
     source completions/git-tools.bash
     ```
 2.  **Verify:**
-    - Type `git-commit-stats -` and press `Tab`. You should see `--help`, `--version`, and `-V`.
-    - Type `git-pack-stats -` and press `Tab`. You should see the same options.
-    - Type `git-commit-stats ` (with a space) and press `Tab`. It should suggest directories.
+    - Type `git-stats -` and press `Tab`. You should see `--help`, `--version`, and `-V`.
+    - Type `git-stats commit -` and press `Tab`. You should see `--help`.
+    - Type `git-stats pack -` and press `Tab`. You should see the options for the `pack` command.
+    - Type `git-stats commit ` (with a space) and press `Tab`. It should suggest directories.
 
 ## Zsh
 
@@ -39,8 +40,8 @@ Zsh completions are more complex because they can be loaded via `source` (eval) 
     source completions/git-tools.zsh
     ```
 3.  **Verify:**
-    - Type `git-commit-stats -<TAB>`. It should show the options with descriptions.
-    - Type `git-pack-stats -<TAB>`. It should also work.
+    - Type `git-stats -<TAB>`. It should show the options with descriptions.
+    - Type `git-stats commit -<TAB>`. It should also work.
 
 ### Method 2: Using fpath (Production-like)
 
@@ -59,7 +60,7 @@ Zsh completions are more complex because they can be loaded via `source` (eval) 
     autoload -Uz compinit && compinit
     ```
 4.  **Verify:**
-    Start a new shell or run `compinit`. Type `git-commit-stats -<TAB>`.
+    Start a new shell or run `compinit`. Type `git-stats -<TAB>`.
 
 ## Troubleshooting
 

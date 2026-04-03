@@ -1,0 +1,10 @@
+usage: commit_stats.py [-h] [-V] [repo]
+
+Lists all commits with file change counts (Regular vs Symlinks).
+
+positional arguments:
+  repo           Path to the git repository.
+
+options:
+  -h, --help     show this help message and exit
+  -V, --version  Show the version and exit.

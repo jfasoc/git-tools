@@ -1,8 +1,12 @@
 import subprocess
 import pytest
-import runpy
-from unittest.mock import patch
-from git_tools.commit_stats import run_git_command, get_commits, get_commit_stats, main
+from git_tools.commit_stats import (
+    run_git_command,
+    get_commits,
+    get_commit_stats,
+    get_parser,
+    run,
+)
 
 
 def test_run_git_command_success(mocker):
@@ -107,8 +111,8 @@ def test_get_commit_stats_advanced(mocker):
 
 def test_main_no_commits(mocker, capsys):
     mocker.patch("git_tools.commit_stats.get_commits", return_value=[])
-    mocker.patch("sys.argv", ["git-commit-stats"])
-    main()
+    args = get_parser().parse_args(["."])
+    run(args)
     captured = capsys.readouterr()
     assert "No commits found." in captured.out
 
@@ -122,9 +126,9 @@ def test_main_with_commits(mocker, capsys):
             ({"A": 0, "M": 1, "D": 1}, {"A": 1, "M": 0, "D": 0}),
         ],
     )
-    mocker.patch("sys.argv", ["git-commit-stats"])
+    args = get_parser().parse_args(["."])
 
-    main()
+    run(args)
     captured = capsys.readouterr()
     assert "Commit" in captured.out
     assert "abc" in captured.out
@@ -140,8 +144,8 @@ def test_main_with_repo(mocker, capsys):
         return_value=({"A": 1, "M": 0, "D": 0}, {"A": 0, "M": 0, "D": 0}),
     )
 
-    mocker.patch("sys.argv", ["git-commit-stats", "/path/to/repo"])
-    main()
+    args = get_parser().parse_args(["/path/to/repo"])
+    run(args)
 
     mock_get_commits.assert_called_with("/path/to/repo")
     mock_get_stats.assert_called_with("abc", "/path/to/repo")
@@ -149,36 +153,26 @@ def test_main_with_repo(mocker, capsys):
 
 def test_version_flag(mocker, capsys):
     mocker.patch("git_tools.commit_stats.version", return_value="0.1.0")
-    mocker.patch("sys.argv", ["git-commit-stats", "--version"])
     with pytest.raises(SystemExit) as excinfo:
-        main()
+        get_parser().parse_args(["--version"])
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
-    assert "git-commit-stats 0.1.0" in captured.out
-
-
-def test_main_entry_point_commit_stats():
-    # Triggers the 'if __name__ == "__main__":' block
-    with patch("sys.argv", ["git-commit-stats", "-h"]):
-        with pytest.raises(SystemExit):
-            runpy.run_module("git_tools.commit_stats", run_name="__main__")
+    assert "0.1.0" in captured.out
 
 
 def test_version_unknown(mocker, capsys):
     mocker.patch("git_tools.commit_stats.version", side_effect=Exception())
-    mocker.patch("sys.argv", ["git-commit-stats", "--version"])
     with pytest.raises(SystemExit) as excinfo:
-        main()
+        get_parser().parse_args(["--version"])
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
-    assert "git-commit-stats unknown" in captured.out
+    assert "unknown" in captured.out
 
 
 def test_short_version_flag(mocker, capsys):
     mocker.patch("git_tools.commit_stats.version", return_value="0.1.0")
-    mocker.patch("sys.argv", ["git-commit-stats", "-V"])
     with pytest.raises(SystemExit) as excinfo:
-        main()
+        get_parser().parse_args(["-V"])
     assert excinfo.value.code == 0
     captured = capsys.readouterr()
-    assert "git-commit-stats 0.1.0" in captured.out
+    assert "0.1.0" in captured.out
