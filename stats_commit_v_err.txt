@@ -1,0 +1,3 @@
+usage: stats.py [-h] [-V] {commit,pack} ...
+stats.py: error: unrecognized arguments: -V
+Failed

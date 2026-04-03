@@ -1,0 +1,9 @@
+usage: stats.py commit [-h] [repo]
+
+Lists all commits with file change counts (Regular vs Symlinks).
+
+positional arguments:
+  repo        Path to the git repository.
+
+options:
+  -h, --help  show this help message and exit

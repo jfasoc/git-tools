@@ -1,0 +1,19 @@
+usage: pack_stats.py [-h] [-V] [-H] [--loose-uncompressed] [--actual-size]
+                     [-v]
+                     [repo]
+
+List git pack files and loose objects.
+
+positional arguments:
+  repo                  Path to the git repository.
+
+options:
+  -h, --help            show this help message and exit
+  -V, --version         Show the version and exit.
+  -H, --human           Display human-readable sizes (e.g., KiB, MiB).
+  --loose-uncompressed  Include uncompressed size for loose objects (can be
+                        slow).
+  --actual-size         Include the actual full uncompressed size of all
+                        objects (can be slow).
+  -v, --verbose         Print how long time it took to obtain each set of
+                        data.
