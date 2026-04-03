@@ -487,12 +487,3 @@ def run(args):
         sys.exit(1)
 
 
-def main():
-    """
-    Main entry point for the git-pack-stats tool.
-    """
-    run(get_parser().parse_args())
-
-
-if __name__ == "__main__":
-    main()

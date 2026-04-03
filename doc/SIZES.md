@@ -1,6 +1,6 @@
-# Git Object Sizes in `git-pack-stats`
+# Git Object Sizes in `git-stats pack`
 
-This document explains how `git-pack-stats` calculates the different object sizes displayed in its output.
+This document explains how `git-stats pack` calculates the different object sizes displayed in its output.
 
 ## Packed Objects
 
@@ -15,11 +15,11 @@ The uncompressed size is calculated by parsing the output of `git verify-pack -v
 - The **third column** in this output represents the uncompressed size of the object.
 - For non-delta objects, this is their full size.
 - For delta objects, this is the size of the delta data itself.
-- `git-pack-stats` sums these values for all objects in the pack.
+- `git-stats pack` sums these values for all objects in the pack.
 
 ### Actual Size
 Calculating the actual full uncompressed size of all objects can be a slow operation. Therefore, it is only performed when the `--actual-size` flag is used.
-- When requested, `git-pack-stats` uses `git cat-file --batch-check='%(objectsize)'` to retrieve the full size of every object in the pack.
+- When requested, `git-stats pack` uses `git cat-file --batch-check='%(objectsize)'` to retrieve the full size of every object in the pack.
 - This represents the total size the objects would occupy if they were not stored as deltas.
 
 ### Deltas
@@ -46,13 +46,13 @@ For loose objects (stored individually in `.git/objects/??/`), the statistics ar
 
 ### Compressed Size
 The compressed size for loose objects is the **sum of the actual sizes of the loose object files** in `.git/objects/??/`.
-- Unlike `git count-objects`, which reports "size on disk" (including filesystem block overhead), `git-pack-stats` manually walks the objects directory and uses `os.path.getsize()` on each file.
+- Unlike `git count-objects`, which reports "size on disk" (including filesystem block overhead), `git-stats pack` manually walks the objects directory and uses `os.path.getsize()` on each file.
 - This provides a more accurate representation of the actual compressed data stored, independent of the underlying filesystem's block size.
 
 ### Uncompressed Size
 Calculating the uncompressed size of loose objects can be a slow operation in repositories with many objects. Therefore, it is only performed when the `--loose-uncompressed` flag is used.
 
-When requested, `git-pack-stats` performs the following steps:
+When requested, `git-stats pack` performs the following steps:
 1.  Lists all files in the `.git/objects/` directory that match the loose object naming pattern (two-character subdirectories with 38-character filenames).
 2.  Passes the resulting list of object SHAs to `git cat-file --batch-check='%(objectsize)'`.
 3.  This command efficiently retrieves the uncompressed size of each object without needing to extract the full object content.

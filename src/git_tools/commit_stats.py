@@ -164,12 +164,3 @@ def run(args):
     print_stats(commits, args.repo)
 
 
-def main():
-    """
-    Main entry point for the git-commit-stats tool.
-    """
-    run(get_parser().parse_args())
-
-
-if __name__ == "__main__":
-    main()
