@@ -72,17 +72,18 @@ def run_git_command(args, repo_path=None, capture_stderr=False):
         return None
 
 
-def get_repo_status(repo_path, fetch_remote=None):
+def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     """
     Gather status information for a Git repository.
 
     Args:
         repo_path (str): Path to the repository.
         fetch_remote (str, optional): Remote to fetch from before checking status.
+        include_storage (bool, optional): Whether to include storage stats.
 
     Returns:
         dict: A dictionary containing 'branch', 'remote_status', 'modified',
-              'untracked', and 'error' (if any).
+              'untracked', 'packs', 'loose', and 'error' (if any).
     """
     if not os.path.isdir(repo_path):
         return {"error": "Path not found"}
@@ -135,11 +136,34 @@ def get_repo_status(repo_path, fetch_remote=None):
             else:
                 modified += 1
 
+    packs = 0
+    loose = 0
+    if include_storage:
+        git_dir = run_git_command(["rev-parse", "--git-dir"], repo_path)
+        if git_dir:
+            if not os.path.isabs(git_dir):
+                git_dir = os.path.abspath(os.path.join(repo_path, git_dir))
+
+            # Count pack files
+            pack_dir = os.path.join(git_dir, "objects", "pack")
+            if os.path.exists(pack_dir):
+                packs = len([f for f in os.listdir(pack_dir) if f.endswith(".pack")])
+
+            # Count loose objects
+            obj_dir = os.path.join(git_dir, "objects")
+            if os.path.exists(obj_dir):
+                for d in os.listdir(obj_dir):
+                    if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
+                        d_path = os.path.join(obj_dir, d)
+                        loose += len(os.listdir(d_path))
+
     return {
         "branch": branch,
         "remote_status": remote_status,
         "modified": modified,
         "untracked": untracked,
+        "packs": packs,
+        "loose": loose,
         "error": None,
     }
 
@@ -386,6 +410,11 @@ def get_parser():
         nargs="?",
         help="Number of parallel jobs to use (default: CPU count).",
     )
+    status_parser.add_argument(
+        "--storage",
+        action="store_true",
+        help="Show number of pack files and loose objects.",
+    )
 
     return parser
 
@@ -436,7 +465,7 @@ def main():
         jobs = args.jobs if args.jobs is not None else multiprocessing.cpu_count()
         with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
             future_to_path = {
-                executor.submit(get_repo_status, path, args.fetch): path
+                executor.submit(get_repo_status, path, args.fetch, args.storage): path
                 for path in active_repos
             }
             for future in concurrent.futures.as_completed(future_to_path):
@@ -472,46 +501,55 @@ def main():
                 others.append(path)
 
         # Print tables
+        storage_header = f" {'Packs':>5} {'Loose':>5}" if args.storage else ""
+        header_text = (
+            f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
+            f"{storage_header}"
+        )
+        line_length = 95 + (13 if args.storage else 0)
+
         for sd in abs_search_dirs:
             group_repos = groups[sd]
             if not group_repos:
                 continue
 
             print(f"\n[{sd}]")
-            print(
-                f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
-            )
-            print("-" * 95)
+            print(header_text)
+            print("-" * line_length)
             for path in group_repos:
                 rel_path = os.path.relpath(path, sd)
                 res = results[path]
                 if res.get("error"):
                     print(f"{truncate_string(rel_path, 40):<40} ERROR: {res['error']}")
                 else:
-                    print(
+                    row = (
                         f"{truncate_string(rel_path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
                         f"{res['modified']:<5} {res['untracked']:<5}"
                     )
+                    if args.storage:
+                        row += f" {res['packs']:>5} {res['loose']:>5}"
+                    print(row)
 
         if others:
             print("\n[Other]")
-            print(
-                f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
-            )
-            print("-" * 95)
+            print(header_text)
+            print("-" * line_length)
             for path in others:
                 res = results[path]
                 if res.get("error"):
                     print(f"{truncate_string(path, 40):<40} ERROR: {res['error']}")
                 else:
-                    print(
+                    row = (
                         f"{truncate_string(path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
                         f"{res['modified']:<5} {res['untracked']:<5}"
                     )
+                    if args.storage:
+                        row += f" {res['packs']:>5} {res['loose']:>5}"
+                    print(row)
     else:
         parser.print_help()
 

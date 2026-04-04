@@ -32,6 +32,7 @@ _shtab_git_repo_manager_status_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   "--fetch[Fetch from remote before checking status (default\: origin). (default\: None)]:fetch:"
   {-j,--jobs}"[Number of parallel jobs to use (default\: CPU count). (default\: None)]:jobs:"
+  "--storage[Show number of pack files and loose objects. (default\: False)]"
 )
 
 # guard to ensure default positional specs are added only once per session

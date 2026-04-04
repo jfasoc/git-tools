@@ -421,6 +421,8 @@ def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
         "remote_status": "Ahead 1",
         "modified": 1,
         "untracked": 1,
+        "packs": 0,
+        "loose": 0,
         "error": None,
     }
 
@@ -444,7 +446,7 @@ def test_get_repo_status_fetch(mock_isdir, mock_is_git, mock_run):
 @patch("git_tools.repo_manager.get_repo_status")
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config", storage=False)
     mock_get_path.return_value = "/mock/config"
     mock_load.return_value = (
         ["/search", "/other_search"],
@@ -455,7 +457,7 @@ def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
         },
     )
 
-    def status_side_effect(path, fetch):
+    def status_side_effect(path, fetch, storage):
         if "error_repo" in path:
             return {"error": "Some error"}
         return {
@@ -463,6 +465,8 @@ def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
             "remote_status": "Up-to-date",
             "modified": 0,
             "untracked": 0,
+            "packs": 0,
+            "loose": 0,
             "error": None,
         }
 
@@ -543,6 +547,8 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
                 return "1"
         if args[0] == "status":
             return ""
+        if args[0] == "rev-parse" and "--git-dir" in args:
+            return ".git"
         return None
 
     mock_run.side_effect = side_effect_behind
@@ -562,6 +568,8 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
                 return "1"
         if args[0] == "status":
             return ""
+        if args[0] == "rev-parse" and "--git-dir" in args:
+            return ".git"
         return None
 
     mock_run.side_effect = side_effect_both
@@ -578,6 +586,8 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
             return "0"
         if args[0] == "status":
             return ""
+        if args[0] == "rev-parse" and "--git-dir" in args:
+            return ".git"
         return None
 
     mock_run.side_effect = side_effect_uptodate
@@ -595,6 +605,76 @@ def test_get_repo_status_remote_status_variants(mock_isdir, mock_is_git, mock_ru
     mock_run.side_effect = side_effect_no_upstream
     res = get_repo_status("/mock/repo")
     assert res["remote_status"] == "N/A"
+
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+@patch("os.path.exists", return_value=True)
+@patch("os.listdir")
+def test_get_repo_status_storage(mock_listdir, mock_exists, mock_isdir, mock_is_git, mock_run):
+    def side_effect(args, repo_path=None, **kwargs):
+        if "rev-parse" in args and "HEAD" in args:
+            return "main"
+        if "rev-parse" in args and "--git-dir" in args:
+            return ".git"
+        if "status" in args:
+            return ""
+        return None
+
+    mock_run.side_effect = side_effect
+
+    def listdir_side_effect(path):
+        if "objects/pack" in path:
+            return ["pack-1.pack", "pack-1.idx"]
+        if "objects/01" in path:
+            return ["obj1"]
+        if "objects" in path:
+            return ["pack", "01", "info"]
+        return []
+
+    mock_listdir.side_effect = listdir_side_effect
+
+    res = get_repo_status("/mock/repo", include_storage=True)
+    assert res["packs"] == 1
+    assert res["loose"] == 1
+
+
+@patch("git_tools.repo_manager.get_config_path")
+@patch("git_tools.repo_manager.load_config")
+@patch("git_tools.repo_manager.get_repo_status")
+@patch("argparse.ArgumentParser.parse_args")
+def test_main_status_storage(mock_args, mock_status, mock_load, mock_get_path):
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config", storage=True)
+    mock_get_path.return_value = "/mock/config"
+    mock_load.return_value = (
+        ["/search"],
+        {
+            os.path.abspath("/search/repo"): {"timestamp": "...", "active": True},
+            os.path.abspath("/outside/repo"): {"timestamp": "...", "active": True},
+        },
+    )
+
+    def status_side_effect(path, fetch, storage):
+        return {
+            "branch": "main",
+            "remote_status": "Up-to-date",
+            "modified": 0,
+            "untracked": 0,
+            "packs": 1,
+            "loose": 2,
+            "error": None,
+        }
+
+    mock_status.side_effect = status_side_effect
+
+    with patch("builtins.print") as mock_print:
+        main()
+        calls = [call.args[0] for call in mock_print.call_args_list if call.args]
+        # Check for storage headers
+        assert any("Packs" in c and "Loose" in c for c in calls)
+        # Check for storage data in both sections
+        assert any("1     2" in c for c in calls)
 
 
 @patch("git_tools.repo_manager.run_git_command")
@@ -645,7 +725,7 @@ def test_main_status_exception(mock_args, mock_get_path, mock_status, mock_load)
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_jobs_optional(mock_args, mock_path, mock_status, mock_load):
     # Test status -j without value
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=None, config="/mock/config")
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=None, config="/mock/config", storage=False)
     mock_load.return_value = (["/search"], {os.path.abspath("/search/repo"): {"active": True}})
     mock_status.return_value = {
         "branch": "main",
@@ -666,7 +746,7 @@ def test_main_status_jobs_optional(mock_args, mock_path, mock_status, mock_load)
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_status, mock_load):
     # Test repo path that doesn't match any search dir
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config", storage=False)
     mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
     mock_status.return_value = {
         "branch": "main",
@@ -687,7 +767,7 @@ def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_status, mock
 @patch("argparse.ArgumentParser.parse_args")
 def test_main_status_other_error(mock_args, mock_path, mock_status, mock_load):
     # Test error in "Other" section
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config", storage=False)
     mock_load.return_value = (["/search"], {os.path.abspath("/outside/repo"): {"active": True}})
     mock_status.return_value = {"error": "Some error"}
 
@@ -704,7 +784,7 @@ def test_main_status_other_error(mock_args, mock_path, mock_status, mock_load):
 def test_main_status_truncation(mock_args, mock_path, mock_status, mock_load):
     # Test that long paths and branches are truncated
     long_path = "/search/" + "a" * 50
-    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config")
+    mock_args.return_value = MagicMock(command="status", fetch=None, jobs=1, config="/mock/config", storage=False)
     mock_load.return_value = (["/search"], {os.path.abspath(long_path): {"active": True}})
     mock_status.return_value = {
         "branch": "a_very_long_branch_name_that_should_be_truncated",
