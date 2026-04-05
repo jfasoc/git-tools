@@ -6,7 +6,7 @@ _shtab_git_repo_manager_subparsers=('scan' 'status')
 
 _shtab_git_repo_manager_option_strings=('-h' '--help' '-V' '--version' '-c' '--config')
 _shtab_git_repo_manager_scan_option_strings=('-h' '--help')
-_shtab_git_repo_manager_status_option_strings=('-h' '--help' '--fetch' '-j' '--jobs')
+_shtab_git_repo_manager_status_option_strings=('-h' '--help' '--fetch' '-j' '--jobs' '--storage')
 
 
 
@@ -24,6 +24,7 @@ _shtab_git_repo_manager_status___help_nargs=0
 _shtab_git_repo_manager_status___fetch_nargs=?
 _shtab_git_repo_manager_status__j_nargs=?
 _shtab_git_repo_manager_status___jobs_nargs=?
+_shtab_git_repo_manager_status___storage_nargs=0
 
 
 # $1=COMP_WORDS[1]
