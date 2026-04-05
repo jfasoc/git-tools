@@ -825,3 +825,37 @@ def test_main_status_truncation(mock_args, mock_path, mock_status, mock_load):
         assert found_path
         assert found_branch
         assert found_remote
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("os.path.exists")
+def test_is_git_repo_bare(mock_exists, mock_run):
+    # Test bare repo detection
+    def exists_side_effect(path):
+        if ".git" in path:
+            return False
+        if any(d in path for d in ["HEAD", "objects", "refs"]):
+            return True
+        return False
+
+    mock_exists.side_effect = exists_side_effect
+    mock_run.return_value = "false\ntrue"  # --is-inside-work-tree false, --is-bare-repository true
+
+    assert is_git_repo("/mock/bare") is True
+    mock_run.assert_called_with(["rev-parse", "--is-inside-work-tree", "--is-bare-repository"], "/mock/bare")
+
+@patch("git_tools.repo_manager.run_git_command")
+@patch("git_tools.repo_manager.is_git_repo", return_value=True)
+@patch("os.path.isdir", return_value=True)
+def test_get_repo_status_bare(mock_isdir, mock_is_git, mock_run):
+    def side_effect(args, repo_path=None, **kwargs):
+        if "--is-bare-repository" in args:
+            return "true"
+        if "rev-parse" in args and "HEAD" in args:
+            return "master"
+        return None
+
+    mock_run.side_effect = side_effect
+    res = get_repo_status("/mock/bare")
+    assert res["branch"] == "master (bare)"
+    assert res["modified"] == "N/A"
+    assert res["untracked"] == "N/A"

@@ -91,6 +91,8 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     if not is_git_repo(repo_path):
         return {"error": "Not a Git repository"}
 
+    is_bare = run_git_command(["rev-parse", "--is-bare-repository"], repo_path) == "true"
+
     if fetch_remote:
         run_git_command(["fetch", fetch_remote], repo_path)
 
@@ -98,6 +100,9 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     branch = run_git_command(["rev-parse", "--abbrev-ref", "HEAD"], repo_path)
     if branch is None:
         return {"error": "Could not determine branch"}
+
+    if is_bare:
+        branch += " (bare)"
 
     # Get remote status
     remote_status = "N/A"
@@ -123,18 +128,22 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
                 remote_status = "Up-to-date"
 
     # Get modified and untracked counts
-    status_out = run_git_command(["status", "--porcelain"], repo_path)
-    if status_out is None:
-        return {"error": "Could not get status"}
-
     modified = 0
     untracked = 0
-    if status_out:
-        for line in status_out.splitlines():
-            if line.startswith("??"):
-                untracked += 1
-            else:
-                modified += 1
+    if is_bare:
+        modified = "N/A"
+        untracked = "N/A"
+    else:
+        status_out = run_git_command(["status", "--porcelain"], repo_path)
+        if status_out is None:
+            return {"error": "Could not get status"}
+
+        if status_out:
+            for line in status_out.splitlines():
+                if line.startswith("??"):
+                    untracked += 1
+                else:
+                    modified += 1
 
     packs = 0
     loose = 0
@@ -170,7 +179,7 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
 
 def is_git_repo(path):
     """
-    Check if a directory is a Git repository.
+    Check if a directory is a Git repository (normal or bare).
 
     Args:
         path (str): Path to the directory.
@@ -178,14 +187,26 @@ def is_git_repo(path):
     Returns:
         bool: True if it's a Git repository, False otherwise.
     """
-    # Fast check for .git entry (folder or file)
+    # Fast check for common indicators
+    # Normal repo has .git/, bare repo has HEAD, objects/, and refs/
     dotgit = os.path.join(path, ".git")
-    if not os.path.exists(dotgit):
+    is_bare_indicator = all(
+        os.path.exists(os.path.join(path, d)) for d in ["HEAD", "objects", "refs"]
+    )
+    if not os.path.exists(dotgit) and not is_bare_indicator:
         return False
 
     # Verify it's a valid git repo using git command.
-    out = run_git_command(["rev-parse", "--is-inside-work-tree"], path)
-    return out == "true"
+    # --is-inside-work-tree is true for normal repos
+    # --is-bare-repository is true for bare repos
+    out = run_git_command(
+        ["rev-parse", "--is-inside-work-tree", "--is-bare-repository"], path
+    )
+    if not out:
+        return False
+
+    # out will be "true\nfalse" or "false\ntrue"
+    return "true" in out.splitlines()
 
 
 def load_config(config_path):
@@ -526,7 +547,7 @@ def main():
                         f"{truncate_string(rel_path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
-                        f"{res['modified']:<5} {res['untracked']:<5}"
+                        f"{str(res['modified']):<5} {str(res['untracked']):<5}"
                     )
                     if args.storage:
                         row += f" {res['packs']:>5} {res['loose']:>5}"
@@ -545,7 +566,7 @@ def main():
                         f"{truncate_string(path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
-                        f"{res['modified']:<5} {res['untracked']:<5}"
+                        f"{str(res['modified']):<5} {str(res['untracked']):<5}"
                     )
                     if args.storage:
                         row += f" {res['packs']:>5} {res['loose']:>5}"
