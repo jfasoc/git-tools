@@ -12,6 +12,7 @@ from git_tools.repo_manager import (
     get_parser,
     get_repo_status,
     truncate_string,
+    parse_origin_domain,
     main,
 )
 
@@ -386,6 +387,19 @@ def test_truncate_string():
     assert truncate_string("another long string", 10) == "another..."
 
 
+def test_parse_origin_domain():
+    assert parse_origin_domain("https://github.com/jfasoc/git-tools.git") == "https:github.com"
+    assert parse_origin_domain("http://github.com/jfasoc/git-tools.git") == "http:github.com"
+    assert parse_origin_domain("git@github.com:jfasoc/git-tools.git") == "ssh:github.com"
+    assert parse_origin_domain("ssh://git@github.com/jfasoc/git-tools.git") == "ssh:github.com"
+    assert parse_origin_domain("ssh://github.com:2222/jfasoc/git-tools.git") == "ssh:github.com"
+    assert parse_origin_domain("https://user@github.com/repo.git") == "https:github.com"
+    assert parse_origin_domain("/tmp/repo") == "N/A"
+    assert parse_origin_domain("user@host:path/to/repo") == "ssh:host"
+    assert parse_origin_domain(None) == "N/A"
+    assert parse_origin_domain("") == "N/A"
+
+
 def test_get_repo_status_path_not_found(tmp_path):
     res = get_repo_status(str(tmp_path / "nonexistent"))
     assert res == {"error": "Path not found"}
@@ -412,6 +426,10 @@ def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
                 return "0"
         if args[0] == "status":
             return " M file1\n?? file2"
+        if args[0] == "remote" and len(args) == 1:
+            return "origin\nupstream"
+        if args[0] == "remote" and args[1] == "get-url":
+            return "https://github.com/user/repo.git"
         return None
 
     mock_run.side_effect = side_effect
@@ -419,6 +437,8 @@ def test_get_repo_status_success(mock_isdir, mock_is_git, mock_run):
     assert res == {
         "branch": "main",
         "remote_status": "Ahead 1",
+        "remote_count": 2,
+        "origin_domain": "https:github.com",
         "modified": 1,
         "untracked": 1,
         "packs": 0,
@@ -463,6 +483,8 @@ def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
         return {
             "branch": "main",
             "remote_status": "Up-to-date",
+            "remote_count": 1,
+            "origin_domain": "https:github.com",
             "modified": 0,
             "untracked": 0,
             "packs": 0,
@@ -479,7 +501,8 @@ def test_main_status(mock_args, mock_status, mock_load, mock_get_path):
         # Check if table header or data was printed (partial match)
         calls = [call.args[0] for call in mock_print.call_args_list if call.args]
         assert any("Remote Status" in c for c in calls)
-        assert any("repo" in c and "main" in c and "Up-to-date" in c for c in calls)
+        assert any("Rem" in c and "Origin" in c for c in calls)
+        assert any("repo" in c and "main" in c and "Up-to-date" in c and "1" in c and "https:github.com" in c for c in calls)
         assert any("error_repo" in c and "ERROR: Some error" in c for c in calls)
 
 
@@ -659,6 +682,8 @@ def test_main_status_storage(mock_args, mock_status, mock_load, mock_get_path):
         return {
             "branch": "main",
             "remote_status": "Up-to-date",
+            "remote_count": 1,
+            "origin_domain": "https:github.com",
             "modified": 0,
             "untracked": 0,
             "packs": 1,
@@ -730,6 +755,8 @@ def test_main_status_jobs_optional(mock_args, mock_path, mock_status, mock_load)
     mock_status.return_value = {
         "branch": "main",
         "remote_status": "Up-to-date",
+        "remote_count": 1,
+        "origin_domain": "https:github.com",
         "modified": 0,
         "untracked": 0,
         "error": None,
@@ -751,6 +778,8 @@ def test_main_status_grouping_edge_cases(mock_args, mock_path, mock_status, mock
     mock_status.return_value = {
         "branch": "main",
         "remote_status": "Up-to-date",
+        "remote_count": 1,
+        "origin_domain": "https:github.com",
         "modified": 0,
         "untracked": 0,
         "error": None,
@@ -789,6 +818,8 @@ def test_main_status_truncation(mock_args, mock_path, mock_status, mock_load):
     mock_status.return_value = {
         "branch": "a_very_long_branch_name_that_should_be_truncated",
         "remote_status": "Ahead 100, Behind 100",
+        "remote_count": 1,
+        "origin_domain": "https:github.com",
         "modified": 0,
         "untracked": 0,
         "error": None,

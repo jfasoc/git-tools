@@ -43,6 +43,49 @@ def truncate_string(s, width):
     return s[: width - 3] + "..."
 
 
+def parse_origin_domain(url):
+    """
+    Parse a Git remote URL to extract the protocol and host.
+
+    Args:
+        url (str): The Git remote URL.
+
+    Returns:
+        str: The formatted string 'protocol:host' or 'N/A'.
+    """
+    if not url:
+        return "N/A"
+
+    # HTTPS/HTTP
+    if url.startswith(("http://", "https://")):
+        protocol = url.split("://")[0]
+        rest = url.split("://")[1]
+        host = rest.split("/")[0]
+        if "@" in host:
+            host = host.split("@")[-1]
+        return f"{protocol}:{host}"
+
+    # SSH (ssh://)
+    if url.startswith("ssh://"):
+        rest = url[6:]
+        host_part = rest.split("/")[0]
+        if "@" in host_part:
+            host_part = host_part.split("@")[-1]
+        if ":" in host_part:
+            host_part = host_part.split(":")[0]
+        return f"ssh:{host_part}"
+
+    # SSH (scp-like)
+    if ":" in url and "/" not in url.split(":")[0]:
+        # host:path or user@host:path
+        host_part = url.split(":")[0]
+        if "@" in host_part:
+            host_part = host_part.split("@")[-1]
+        return f"ssh:{host_part}"
+
+    return "N/A"
+
+
 def run_git_command(args, repo_path=None, capture_stderr=False):
     """
     Run a git command and return its output.
@@ -166,9 +209,20 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
                         d_path = os.path.join(obj_dir, d)
                         loose += len(os.listdir(d_path))
 
+    # Get remote count and origin domain
+    remote_list_out = run_git_command(["remote"], repo_path)
+    remote_count = 0
+    if remote_list_out:
+        remote_count = len(remote_list_out.splitlines())
+
+    origin_url = run_git_command(["remote", "get-url", "origin"], repo_path)
+    origin_domain = parse_origin_domain(origin_url)
+
     return {
         "branch": branch,
         "remote_status": remote_status,
+        "remote_count": remote_count,
+        "origin_domain": origin_domain,
         "modified": modified,
         "untracked": untracked,
         "packs": packs,
@@ -524,10 +578,11 @@ def main():
         # Print tables
         storage_header = f" {'Packs':>5} {'Loose':>5}" if args.storage else ""
         header_text = (
-            f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} {'Mod':<5} {'Unt':<5}"
+            f"{'Path':<40} {'Branch':<20} {'Remote Status':<20} "
+            f"{'Rem':<3} {'Origin':<20} {'Mod':<5} {'Unt':<5}"
             f"{storage_header}"
         )
-        line_length = 95 + (13 if args.storage else 0)
+        line_length = 120 + (13 if args.storage else 0)
 
         for sd in abs_search_dirs:
             group_repos = groups[sd]
@@ -547,6 +602,8 @@ def main():
                         f"{truncate_string(rel_path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{str(res['remote_count']):<3} "
+                        f"{truncate_string(res['origin_domain'], 20):<20} "
                         f"{str(res['modified']):<5} {str(res['untracked']):<5}"
                     )
                     if args.storage:
@@ -566,6 +623,8 @@ def main():
                         f"{truncate_string(path, 40):<40} "
                         f"{truncate_string(res['branch'], 20):<20} "
                         f"{truncate_string(res['remote_status'], 20):<20} "
+                        f"{str(res['remote_count']):<3} "
+                        f"{truncate_string(res['origin_domain'], 20):<20} "
                         f"{str(res['modified']):<5} {str(res['untracked']):<5}"
                     )
                     if args.storage:
