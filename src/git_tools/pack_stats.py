@@ -382,9 +382,15 @@ def print_stats(stats, human=False, verbose=False):
     # Header
     header = (
         f"{'Pack Name':<60} {'Objects':>10} {'Deltas':>10} {'Size':>12} "
-        f"{'Uncompressed':>12} {'Actual':>12} {'Comp %':>8} {'Act %':>8} "
-        f"{'% Obj':>8} {'% Size':>8}"
+        f"{'Uncompressed':>12} "
     )
+    if total_actual is not None:
+        header += f"{'Actual':>12} "
+    header += f"{'Comp %':>8} "
+    if total_actual is not None:
+        header += f"{'Act %':>8} "
+    header += f"{'% Obj':>8} {'% Size':>8}"
+
     print(header)
     print("-" * len(header))
 
@@ -394,21 +400,33 @@ def print_stats(stats, human=False, verbose=False):
         comp_ratio = (
             (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
         )
-        if data["actual"] is not None:
-            act_ratio = (data["size"] / data["actual"] * 100) if data["actual"] else 0
-            actual_str = format_size(data["actual"], human)
-            act_ratio_str = f"{act_ratio:>7.1f}%"
-        else:
-            actual_str = f"{'N/A':>12}"
-            act_ratio_str = f"{'N/A':>8}"
 
-        print(
+        row = (
             f"{data['name']:<60} {data['objects']:>10} {data['deltas']:>10} "
             f"{format_size(data['size'], human):>12} "
             f"{format_size(data['uncompressed'], human):>12} "
-            f"{actual_str:>12} {comp_ratio:>7.1f}% {act_ratio_str} "
-            f"{p_obj:>7.1f}% {p_size:>7.1f}%"
         )
+        if total_actual is not None:
+            if data["actual"] is not None:
+                actual_str = format_size(data["actual"], human)
+            else:
+                actual_str = "N/A"
+            row += f"{actual_str:>12} "
+
+        row += f"{comp_ratio:>7.1f}% "
+
+        if total_actual is not None:
+            if data["actual"] is not None:
+                act_ratio = (
+                    (data["size"] / data["actual"] * 100) if data["actual"] else 0
+                )
+                act_ratio_str = f"{act_ratio:>7.1f}%"
+            else:
+                act_ratio_str = "N/A"
+            row += f"{act_ratio_str:>8} "
+
+        row += f"{p_obj:>7.1f}% {p_size:>7.1f}%"
+        print(row)
 
     # Loose objects section
     print("-" * len(header))
@@ -419,21 +437,34 @@ def print_stats(stats, human=False, verbose=False):
         comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
         loose_uncomp_str = format_size(loose_uncomp, human)
         comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
-        actual_loose_str = loose_uncomp_str
-        act_ratio_loose_str = comp_ratio_loose_str
     else:
-        loose_uncomp_str = f"{'N/A':>12}"
-        comp_ratio_loose_str = f"{'N/A':>8}"
-        actual_loose_str = f"{'N/A':>12}"
-        act_ratio_loose_str = f"{'N/A':>8}"
+        loose_uncomp_str = "N/A"
+        comp_ratio_loose_str = "N/A"
 
-    print(
+    row = (
         f"{'Loose Objects':<60} {loose_count:>10} {loose_deltas:>10} "
         f"{format_size(loose_size, human):>12} "
-        f"{loose_uncomp_str:>12} {actual_loose_str:>12} "
-        f"{comp_ratio_loose_str} {act_ratio_loose_str} "
-        f"{p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
+        f"{loose_uncomp_str:>12} "
     )
+
+    if total_actual is not None:
+        if loose_uncomp is not None:
+            actual_loose_str = loose_uncomp_str
+        else:
+            actual_loose_str = "N/A"
+        row += f"{actual_loose_str:>12} "
+
+    row += f"{comp_ratio_loose_str:>8} "
+
+    if total_actual is not None:
+        if loose_uncomp is not None:
+            act_ratio_loose_str = comp_ratio_loose_str
+        else:
+            act_ratio_loose_str = "N/A"
+        row += f"{act_ratio_loose_str:>8} "
+
+    row += f"{p_obj_loose:>7.1f}% {p_size_loose:>7.1f}%"
+    print(row)
 
     # Total
     print("=" * len(header))
@@ -442,30 +473,39 @@ def print_stats(stats, human=False, verbose=False):
     )
     # If loose_uncomp is N/A, the total uncompressed is also incomplete/N/A
     if loose_uncomp is None and loose_count > 0:
-        total_uncompressed_str = f"{'N/A':>12}"
-        total_comp_ratio_str = f"{'N/A':>8}"
-        total_actual_str = f"{'N/A':>12}"
-        total_act_ratio_str = f"{'N/A':>8}"
+        total_uncompressed_str = "N/A"
+        total_comp_ratio_str = "N/A"
     else:
         total_uncompressed_str = format_size(total_uncompressed, human)
         total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
-        if total_actual is not None:
+
+    row = (
+        f"{'Total':<60} {total_objects:>10} {total_deltas:>10} "
+        f"{format_size(total_size, human):>12} "
+        f"{total_uncompressed_str:>12} "
+    )
+
+    if total_actual is not None:
+        if loose_uncomp is None and loose_count > 0:
+            total_actual_str = "N/A"
+        else:
+            total_actual_str = format_size(total_actual, human)
+        row += f"{total_actual_str:>12} "
+
+    row += f"{total_comp_ratio_str:>8} "
+
+    if total_actual is not None:
+        if loose_uncomp is None and loose_count > 0:
+            total_act_ratio_str = "N/A"
+        else:
             total_act_ratio = (
                 (total_size / total_actual * 100) if total_actual else 0
             )
-            total_actual_str = format_size(total_actual, human)
             total_act_ratio_str = f"{total_act_ratio:>7.1f}%"
-        else:
-            total_actual_str = f"{'N/A':>12}"
-            total_act_ratio_str = f"{'N/A':>8}"
+        row += f"{total_act_ratio_str:>8} "
 
-    print(
-        f"{'Total':<60} {total_objects:>10} {total_deltas:>10} "
-        f"{format_size(total_size, human):>12} "
-        f"{total_uncompressed_str:>12} {total_actual_str:>12} "
-        f"{total_comp_ratio_str} {total_act_ratio_str} "
-        f"{100.0:>7.1f}% {100.0:>7.1f}%"
-    )
+    row += f"{100.0:>7.1f}% {100.0:>7.1f}%"
+    print(row)
 
 
 def run(args):
