@@ -26,6 +26,11 @@ def test_get_parser():
     assert args.verbose is True
     assert args.repo == "myrepo"
 
+    # Test pack subcommand with --no-loose-uncompressed
+    args = parser.parse_args(["pack", "--no-loose-uncompressed"])
+    assert args.command == "pack"
+    assert args.loose_uncompressed is False
+
     # Test version
     with pytest.raises(SystemExit) as e:
         parser.parse_args(["--version"])

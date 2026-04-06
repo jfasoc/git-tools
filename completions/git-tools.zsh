@@ -90,7 +90,8 @@ _shtab_git_stats_commit_defaults_added=0
 _shtab_git_stats_pack_options=(
   "(- : *)"{-h,--help}"[show this help message and exit]"
   {-H,--human}"[Display human-readable sizes (e.g., KiB, MiB).]"
-  "--loose-uncompressed[Include uncompressed size for loose objects (can be slow).]"
+  "--loose-uncompressed[Include uncompressed size for loose objects (can be slow). Auto-enabled if \<\= 1000 loose objects.]"
+  "--no-loose-uncompressed[Disable uncompressed size for loose objects.]"
   "--actual-size[Include the actual full uncompressed size of all objects (can be slow).]"
   {-v,--verbose}"[Print how long time it took to obtain each set of data.]"
   ":Path to the git repository.:_files -/"

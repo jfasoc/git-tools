@@ -7,6 +7,7 @@ from git_tools.pack_stats import (
     get_git_dir,
     get_pack_files,
     get_pack_info,
+    get_loose_count,
     get_loose_info,
     format_size,
     get_parser,
@@ -292,6 +293,38 @@ def test_get_loose_info_no_obj_dir():
         assert uncompressed == 0
 
 
+def test_get_loose_count_success():
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
+        patch("os.listdir") as mock_listdir,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = True
+        mock_listdir.side_effect = [
+            ["ab", "cd"],  # Inside .git/objects
+            ["1234"],      # Inside .git/objects/ab
+            ["5678", "9012"] # Inside .git/objects/cd
+        ]
+        assert get_loose_count() == 3
+
+
+def test_get_loose_count_no_obj_dir():
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("os.path.exists") as mock_exists,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_exists.return_value = False
+        assert get_loose_count() == 0
+
+
+def test_get_loose_count_exception():
+    with patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir:
+        mock_get_git_dir.side_effect = Exception()
+        assert get_loose_count() == 0
+
+
 def test_format_size():
     # Default (human=False)
     assert format_size(500) == "500"
@@ -342,6 +375,102 @@ def test_main_with_data(capsys):
         assert "Loose Objects" in captured.out
         assert "50.0%" in captured.out
         assert "50.0%" in captured.out
+
+
+def test_main_with_loose_uncompressed_threshold_auto_enabled(capsys):
+    # Case: <= 1000 objects, default (None)
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("git_tools.pack_stats.get_loose_count") as mock_get_count,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = []
+        mock_get_info.return_value = (0, 0, 0, 0, None)
+        mock_get_loose.return_value = (1000, 0, 512, 1024)
+        mock_get_count.return_value = 1000
+
+        args = get_parser().parse_args([])
+        run(args)
+        captured = capsys.readouterr()
+        # Should be enabled because 1000 <= 1000
+        assert "1.024" in captured.out
+        mock_get_loose.assert_called_with(".", True)
+
+
+def test_main_with_loose_uncompressed_threshold_auto_disabled(capsys):
+    # Case: > 1000 objects, default (None)
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("git_tools.pack_stats.get_loose_count") as mock_get_count,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = []
+        mock_get_info.return_value = (0, 0, 0, 0, None)
+        mock_get_loose.return_value = (1001, 0, 512, None)
+        mock_get_count.return_value = 1001
+
+        args = get_parser().parse_args([])
+        run(args)
+        captured = capsys.readouterr()
+        # Should be disabled because 1001 > 1000
+        assert "N/A" in captured.out
+        mock_get_loose.assert_called_with(".", False)
+
+
+def test_main_with_loose_uncompressed_explicit_on(capsys):
+    # Case: > 1000 objects, but explicit --loose-uncompressed
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("git_tools.pack_stats.get_loose_count") as mock_get_count,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = []
+        mock_get_info.return_value = (0, 0, 0, 0, None)
+        mock_get_loose.return_value = (2000, 0, 512, 1024)
+        mock_get_count.return_value = 2000
+
+        args = get_parser().parse_args(["--loose-uncompressed"])
+        run(args)
+        captured = capsys.readouterr()
+        # Should be enabled despite being > 1000
+        assert "1.024" in captured.out
+        mock_get_loose.assert_called_with(".", True)
+        # get_loose_count should NOT be called if explicit
+        mock_get_count.assert_not_called()
+
+
+def test_main_with_loose_uncompressed_explicit_off(capsys):
+    # Case: < 1000 objects, but explicit --no-loose-uncompressed
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info") as mock_get_info,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+        patch("git_tools.pack_stats.get_loose_count") as mock_get_count,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = []
+        mock_get_info.return_value = (0, 0, 0, 0, None)
+        mock_get_loose.return_value = (10, 0, 512, None)
+        mock_get_count.return_value = 10
+
+        args = get_parser().parse_args(["--no-loose-uncompressed"])
+        run(args)
+        captured = capsys.readouterr()
+        # Should be disabled despite being < 1000
+        assert "N/A" in captured.out
+        mock_get_loose.assert_called_with(".", False)
+        # get_loose_count should NOT be called if explicit
+        mock_get_count.assert_not_called()
 
 
 def test_main_with_loose_uncompressed(capsys):
