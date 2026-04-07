@@ -19,7 +19,9 @@ def test_get_parser():
     assert args.repo == "myrepo"
 
     # Test pack subcommand
-    args = parser.parse_args(["pack", "--human", "--loose-uncompressed", "-v", "myrepo"])
+    args = parser.parse_args(
+        ["pack", "--human", "--loose-uncompressed", "-v", "myrepo"]
+    )
     assert args.command == "pack"
     assert args.human is True
     assert args.loose_uncompressed is True

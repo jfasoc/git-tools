@@ -201,7 +201,7 @@ def test_get_pack_info_fast():
     with (
         patch("subprocess.run") as mock_run,
         patch("os.path.getsize") as mock_getsize,
-        patch("builtins.open", MagicMock()) as mock_open,
+        patch("builtins.open", MagicMock()),
     ):
         mock_run.return_value = MagicMock(stdout=b"line1\nline2\nline3\n", returncode=0)
         mock_getsize.return_value = 1024
@@ -219,7 +219,7 @@ def test_get_pack_info_fast():
     with (
         patch("subprocess.run") as mock_run,
         patch("os.path.getsize") as mock_getsize,
-        patch("builtins.open", MagicMock()) as mock_open,
+        patch("builtins.open", MagicMock()),
     ):
         mock_run.return_value = MagicMock(stdout=b"line1\n", returncode=0)
         mock_getsize.return_value = 100
@@ -337,8 +337,8 @@ def test_get_loose_count_success():
         mock_exists.return_value = True
         mock_listdir.side_effect = [
             ["ab", "cd"],  # Inside .git/objects
-            ["1234"],      # Inside .git/objects/ab
-            ["5678", "9012"] # Inside .git/objects/cd
+            ["1234"],  # Inside .git/objects/ab
+            ["5678", "9012"],  # Inside .git/objects/cd
         ]
         assert get_loose_count() == 3
 
@@ -621,7 +621,10 @@ def test_main_sorting(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = ["small.pack", "large.pack"]
-        mock_get_info.side_effect = [(10, 5, 100, 200, None), (100, 50, 1000, 2000, None)]
+        mock_get_info.side_effect = [
+            (10, 5, 100, 200, None),
+            (100, 50, 1000, 2000, None),
+        ]
         mock_get_loose.return_value = (0, 0, 0, None)
 
         args = get_parser().parse_args(["."])

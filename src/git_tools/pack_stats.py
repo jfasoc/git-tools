@@ -153,9 +153,7 @@ def get_pack_info_fast(git_dir, pack_file, repo_path=None):
 
     import subprocess
 
-    result = subprocess.run(
-        cmd, input=idx_content, capture_output=True, check=True
-    )
+    result = subprocess.run(cmd, input=idx_content, capture_output=True, check=True)
     output = result.stdout.decode("utf-8")
     object_count = len(output.splitlines())
 
@@ -613,9 +611,7 @@ def print_stats(stats, human=False, verbose=False):
         if loose_uncomp is None and loose_count > 0:
             total_act_ratio_str = "N/A"
         else:
-            total_act_ratio = (
-                (total_size / total_actual * 100) if total_actual else 0
-            )
+            total_act_ratio = (total_size / total_actual * 100) if total_actual else 0
             total_act_ratio_str = f"{total_act_ratio:>7.1f}%"
         row += f"{total_act_ratio_str:>8} "
 
@@ -650,5 +646,3 @@ def run(args):
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-

@@ -134,7 +134,9 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     if not is_git_repo(repo_path):
         return {"error": "Not a Git repository"}
 
-    is_bare = run_git_command(["rev-parse", "--is-bare-repository"], repo_path) == "true"
+    is_bare = (
+        run_git_command(["rev-parse", "--is-bare-repository"], repo_path) == "true"
+    )
 
     if fetch_remote:
         run_git_command(["fetch", fetch_remote], repo_path)
@@ -538,7 +540,9 @@ def main():
         # Parallel status gathering
         results = {}
         jobs = args.jobs if args.jobs is not None else multiprocessing.cpu_count()
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, jobs)) as executor:
+        with concurrent.futures.ThreadPoolExecutor(
+            max_workers=max(1, jobs)
+        ) as executor:
             future_to_path = {
                 executor.submit(get_repo_status, path, args.fetch, args.storage): path
                 for path in active_repos
@@ -552,9 +556,7 @@ def main():
 
         # Group by search directory
         groups = {}
-        abs_search_dirs = [
-            os.path.abspath(os.path.expanduser(d)) for d in search_dirs
-        ]
+        abs_search_dirs = [os.path.abspath(os.path.expanduser(d)) for d in search_dirs]
         for sd in abs_search_dirs:
             groups[sd] = []
 

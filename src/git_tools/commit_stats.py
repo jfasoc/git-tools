@@ -162,5 +162,3 @@ def run(args):
     """
     commits = get_commits(args.repo)
     print_stats(commits, args.repo)
-
-
