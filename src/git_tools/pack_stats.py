@@ -119,6 +119,30 @@ def get_pack_info(git_dir, pack_file, repo_path=None, include_actual=False):
     return object_count, delta_count, size, uncompressed_size, actual_size
 
 
+def get_loose_count(repo_path=None):
+    """
+    Get the count of loose objects in the repository.
+
+    Args:
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        int: The number of loose objects.
+    """
+    try:
+        git_dir = get_git_dir(repo_path)
+        obj_dir = os.path.join(git_dir, "objects")
+        count = 0
+        if os.path.exists(obj_dir):
+            for d in os.listdir(obj_dir):
+                if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
+                    d_path = os.path.join(obj_dir, d)
+                    count += len(os.listdir(d_path))
+        return count
+    except Exception:
+        return 0
+
+
 def get_loose_info(repo_path=None, include_uncompressed=False):
     """
     Gather statistics for loose objects in the repository.
@@ -240,7 +264,15 @@ def get_parser():
     parser.add_argument(
         "--loose-uncompressed",
         action="store_true",
-        help="Include uncompressed size for loose objects (can be slow).",
+        default=None,
+        help="Include uncompressed size for loose objects (can be slow). "
+        "Auto-enabled if <= 1000 loose objects.",
+    )
+    parser.add_argument(
+        "--no-loose-uncompressed",
+        action="store_false",
+        dest="loose_uncompressed",
+        help="Disable uncompressed size for loose objects.",
     )
     parser.add_argument(
         "--actual-size",
@@ -516,8 +548,14 @@ def run(args):
         args (argparse.Namespace): The parsed command-line arguments.
     """
     try:
+        loose_uncompressed = args.loose_uncompressed
+        if loose_uncompressed is None:
+            # If not specified, auto-enable if <= 1000 loose objects
+            count = get_loose_count(args.repo)
+            loose_uncompressed = count <= 1000
+
         stats = collect_stats(
-            args.repo, args.verbose, args.loose_uncompressed, args.actual_size
+            args.repo, args.verbose, loose_uncompressed, args.actual_size
         )
         print_stats(stats, args.human, args.verbose)
     except SystemExit:

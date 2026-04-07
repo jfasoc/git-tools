@@ -64,7 +64,15 @@ def get_parser():
     pack_parser.add_argument(
         "--loose-uncompressed",
         action="store_true",
-        help="Include uncompressed size for loose objects (can be slow).",
+        default=None,
+        help="Include uncompressed size for loose objects (can be slow). "
+        "Auto-enabled if <= 1000 loose objects.",
+    )
+    pack_parser.add_argument(
+        "--no-loose-uncompressed",
+        action="store_false",
+        dest="loose_uncompressed",
+        help="Disable uncompressed size for loose objects.",
     )
     pack_parser.add_argument(
         "--actual-size",
