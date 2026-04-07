@@ -93,6 +93,7 @@ _shtab_git_stats_pack_options=(
   "--loose-uncompressed[Include uncompressed size for loose objects (can be slow). Auto-enabled if \<\= 1000 loose objects.]"
   "--no-loose-uncompressed[Disable uncompressed size for loose objects.]"
   "--actual-size[Include the actual full uncompressed size of all objects (can be slow).]"
+  {-f,--fast}"[Disable collection of data that takes long time (Deltas, Uncompressed, Actual).]"
   {-v,--verbose}"[Print how long time it took to obtain each set of data.]"
   ":Path to the git repository.:_files -/"
 )
