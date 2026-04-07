@@ -25,6 +25,7 @@ dev = [
     "pytest",
     "pytest-mock",
     "pytest-cov",
+    "pytest-bdd",
     "ruff",
     "argcomplete",
     "shtab",
