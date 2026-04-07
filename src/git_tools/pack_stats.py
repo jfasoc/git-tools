@@ -153,7 +153,9 @@ def get_pack_info_fast(git_dir, pack_file, repo_path=None):
 
     import subprocess
 
-    result = subprocess.run(cmd, input=idx_content, capture_output=True, check=True)
+    result = subprocess.run(
+        cmd, input=idx_content, capture_output=True, check=True
+    )
     output = result.stdout.decode("utf-8")
     object_count = len(output.splitlines())
 
