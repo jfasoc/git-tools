@@ -9,7 +9,9 @@ def test_bash_completion_content():
 
     # Check for main tools
     assert "complete -o filenames -F _shtab_git_stats git-stats" in content
-    assert "complete -o filenames -F _shtab_git_repo_manager git-repo-manager" in content
+    assert (
+        "complete -o filenames -F _shtab_git_repo_manager git-repo-manager" in content
+    )
 
     # Check for version flags in Bash
     assert "-V" in content

@@ -7,6 +7,7 @@ from git_tools.pack_stats import (
     get_git_dir,
     get_pack_files,
     get_pack_info,
+    get_pack_info_fast,
     get_loose_count,
     get_loose_info,
     format_size,
@@ -196,6 +197,39 @@ def test_get_pack_info_with_tag():
         assert uncompressed == 50
 
 
+def test_get_pack_info_fast():
+    with (
+        patch("subprocess.run") as mock_run,
+        patch("os.path.getsize") as mock_getsize,
+        patch("builtins.open", MagicMock()),
+    ):
+        mock_run.return_value = MagicMock(stdout=b"line1\nline2\nline3\n", returncode=0)
+        mock_getsize.return_value = 1024
+
+        count, deltas, size, uncompressed, actual = get_pack_info_fast(
+            "/abs/path/.git", "pack-1.pack"
+        )
+        assert count == 3
+        assert deltas == 0
+        assert size == 1024
+        assert uncompressed == 0
+        assert actual is None
+
+    # Test with repo_path
+    with (
+        patch("subprocess.run") as mock_run,
+        patch("os.path.getsize") as mock_getsize,
+        patch("builtins.open", MagicMock()),
+    ):
+        mock_run.return_value = MagicMock(stdout=b"line1\n", returncode=0)
+        mock_getsize.return_value = 100
+
+        get_pack_info_fast("/abs/path/.git", "pack-1.pack", repo_path="/tmp/repo")
+        args, kwargs = mock_run.call_args
+        assert "-C" in args[0]
+        assert "/tmp/repo" in args[0]
+
+
 def test_get_pack_info_parsing_error():
     with (
         patch("git_tools.pack_stats.run_git_command") as mock_git,
@@ -303,8 +337,8 @@ def test_get_loose_count_success():
         mock_exists.return_value = True
         mock_listdir.side_effect = [
             ["ab", "cd"],  # Inside .git/objects
-            ["1234"],      # Inside .git/objects/ab
-            ["5678", "9012"] # Inside .git/objects/cd
+            ["1234"],  # Inside .git/objects/ab
+            ["5678", "9012"],  # Inside .git/objects/cd
         ]
         assert get_loose_count() == 3
 
@@ -587,7 +621,10 @@ def test_main_sorting(capsys):
     ):
         mock_get_git_dir.return_value = ".git"
         mock_get_packs.return_value = ["small.pack", "large.pack"]
-        mock_get_info.side_effect = [(10, 5, 100, 200, None), (100, 50, 1000, 2000, None)]
+        mock_get_info.side_effect = [
+            (10, 5, 100, 200, None),
+            (100, 50, 1000, 2000, None),
+        ]
         mock_get_loose.return_value = (0, 0, 0, None)
 
         args = get_parser().parse_args(["."])
@@ -654,6 +691,26 @@ def test_version_unknown(capsys):
         assert excinfo.value.code == 0
         captured = capsys.readouterr()
         assert "unknown" in captured.out
+
+
+def test_main_fast(capsys):
+    with (
+        patch("git_tools.pack_stats.get_git_dir") as mock_get_git_dir,
+        patch("git_tools.pack_stats.get_pack_files") as mock_get_packs,
+        patch("git_tools.pack_stats.get_pack_info_fast") as mock_get_info_fast,
+        patch("git_tools.pack_stats.get_loose_info") as mock_get_loose,
+    ):
+        mock_get_git_dir.return_value = ".git"
+        mock_get_packs.return_value = ["pack-1.pack"]
+        mock_get_info_fast.return_value = (10, 0, 512, 0, None)
+        mock_get_loose.return_value = (10, 0, 512, None)
+
+        args = get_parser().parse_args(["--fast"])
+        run(args)
+        captured = capsys.readouterr()
+        assert "pack-1.pack" in captured.out
+        assert "Deltas" not in captured.out
+        assert "Uncompressed" not in captured.out
 
 
 def test_short_version_flag(capsys):

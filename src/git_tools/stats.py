@@ -80,6 +80,12 @@ def get_parser():
         help="Include the actual full uncompressed size of all objects (can be slow).",
     )
     pack_parser.add_argument(
+        "-f",
+        "--fast",
+        action="store_true",
+        help="Disable collection of data that takes long time (Deltas, Uncompressed, Actual).",
+    )
+    pack_parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",

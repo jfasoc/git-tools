@@ -119,6 +119,50 @@ def get_pack_info(git_dir, pack_file, repo_path=None, include_actual=False):
     return object_count, delta_count, size, uncompressed_size, actual_size
 
 
+def get_pack_info_fast(git_dir, pack_file, repo_path=None):
+    """
+    Gather basic statistics for a specific pack file quickly.
+
+    Counts the number of objects using git show-index. This is much faster
+    than verify-pack -v as it doesn't process the entire pack file.
+
+    Args:
+        git_dir (str): Absolute path to the .git directory.
+        pack_file (str): Filename of the pack file.
+        repo_path (str, optional): Path to the git repository. Defaults to None (CWD).
+
+    Returns:
+        tuple: (object_count, delta_count, size, uncompressed_size, actual_size)
+            object_count (int): Number of objects in the pack file.
+            delta_count (int): Always 0 in fast mode.
+            size (int): Compressed size of the pack file in bytes.
+            uncompressed_size (int): Always 0 in fast mode.
+            actual_size (int or None): Always None in fast mode.
+    """
+    pack_path = os.path.join(git_dir, "objects", "pack", pack_file)
+    idx_path = pack_path[:-5] + ".idx"
+
+    # Count objects using git show-index
+    # The output format for show-index is one line per object.
+    with open(idx_path, "rb") as f:
+        idx_content = f.read()
+    cmd = ["git"]
+    if repo_path:
+        cmd.extend(["-C", repo_path])
+    cmd.extend(["show-index"])
+
+    import subprocess
+
+    result = subprocess.run(cmd, input=idx_content, capture_output=True, check=True)
+    output = result.stdout.decode("utf-8")
+    object_count = len(output.splitlines())
+
+    # Get size
+    size = os.path.getsize(pack_path)
+
+    return object_count, 0, size, 0, None
+
+
 def get_loose_count(repo_path=None):
     """
     Get the count of loose objects in the repository.
@@ -280,6 +324,12 @@ def get_parser():
         help="Include the actual full uncompressed size of all objects (can be slow).",
     )
     parser.add_argument(
+        "-f",
+        "--fast",
+        action="store_true",
+        help="Disable collection of data that takes long time (Deltas, Uncompressed, Actual).",
+    )
+    parser.add_argument(
         "-v",
         "--verbose",
         action="store_true",
@@ -292,7 +342,11 @@ def get_parser():
 
 
 def collect_stats(
-    repo_path, verbose=False, loose_uncompressed=False, include_actual=False
+    repo_path,
+    verbose=False,
+    loose_uncompressed=False,
+    include_actual=False,
+    fast=False,
 ):
     """
     Gather storage statistics for the Git repository.
@@ -305,6 +359,8 @@ def collect_stats(
                                             Defaults to False.
         include_actual (bool, optional): Whether to calculate actual uncompressed
                                           size for objects. Defaults to False.
+        fast (bool, optional): Whether to disable expensive data collection.
+                                Defaults to False.
 
     Returns:
         dict: A dictionary containing all collected statistics and total duration.
@@ -327,9 +383,14 @@ def collect_stats(
 
     for pf in pack_files:
         start_time = time.perf_counter()
-        count, deltas, size, uncompressed, actual = get_pack_info(
-            git_dir, pf, repo_path, include_actual
-        )
+        if fast:
+            count, deltas, size, uncompressed, actual = get_pack_info_fast(
+                git_dir, pf, repo_path
+            )
+        else:
+            count, deltas, size, uncompressed, actual = get_pack_info(
+                git_dir, pf, repo_path, include_actual
+            )
         duration = (time.perf_counter() - start_time) * 1000
         if verbose:
             print(f"{duration:10.3f} ms get info for {pf}")
@@ -352,7 +413,9 @@ def collect_stats(
             total_actual += actual
 
     start_time = time.perf_counter()
-    l_count, l_deltas, l_size, l_uncomp = get_loose_info(repo_path, loose_uncompressed)
+    l_count, l_deltas, l_size, l_uncomp = get_loose_info(
+        repo_path, loose_uncompressed and not fast
+    )
     duration = (time.perf_counter() - start_time) * 1000
     if verbose:
         print(f"{duration:10.3f} ms get info for loose objects")
@@ -382,6 +445,7 @@ def collect_stats(
         "loose_size": l_size,
         "loose_uncomp": l_uncomp,
         "total_duration": total_duration,
+        "fast": fast,
     }
 
 
@@ -410,15 +474,19 @@ def print_stats(stats, human=False, verbose=False):
     loose_deltas = stats["loose_deltas"]
     loose_size = stats["loose_size"]
     loose_uncomp = stats["loose_uncomp"]
+    fast = stats.get("fast", False)
 
     # Header
-    header = (
-        f"{'Pack Name':<60} {'Objects':>10} {'Deltas':>10} {'Size':>12} "
-        f"{'Uncompressed':>12} "
-    )
+    header = f"{'Pack Name':<60} {'Objects':>10} "
+    if not fast:
+        header += f"{'Deltas':>10} "
+    header += f"{'Size':>12} "
+    if not fast:
+        header += f"{'Uncompressed':>12} "
     if total_actual is not None:
         header += f"{'Actual':>12} "
-    header += f"{'Comp %':>8} "
+    if not fast:
+        header += f"{'Comp %':>8} "
     if total_actual is not None:
         header += f"{'Act %':>8} "
     header += f"{'% Obj':>8} {'% Size':>8}"
@@ -429,15 +497,13 @@ def print_stats(stats, human=False, verbose=False):
     for data in pack_data:
         p_obj = (data["objects"] / total_objects * 100) if total_objects > 0 else 0
         p_size = (data["size"] / total_size * 100) if total_size > 0 else 0
-        comp_ratio = (
-            (data["size"] / data["uncompressed"] * 100) if data["uncompressed"] else 0
-        )
 
-        row = (
-            f"{data['name']:<60} {data['objects']:>10} {data['deltas']:>10} "
-            f"{format_size(data['size'], human):>12} "
-            f"{format_size(data['uncompressed'], human):>12} "
-        )
+        row = f"{data['name']:<60} {data['objects']:>10} "
+        if not fast:
+            row += f"{data['deltas']:>10} "
+        row += f"{format_size(data['size'], human):>12} "
+        if not fast:
+            row += f"{format_size(data['uncompressed'], human):>12} "
         if total_actual is not None:
             if data["actual"] is not None:
                 actual_str = format_size(data["actual"], human)
@@ -445,7 +511,13 @@ def print_stats(stats, human=False, verbose=False):
                 actual_str = "N/A"
             row += f"{actual_str:>12} "
 
-        row += f"{comp_ratio:>7.1f}% "
+        if not fast:
+            comp_ratio = (
+                (data["size"] / data["uncompressed"] * 100)
+                if data["uncompressed"]
+                else 0
+            )
+            row += f"{comp_ratio:>7.1f}% "
 
         if total_actual is not None:
             if data["actual"] is not None:
@@ -465,32 +537,37 @@ def print_stats(stats, human=False, verbose=False):
     p_obj_loose = (loose_count / total_objects * 100) if total_objects > 0 else 0
     p_size_loose = (loose_size / total_size * 100) if total_size > 0 else 0
 
-    if loose_uncomp is not None:
-        comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
-        loose_uncomp_str = format_size(loose_uncomp, human)
-        comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
-    else:
-        loose_uncomp_str = "N/A"
-        comp_ratio_loose_str = "N/A"
+    row = f"{'Loose Objects':<60} {loose_count:>10} "
+    if not fast:
+        row += f"{loose_deltas:>10} "
+    row += f"{format_size(loose_size, human):>12} "
 
-    row = (
-        f"{'Loose Objects':<60} {loose_count:>10} {loose_deltas:>10} "
-        f"{format_size(loose_size, human):>12} "
-        f"{loose_uncomp_str:>12} "
-    )
+    if not fast:
+        if loose_uncomp is not None:
+            loose_uncomp_str = format_size(loose_uncomp, human)
+        else:
+            loose_uncomp_str = "N/A"
+        row += f"{loose_uncomp_str:>12} "
 
     if total_actual is not None:
         if loose_uncomp is not None:
-            actual_loose_str = loose_uncomp_str
+            actual_loose_str = format_size(loose_uncomp, human)
         else:
             actual_loose_str = "N/A"
         row += f"{actual_loose_str:>12} "
 
-    row += f"{comp_ratio_loose_str:>8} "
+    if not fast:
+        if loose_uncomp is not None:
+            comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
+            comp_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
+        else:
+            comp_ratio_loose_str = "N/A"
+        row += f"{comp_ratio_loose_str:>8} "
 
     if total_actual is not None:
         if loose_uncomp is not None:
-            act_ratio_loose_str = comp_ratio_loose_str
+            comp_ratio_loose = (loose_size / loose_uncomp * 100) if loose_uncomp else 0
+            act_ratio_loose_str = f"{comp_ratio_loose:>7.1f}%"
         else:
             act_ratio_loose_str = "N/A"
         row += f"{act_ratio_loose_str:>8} "
@@ -500,22 +577,18 @@ def print_stats(stats, human=False, verbose=False):
 
     # Total
     print("=" * len(header))
-    total_comp_ratio = (
-        (total_size / total_uncompressed * 100) if total_uncompressed else 0
-    )
-    # If loose_uncomp is N/A, the total uncompressed is also incomplete/N/A
-    if loose_uncomp is None and loose_count > 0:
-        total_uncompressed_str = "N/A"
-        total_comp_ratio_str = "N/A"
-    else:
-        total_uncompressed_str = format_size(total_uncompressed, human)
-        total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
+    row = f"{'Total':<60} {total_objects:>10} "
+    if not fast:
+        row += f"{total_deltas:>10} "
+    row += f"{format_size(total_size, human):>12} "
 
-    row = (
-        f"{'Total':<60} {total_objects:>10} {total_deltas:>10} "
-        f"{format_size(total_size, human):>12} "
-        f"{total_uncompressed_str:>12} "
-    )
+    if not fast:
+        # If loose_uncomp is N/A, the total uncompressed is also incomplete/N/A
+        if loose_uncomp is None and loose_count > 0:
+            total_uncompressed_str = "N/A"
+        else:
+            total_uncompressed_str = format_size(total_uncompressed, human)
+        row += f"{total_uncompressed_str:>12} "
 
     if total_actual is not None:
         if loose_uncomp is None and loose_count > 0:
@@ -524,15 +597,21 @@ def print_stats(stats, human=False, verbose=False):
             total_actual_str = format_size(total_actual, human)
         row += f"{total_actual_str:>12} "
 
-    row += f"{total_comp_ratio_str:>8} "
+    if not fast:
+        if loose_uncomp is None and loose_count > 0:
+            total_comp_ratio_str = "N/A"
+        else:
+            total_comp_ratio = (
+                (total_size / total_uncompressed * 100) if total_uncompressed else 0
+            )
+            total_comp_ratio_str = f"{total_comp_ratio:>7.1f}%"
+        row += f"{total_comp_ratio_str:>8} "
 
     if total_actual is not None:
         if loose_uncomp is None and loose_count > 0:
             total_act_ratio_str = "N/A"
         else:
-            total_act_ratio = (
-                (total_size / total_actual * 100) if total_actual else 0
-            )
+            total_act_ratio = (total_size / total_actual * 100) if total_actual else 0
             total_act_ratio_str = f"{total_act_ratio:>7.1f}%"
         row += f"{total_act_ratio_str:>8} "
 
@@ -555,7 +634,11 @@ def run(args):
             loose_uncompressed = count <= 1000
 
         stats = collect_stats(
-            args.repo, args.verbose, loose_uncompressed, args.actual_size
+            args.repo,
+            args.verbose,
+            loose_uncompressed,
+            args.actual_size,
+            args.fast,
         )
         print_stats(stats, args.human, args.verbose)
     except SystemExit:
@@ -563,5 +646,3 @@ def run(args):
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-
-

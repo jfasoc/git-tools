@@ -168,7 +168,7 @@ _shtab_git_stats_subparsers=('commit' 'pack')
 
 _shtab_git_stats_option_strings=('-h' '--help' '-V' '--version')
 _shtab_git_stats_commit_option_strings=('-h' '--help')
-_shtab_git_stats_pack_option_strings=('-h' '--help' '-H' '--human' '--loose-uncompressed' '--no-loose-uncompressed' '--actual-size' '-v' '--verbose')
+_shtab_git_stats_pack_option_strings=('-h' '--help' '-H' '--human' '--loose-uncompressed' '--no-loose-uncompressed' '--actual-size' '-f' '--fast' '-v' '--verbose')
 
 _shtab_git_stats_commit_pos_0_COMPGEN=_shtab_compgen_dirs
 _shtab_git_stats_pack_pos_0_COMPGEN=_shtab_compgen_dirs
@@ -189,6 +189,8 @@ _shtab_git_stats_pack___human_nargs=0
 _shtab_git_stats_pack___loose_uncompressed_nargs=0
 _shtab_git_stats_pack___no_loose_uncompressed_nargs=0
 _shtab_git_stats_pack___actual_size_nargs=0
+_shtab_git_stats_pack__f_nargs=0
+_shtab_git_stats_pack___fast_nargs=0
 _shtab_git_stats_pack__v_nargs=0
 _shtab_git_stats_pack___verbose_nargs=0
 
