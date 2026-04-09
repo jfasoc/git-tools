@@ -9,6 +9,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,4 +33,28 @@ jobs:
         run: pdm run pytest
 
       - name: Run mutation tests
-        run: pdm run pytest --gremlins
+        uses: mikelane/pytest-gremlins-action@v1
+        with:
+          parallel: 'true'
+          extra-args: '--gremlins --gremlin-report=html'
+        env:
+          PATH: ${{ github.workspace }}/.venv/bin:${{ env.PATH }}
+          PYTHONPATH: ${{ github.workspace }}/src
+
+      - name: Deploy report to GitHub Pages
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: coverage/gremlins
+          target-folder: reports/${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || 'main' }}
+          clean: false
+
+      - name: Add report link to summary
+        if: always()
+        run: |
+          REPORT_PATH="reports/${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || 'main' }}/index.html"
+          REPO_NAME="${{ github.event.repository.name }}"
+          OWNER="${{ github.event.repository.owner.login }}"
+          PAGES_URL="https://${OWNER}.github.io/${REPO_NAME}/${REPORT_PATH}"
+          echo "### 👾 Mutation Report" >> $GITHUB_STEP_SUMMARY
+          echo "View the detailed mutation report here: [${PAGES_URL}](${PAGES_URL})" >> $GITHUB_STEP_SUMMARY
