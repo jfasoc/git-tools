@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests
         run: pdm run pytest
+
+      - name: Run mutation tests
+        run: pdm run pytest --gremlins

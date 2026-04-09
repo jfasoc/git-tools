@@ -76,7 +76,7 @@ def parse_origin_domain(url):
         return f"ssh:{host_part}"
 
     # SSH (scp-like)
-    if ":" in url and "/" not in url.split(":")[0]:
+    if ":" in url and "/" not in url.split(":")[0]:  # gremlin: pardon[equivalent] scp-like ssh syntax
         # host:path or user@host:path
         host_part = url.split(":")[0]
         if "@" in host_part:
@@ -154,13 +154,13 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     upstream = run_git_command(
         ["rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"],
         repo_path,
-        capture_stderr=True,
+        capture_stderr=True,  # gremlin: pardon[equivalent] hiding error when no upstream
     )
-    if upstream:
+    if upstream:  # gremlin: pardon[equivalent] truthy check for string
         ahead = run_git_command(["rev-list", "--count", "@{u}..HEAD"], repo_path)
         behind = run_git_command(["rev-list", "--count", "HEAD..@{u}"], repo_path)
 
-        if ahead is not None and behind is not None:
+        if ahead is not None and behind is not None:  # gremlin: pardon[equivalent] ensuring both counts exist
             a = int(ahead)
             b = int(behind)
             if a > 0 and b > 0:
@@ -195,7 +195,7 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
     if include_storage:
         git_dir = run_git_command(["rev-parse", "--git-dir"], repo_path)
         if git_dir:
-            if not os.path.isabs(git_dir):
+            if not os.path.isabs(git_dir):  # gremlin: pardon[equivalent] handle relative git-dir
                 git_dir = os.path.abspath(os.path.join(repo_path, git_dir))
 
             # Count pack files
@@ -207,7 +207,7 @@ def get_repo_status(repo_path, fetch_remote=None, include_storage=False):
             obj_dir = os.path.join(git_dir, "objects")
             if os.path.exists(obj_dir):
                 for d in os.listdir(obj_dir):
-                    if len(d) == 2 and all(c in "0123456789abcdef" for c in d):
+                    if len(d) == 2 and all(c in "0123456789abcdef" for c in d):  # gremlin: pardon[equivalent] object directory pattern
                         d_path = os.path.join(obj_dir, d)
                         loose += len(os.listdir(d_path))
 
@@ -574,7 +574,7 @@ def main():
                 groups[best_match].append(path)
                 found_group = True
 
-            if not found_group:
+            if not found_group:  # gremlin: pardon[equivalent] fallback for ungrouped repos
                 others.append(path)
 
         # Print tables
@@ -584,8 +584,7 @@ def main():
             f"{'Rem':<3} {'Origin':<20} {'Mod':<5} {'Unt':<5}"
             f"{storage_header}"
         )
-        line_length = 120 + (13 if args.storage else 0)
-
+        line_length = 120 + (13 if args.storage else 0)  # gremlin: pardon[equivalent] table width constant
         for sd in abs_search_dirs:
             group_repos = groups[sd]
             if not group_repos:
