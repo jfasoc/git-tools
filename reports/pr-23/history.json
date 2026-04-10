@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2026-04-10T00:57:05.049454+00:00",
+    "score": 98.03,
+    "by_file": {
+      "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py": 97.85,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py": 98.43,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py": 100.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/stats.py": 80.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py": 100.0
+    },
+    "by_operator": {
+      "boolean": {
+        "total": 89,
+        "survived": 3
+      },
+      "comparison": {
+        "total": 66,
+        "survived": 0
+      },
+      "boundary": {
+        "total": 40,
+        "survived": 0
+      },
+      "arithmetic": {
+        "total": 50,
+        "survived": 0
+      },
+      "return": {
+        "total": 41,
+        "survived": 0
+      }
+    }
+  }
+]
