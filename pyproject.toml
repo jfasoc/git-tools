@@ -6,7 +6,7 @@ authors = [
     {name = "jfasoc", email = "7720125+jfasoc@users.noreply.github.com"},
 ]
 dependencies = []
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 readme = "README.md"
 license = {text = "MIT"}
 
@@ -26,6 +26,8 @@ dev = [
     "pytest-mock",
     "pytest-cov",
     "pytest-bdd",
+    "pytest-gremlins",
+    "pytest-xdist",
     "ruff",
     "argcomplete",
     "shtab",
@@ -37,7 +39,12 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 88
-target-version = "py310"
+target-version = "py311"
+
+[tool.pytest-gremlins]
+gremlins = false
+gremlin-workers = "auto"
+gremlin-report = ["term-missing"]
 
 [build-system]
 requires = ["pdm-backend"]
