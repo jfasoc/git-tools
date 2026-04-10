@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
+      security-events: write
 
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +38,40 @@ jobs:
         uses: mikelane/pytest-gremlins-action@v1
         with:
           parallel: 'true'
-          extra-args: '--gremlins --gremlin-report=html'
+          extra-args: '--gremlins --gremlin-report=html --gremlin-report=json'
           command-prefix: 'pdm run'
           skip-install: 'true'
+
+      - name: Generate SARIF report
+        if: always()
+        run: pdm run gremlins-to-sarif coverage/gremlins/gremlins.json -o gremlins.sarif
+
+      - name: Upload SARIF to GitHub
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: gremlins.sarif
+          category: pytest-gremlins
+
+      - name: Generate Stryker report
+        if: always()
+        run: pdm run gremlins-to-stryker coverage/gremlins/gremlins.json -o stryker.json
+
+      - name: Upload to Stryker Dashboard
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.STRYKER_DASHBOARD_API_KEY != ''
+        run: |
+          curl -X PUT https://dashboard.stryker-mutator.io/api/reports/github.com/${{ github.repository }}/main \
+            -H "Content-Type: application/json" \
+            -H "X-Api-Key: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}" \
+            -d @stryker.json
+
+      - name: Upload to Codecov
+        if: always() && secrets.CODECOV_TOKEN != ''
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: stryker.json
+          flags: mutation
 
       - name: Deploy report to GitHub Pages
         if: always()
