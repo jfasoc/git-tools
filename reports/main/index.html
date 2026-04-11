@@ -320,11 +320,11 @@
         
         <div class="summary">
             <div class="stat-card">
-                <div class="stat-value">286</div>
+                <div class="stat-value">293</div>
                 <div class="stat-label">Total Gremlins</div>
             </div>
             <div class="stat-card stat-zapped">
-                <div class="stat-value">249</div>
+                <div class="stat-value">256</div>
                 <div class="stat-label">Zapped</div>
             </div>
             <div class="stat-card stat-survived">
@@ -2167,6 +2167,223 @@
                     <td>147</td>
                     <td>arithmetic</td>
                     <td>* to /</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>return parser</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>return</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-return parser</span>
+<span class="diff-add">+return</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>35</td>
+                    <td>return</td>
+                    <td>return value to None</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>result.get('status') != 'survived'</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>result.get('status') == 'survived'</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-result.get('status') != 'survived'</span>
+<span class="diff-add">+result.get('status') == 'survived'</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>54</td>
+                    <td>comparison</td>
+                    <td>!= to ==</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>return sarif</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>return</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-return sarif</span>
+<span class="diff-add">+return</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>102</td>
+                    <td>return</td>
+                    <td>return value to None</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>__name__ == '__main__'</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>__name__ != '__main__'</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-__name__ == '__main__'</span>
+<span class="diff-add">+__name__ != '__main__'</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>132</td>
+                    <td>comparison</td>
+                    <td>== to !=</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>return parser</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>return</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-return parser</span>
+<span class="diff-add">+return</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>35</td>
+                    <td>return</td>
+                    <td>return value to None</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>return stryker</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>return</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-return stryker</span>
+<span class="diff-add">+return</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>95</td>
+                    <td>return</td>
+                    <td>return value to None</td>
+                    <td class="status-zapped">zapped</td>
+                </tr>
+
+                <tr>
+                    <td>
+                        /home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py
+                        
+                        <details>
+                            <summary>Show diff</summary>
+                            <div class="diff-panels">
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Mogwai (original)</div>
+                                    <pre>__name__ == '__main__'</pre>
+                                </div>
+                                <div class="diff-panel">
+                                    <div class="diff-panel-header">Gremlin (mutated)</div>
+                                    <pre>__name__ != '__main__'</pre>
+                                </div>
+                            </div>
+                            <div class="diff-unified">
+                                <pre>--- mogwai
++++ gremlin
+<span class="diff-meta">@@ -1 +1 @@</span>
+<span class="diff-remove">-__name__ == '__main__'</span>
+<span class="diff-add">+__name__ != '__main__'</span></pre>
+                            </div>
+                        </details>
+                    </td>
+                    <td>125</td>
+                    <td>comparison</td>
+                    <td>== to !=</td>
                     <td class="status-zapped">zapped</td>
                 </tr>
 
@@ -9579,7 +9796,7 @@ gremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/t
                     type: 'doughnut',
                     data: {
                         datasets: [{
-                            data: [98.0, 2.0],
+                            data: [98.1, 1.9],
                             backgroundColor: ['#4caf50', borderColor],
                             borderWidth: 0,
                         }]
@@ -9600,7 +9817,7 @@ gremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/t
                     data: {
                         labels: ['Zapped', 'Survived', 'Timeout', 'Error'],
                         datasets: [{
-                            data: [249, 3, 0, 2],
+                            data: [256, 3, 0, 2],
                             backgroundColor: ['#4caf50', '#ef5350', '#ffa726', '#ab47bc'],
                         }]
                     },
@@ -9613,15 +9830,15 @@ gremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/t
             }
 
             var fileEl = document.getElementById('fileChart');
-            if (fileEl && ["/home/runner/work/git-tools/git-tools/src/git_tools/stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py", "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py"].length > 0) {
+            if (fileEl && ["/home/runner/work/git-tools/git-tools/src/git_tools/stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py", "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py", "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py", "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py"].length > 0) {
                 new Chart(fileEl, {
                     type: 'bar',
                     data: {
-                        labels: ["/home/runner/work/git-tools/git-tools/src/git_tools/stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py", "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py"],
+                        labels: ["/home/runner/work/git-tools/git-tools/src/git_tools/stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py", "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py", "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py", "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py", "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py"],
                         datasets: [{
                             label: 'Score %',
-                            data: [80.0, 97.8, 98.4, 100.0, 100.0],
-                            backgroundColor: [80.0, 97.8, 98.4, 100.0, 100.0].map(function(v) {
+                            data: [80.0, 97.8, 98.4, 100.0, 100.0, 100.0, 100.0],
+                            backgroundColor: [80.0, 97.8, 98.4, 100.0, 100.0, 100.0, 100.0].map(function(v) {
                                 if (v >= 80) { return '#4caf50'; }
                                 return v >= 60 ? '#ffa726' : '#ef5350';
                             }),
@@ -9647,7 +9864,7 @@ gremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/t
                     data: {
                         labels: ["boolean", "comparison", "boundary", "arithmetic", "return"],
                         datasets: [
-                            { label: 'Total', data: [89, 66, 40, 50, 41], backgroundColor: '#2e7d32' },
+                            { label: 'Total', data: [89, 69, 40, 50, 45], backgroundColor: '#2e7d32' },
                             { label: 'Survived', data: [3, 0, 0, 0, 0], backgroundColor: '#ef5350' },
                         ]
                     },
