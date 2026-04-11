@@ -58,18 +58,26 @@ jobs:
         run: pdm run gremlins-to-stryker coverage/gremlins/gremlins.json -o stryker.json
 
       - name: Upload to Stryker Dashboard
-        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main' && secrets.STRYKER_DASHBOARD_API_KEY != ''
+        if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          STRYKER_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
         run: |
-          curl -X PUT https://dashboard.stryker-mutator.io/api/reports/github.com/${{ github.repository }}/main \
-            -H "Content-Type: application/json" \
-            -H "X-Api-Key: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}" \
-            -d @stryker.json
+          if [ -n "$STRYKER_API_KEY" ]; then
+            curl -X PUT https://dashboard.stryker-mutator.io/api/reports/github.com/${{ github.repository }}/main \
+              -H "Content-Type: application/json" \
+              -H "X-Api-Key: $STRYKER_API_KEY" \
+              -d @stryker.json
+          else
+            echo "Skipping Stryker upload: STRYKER_DASHBOARD_API_KEY secret is not set."
+          fi
 
       - name: Upload to Codecov
-        if: always() && secrets.CODECOV_TOKEN != ''
+        if: always()
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ env.CODECOV_TOKEN }}
           files: stryker.json
           flags: mutation
 
