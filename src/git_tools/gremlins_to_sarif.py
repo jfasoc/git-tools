@@ -61,6 +61,7 @@ def convert_to_sarif(
                 "shortDescription": {
                     "text": f"Mutation survived: {result.get('operator')}"
                 },
+                "defaultConfiguration": {"level": "warning"},
                 "helpUri": "https://github.com/mikelane/pytest-gremlins",
             }
 
