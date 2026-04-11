@@ -13,6 +13,8 @@ license = {text = "MIT"}
 [project.scripts]
 git-repo-manager = "git_tools.repo_manager:main"
 git-stats = "git_tools.stats:main"
+gremlins-to-sarif = "git_tools.gremlins_to_sarif:main"
+gremlins-to-stryker = "git_tools.gremlins_to_stryker:main"
 
 [tool.pdm]
 distribution = true
