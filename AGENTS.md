@@ -45,9 +45,9 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 * **Scope Integrity:** DO NOT modify or remove code in functions or tools unrelated to your current task. Accidentally deleting existing features is a major failure.
 * **Verification over Feedback:** Prioritize the actual source code as the ground truth. If a code review or external feedback contradicts the existing code (e.g., claiming a feature is "unimplemented" when it is clearly present), you must verify the code before taking action.
 * **Update Completion Files:** Whenever CLI parameters are added, removed, or modified, you MUST regenerate the shell completion scripts (e.g., by running `python3 generate_completions.py`).
-* **Commit Message Validation:** When running `cz check` manually, use the `--rev-range` flag to skip historical commits that do not follow the conventional commits format. The recommended start commit is `b1334e9`.
+* **Commit Message Validation:** When running `cz check` manually, use the `--rev-range` flag to skip historical commits that do not follow the conventional commits format. The recommended start commit is `60c103d`.
     ```bash
-    cz check --rev-range b1334e9..HEAD
+    cz check --rev-range 60c103d..HEAD
     ```
 
 ## 6. Documentation
