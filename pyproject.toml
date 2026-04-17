@@ -57,6 +57,7 @@ tag_format = "v$version"
 update_changelog_on_bump = true
 annotated_tag = true
 bump_message = "chore(release): $new_version [skip ci]"
+allowed_prefixes = ["Merge", "Revert", "Pull request", "fixup!", "squash!", "amend!", "Deploying"]
 
 [build-system]
 requires = ["pdm-backend"]
