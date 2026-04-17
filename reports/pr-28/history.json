@@ -1,0 +1,37 @@
+[
+  {
+    "timestamp": "2026-04-17T13:58:37.983398+00:00",
+    "score": 98.08,
+    "by_file": {
+      "/home/runner/work/git-tools/git-tools/src/git_tools/repo_manager.py": 97.85,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/pack_stats.py": 98.43,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/commit_stats.py": 100.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_sarif.py": 100.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/gremlins_to_stryker.py": 100.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/stats.py": 80.0,
+      "/home/runner/work/git-tools/git-tools/src/git_tools/utils.py": 100.0
+    },
+    "by_operator": {
+      "boolean": {
+        "total": 89,
+        "survived": 3
+      },
+      "comparison": {
+        "total": 69,
+        "survived": 0
+      },
+      "boundary": {
+        "total": 40,
+        "survived": 0
+      },
+      "arithmetic": {
+        "total": 50,
+        "survived": 0
+      },
+      "return": {
+        "total": 45,
+        "survived": 0
+      }
+    }
+  }
+]
