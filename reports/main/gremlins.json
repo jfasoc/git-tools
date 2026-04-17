@@ -317,7 +317,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 237.61435800000186,
+      "execution_time_ms": 271.89908800001206,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commits",
         "tests/test_commit_stats.py::test_get_commits_empty",
@@ -332,7 +332,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 241.4977889999932,
+      "execution_time_ms": 244.97263000000657,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -348,7 +348,7 @@
       "operator": "comparison",
       "description": "< to <=",
       "killing_test": "unknown",
-      "execution_time_ms": 240.14326600000402,
+      "execution_time_ms": 247.50445499999785,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -364,7 +364,7 @@
       "operator": "comparison",
       "description": "< to >",
       "killing_test": "unknown",
-      "execution_time_ms": 241.1138669999957,
+      "execution_time_ms": 247.54385800000023,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -380,7 +380,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 240.1192820000091,
+      "execution_time_ms": 243.83155499999987,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -396,7 +396,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 237.20700599999134,
+      "execution_time_ms": 242.4289229999914,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -412,7 +412,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 252.07153099999857,
+      "execution_time_ms": 246.2201069999992,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -428,7 +428,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 255.33417500000155,
+      "execution_time_ms": 242.53381400001217,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -444,7 +444,7 @@
       "operator": "boolean",
       "description": "or to and",
       "killing_test": "unknown",
-      "execution_time_ms": 245.3710560000104,
+      "execution_time_ms": 239.03761699999393,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -460,7 +460,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 240.40739699999847,
+      "execution_time_ms": 248.02284099999383,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -476,7 +476,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 241.3106220000003,
+      "execution_time_ms": 250.59508100000016,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -492,7 +492,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 243.45679500000017,
+      "execution_time_ms": 241.0848130000005,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -508,7 +508,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 238.4953999999908,
+      "execution_time_ms": 252.66460499999255,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced",
         "tests/test_stats.py::test_module_main"
@@ -522,7 +522,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 245.08734600000537,
+      "execution_time_ms": 246.57150800000238,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -535,7 +535,7 @@
       "operator": "comparison",
       "description": "!= to ==",
       "killing_test": "unknown",
-      "execution_time_ms": 245.00622200000066,
+      "execution_time_ms": 341.97258300000044,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -548,7 +548,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 243.9628740000046,
+      "execution_time_ms": 243.08092300000794,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -561,7 +561,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 244.95953699999973,
+      "execution_time_ms": 234.64892399999826,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -574,7 +574,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 238.30311599999732,
+      "execution_time_ms": 245.67691099998967,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -587,7 +587,7 @@
       "operator": "comparison",
       "description": "!= to ==",
       "killing_test": "unknown",
-      "execution_time_ms": 242.8340640000073,
+      "execution_time_ms": 242.80131599999777,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -600,7 +600,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 241.83854800000404,
+      "execution_time_ms": 244.5054670000104,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -613,7 +613,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 243.39193500000533,
+      "execution_time_ms": 240.18974200001253,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_advanced"
       ]
@@ -626,7 +626,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 235.88024400000052,
+      "execution_time_ms": 247.55768400000022,
       "selected_tests": [
         "tests/test_commit_stats.py::test_get_commit_stats_basic",
         "tests/test_commit_stats.py::test_get_commit_stats_symlinks",
@@ -642,7 +642,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 237.8324049999918,
+      "execution_time_ms": 241.4037879999995,
       "selected_tests": [
         "tests/test_commit_stats.py::test_short_version_flag",
         "tests/test_commit_stats.py::test_version_flag",
@@ -660,7 +660,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 242.13403999999628,
+      "execution_time_ms": 243.1983559999935,
       "selected_tests": [
         "tests/test_commit_stats.py::test_main_no_commits",
         "tests/test_commit_stats.py::test_main_with_commits",
@@ -676,7 +676,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 240.06919699999685,
+      "execution_time_ms": 239.38174200000617,
       "selected_tests": [
         "tests/test_commit_stats.py::test_main_with_commits",
         "tests/test_commit_stats.py::test_main_with_repo",
@@ -691,7 +691,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 285.1735189999971,
+      "execution_time_ms": 278.17147600001135,
       "selected_tests": [
         "tests/test_gremlins_to_sarif.py::test_get_parser",
         "tests/test_gremlins_to_sarif.py::test_module_main"
@@ -705,7 +705,7 @@
       "operator": "comparison",
       "description": "!= to ==",
       "killing_test": "unknown",
-      "execution_time_ms": 289.43639199999893,
+      "execution_time_ms": 278.0976590000108,
       "selected_tests": [
         "tests/test_gremlins_to_sarif.py::test_convert_to_sarif",
         "tests/test_gremlins_to_sarif.py::test_run_success"
@@ -719,7 +719,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.33974400000295,
+      "execution_time_ms": 277.1944659999974,
       "selected_tests": [
         "tests/test_gremlins_to_sarif.py::test_convert_to_sarif",
         "tests/test_gremlins_to_sarif.py::test_run_success",
@@ -734,7 +734,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 455.9363139999988,
+      "execution_time_ms": 278.3129430000031,
       "selected_tests": [
         "tests/test_gremlins_to_sarif.py::test_module_main"
       ]
@@ -747,7 +747,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 277.4655439999947,
+      "execution_time_ms": 282.3438460000034,
       "selected_tests": [
         "tests/test_gremlins_to_stryker.py::test_get_parser",
         "tests/test_gremlins_to_stryker.py::test_module_main"
@@ -761,7 +761,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 278.12258500000553,
+      "execution_time_ms": 277.843193999999,
       "selected_tests": [
         "tests/test_gremlins_to_stryker.py::test_convert_to_stryker",
         "tests/test_gremlins_to_stryker.py::test_run_success",
@@ -776,7 +776,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 283.45509799999036,
+      "execution_time_ms": 277.97105200001226,
       "selected_tests": [
         "tests/test_gremlins_to_stryker.py::test_module_main"
       ]
@@ -789,7 +789,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 291.08970599999395,
+      "execution_time_ms": 300.418238000006,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_git_dir_absolute",
         "tests/test_pack_stats.py::test_get_git_dir_relative"
@@ -803,7 +803,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 289.02018700000554,
+      "execution_time_ms": 296.3309940000016,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_files",
         "tests/test_pack_stats.py::test_get_pack_files_no_pack_dir"
@@ -817,7 +817,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 286.89807899999664,
+      "execution_time_ms": 284.17449600000566,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_files_no_pack_dir"
       ]
@@ -830,7 +830,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 288.68402999999887,
+      "execution_time_ms": 282.80943200000763,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_files"
       ]
@@ -843,7 +843,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 262.0856849999882,
+      "execution_time_ms": 256.96454500000243,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -989,7 +989,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 289.1140409999906,
+      "execution_time_ms": 286.0901340000055,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_info_fast"
       ]
@@ -1001,7 +1001,7 @@
       "status": "survived",
       "operator": "boolean",
       "description": "True to False",
-      "execution_time_ms": 289.14874199999474,
+      "execution_time_ms": 284.596422000007,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_info_fast"
       ]
@@ -1013,7 +1013,7 @@
       "status": "survived",
       "operator": "boolean",
       "description": "True to False",
-      "execution_time_ms": 290.01063100000124,
+      "execution_time_ms": 286.9420879999893,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_info_fast"
       ]
@@ -1026,7 +1026,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 284.5674040000006,
+      "execution_time_ms": 285.225564000001,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_pack_info_fast"
       ]
@@ -1039,7 +1039,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 298.62499700000456,
+      "execution_time_ms": 288.29686599999604,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_loose_count_no_obj_dir",
         "tests/test_pack_stats.py::test_get_loose_count_success",
@@ -1060,7 +1060,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 301.55858899999544,
+      "execution_time_ms": 287.94732500000464,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_loose_count_exception",
         "tests/test_pack_stats.py::test_main_error"
@@ -1074,7 +1074,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 255.58599099998958,
+      "execution_time_ms": 253.04196400000478,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -1220,7 +1220,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 287.7992319999976,
+      "execution_time_ms": 277.6059180000061,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_loose_info_with_data"
       ]
@@ -1233,7 +1233,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.5655330000011,
+      "execution_time_ms": 287.9752569999994,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_loose_info_empty",
         "tests/test_pack_stats.py::test_get_loose_info_no_obj_dir",
@@ -1248,7 +1248,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 290.39021199999127,
+      "execution_time_ms": 284.0839170000038,
       "selected_tests": [
         "tests/test_pack_stats.py::test_get_loose_info_exception"
       ]
@@ -1261,7 +1261,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 256.75972099999456,
+      "execution_time_ms": 254.99804699998663,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -1407,7 +1407,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 283.89493900000673,
+      "execution_time_ms": 279.9864729999939,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
@@ -1432,7 +1432,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 280.21682100001044,
+      "execution_time_ms": 284.6758999999963,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
@@ -1456,7 +1456,7 @@
       "operator": "comparison",
       "description": "< to <=",
       "killing_test": "unknown",
-      "execution_time_ms": 291.8518930000005,
+      "execution_time_ms": 282.0216450000004,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1470,7 +1470,7 @@
       "operator": "comparison",
       "description": "< to >",
       "killing_test": "unknown",
-      "execution_time_ms": 287.6335970000099,
+      "execution_time_ms": 281.11590799998964,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1484,7 +1484,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 280.79252300000235,
+      "execution_time_ms": 280.77053299999477,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1498,7 +1498,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 278.3650129999984,
+      "execution_time_ms": 283.90624499999717,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1512,7 +1512,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 286.42922599999565,
+      "execution_time_ms": 283.73942499999316,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size"
       ]
@@ -1525,7 +1525,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 292.90302700000836,
+      "execution_time_ms": 282.8711410000011,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1539,7 +1539,7 @@
       "operator": "comparison",
       "description": "< to <=",
       "killing_test": "unknown",
-      "execution_time_ms": 286.3739350000003,
+      "execution_time_ms": 282.24286600000426,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1553,7 +1553,7 @@
       "operator": "comparison",
       "description": "< to >",
       "killing_test": "unknown",
-      "execution_time_ms": 287.74519099999907,
+      "execution_time_ms": 280.8121310000047,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1567,7 +1567,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 283.8992159999947,
+      "execution_time_ms": 283.5589390000024,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1581,7 +1581,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 284.33168500001216,
+      "execution_time_ms": 281.89265500000715,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size",
         "tests/test_pack_stats.py::test_main_human_readable"
@@ -1595,7 +1595,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 288.39466200000174,
+      "execution_time_ms": 282.30827900000577,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size"
       ]
@@ -1608,7 +1608,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 283.23064699999634,
+      "execution_time_ms": 281.3717540000056,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size"
       ]
@@ -1621,7 +1621,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 282.48102899999594,
+      "execution_time_ms": 279.860608000007,
       "selected_tests": [
         "tests/test_pack_stats.py::test_format_size"
       ]
@@ -1634,7 +1634,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 286.046859999999,
+      "execution_time_ms": 279.85985699999105,
       "selected_tests": [
         "tests/test_pack_stats.py::test_short_version_flag",
         "tests/test_pack_stats.py::test_version_flag",
@@ -1663,7 +1663,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 282.9398779999934,
+      "execution_time_ms": 279.52316600000415,
       "selected_tests": [
         "tests/test_pack_stats.py::test_short_version_flag",
         "tests/test_pack_stats.py::test_version_flag",
@@ -1692,7 +1692,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 256.75771900000655,
+      "execution_time_ms": 262.8460900000107,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -1838,7 +1838,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 259.98942599999,
+      "execution_time_ms": 261.2879360000022,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -1984,7 +1984,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 263.13169200000175,
+      "execution_time_ms": 256.59461200000067,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -2130,7 +2130,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 255.02909299999033,
+      "execution_time_ms": 267.6893829999898,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -2276,7 +2276,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 290.00476199999525,
+      "execution_time_ms": 280.55470200000343,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2300,7 +2300,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 291.18482699999504,
+      "execution_time_ms": 283.6478629999988,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2324,7 +2324,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 287.5861910000026,
+      "execution_time_ms": 282.8850589999945,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -2343,7 +2343,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 286.8983989999947,
+      "execution_time_ms": 278.1604789999932,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -2362,7 +2362,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 286.7753780000015,
+      "execution_time_ms": 285.6514519999962,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2386,7 +2386,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 285.38436200000206,
+      "execution_time_ms": 285.0217639999926,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2410,7 +2410,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 288.63833300000863,
+      "execution_time_ms": 281.6099329999986,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2434,7 +2434,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 283.55984399999556,
+      "execution_time_ms": 285.3901229999991,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2458,7 +2458,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 282.02375300000426,
+      "execution_time_ms": 283.52525900000103,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2482,7 +2482,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 283.51768200001004,
+      "execution_time_ms": 285.1529140000082,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2506,7 +2506,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 282.31687100000613,
+      "execution_time_ms": 282.018554000004,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2530,7 +2530,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 280.0451989999999,
+      "execution_time_ms": 284.3528209999988,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2554,7 +2554,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 255.12371300000325,
+      "execution_time_ms": 257.6443189999935,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -2700,7 +2700,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 255.79461499999923,
+      "execution_time_ms": 258.28343900001016,
       "selected_tests": [
         "tests/test_bash_completion.py::test_bash_completion_integration",
         "tests/test_commit_stats.py::test_run_git_command_success",
@@ -2846,7 +2846,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 282.49084399999447,
+      "execution_time_ms": 283.7898830000114,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2870,7 +2870,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 282.5493200000011,
+      "execution_time_ms": 283.68255299999134,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2894,7 +2894,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 280.31323400000474,
+      "execution_time_ms": 282.65776399999254,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2918,7 +2918,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 280.0311280000045,
+      "execution_time_ms": 280.4679159999921,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2942,7 +2942,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 287.528647000002,
+      "execution_time_ms": 282.5458549999951,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -2966,7 +2966,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 278.3934950000031,
+      "execution_time_ms": 282.10089800001015,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -2985,7 +2985,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 285.14126199999623,
+      "execution_time_ms": 281.8952939999946,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3004,7 +3004,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 293.5527079999929,
+      "execution_time_ms": 279.53746300001114,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3023,7 +3023,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 284.20035500001006,
+      "execution_time_ms": 276.9380609999956,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3042,7 +3042,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 281.40574900000104,
+      "execution_time_ms": 280.8652089999981,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3061,7 +3061,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 279.66040900000166,
+      "execution_time_ms": 287.40778099999886,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3080,7 +3080,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 282.58280999999386,
+      "execution_time_ms": 281.665856999993,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3099,7 +3099,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 282.10789700000305,
+      "execution_time_ms": 279.88803600000267,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3118,7 +3118,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 282.15321399999027,
+      "execution_time_ms": 288.99231199999065,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3137,7 +3137,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 290.186305000006,
+      "execution_time_ms": 285.083501999992,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3156,7 +3156,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 282.89414900000054,
+      "execution_time_ms": 280.99522700000534,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3175,7 +3175,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 289.69257500000367,
+      "execution_time_ms": 280.7993269999969,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3194,7 +3194,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 285.7307940000027,
+      "execution_time_ms": 287.275901000001,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3213,7 +3213,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 285.94523099999947,
+      "execution_time_ms": 288.8887050000051,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3232,7 +3232,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 281.75455500000623,
+      "execution_time_ms": 307.678561000003,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_fast",
         "tests/test_pack_stats.py::test_main_with_data",
@@ -3251,7 +3251,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 286.06394599999874,
+      "execution_time_ms": 279.4660969999967,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_data",
         "tests/test_pack_stats.py::test_main_sorting",
@@ -3269,7 +3269,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 286.0829149999944,
+      "execution_time_ms": 295.7951690000016,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_data",
         "tests/test_pack_stats.py::test_main_sorting",
@@ -3287,7 +3287,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 278.61223899999743,
+      "execution_time_ms": 282.9433929999965,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3301,7 +3301,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 281.90186300000164,
+      "execution_time_ms": 282.59241899999665,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3315,7 +3315,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 286.07537300000274,
+      "execution_time_ms": 283.039402,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3339,7 +3339,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 282.2596709999914,
+      "execution_time_ms": 282.2466550000087,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3363,7 +3363,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 283.29657400000485,
+      "execution_time_ms": 287.0587680000085,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3387,7 +3387,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 287.833593000002,
+      "execution_time_ms": 291.53401599999995,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3411,7 +3411,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 284.1925099999969,
+      "execution_time_ms": 281.8713270000046,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3435,7 +3435,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 282.32783299999653,
+      "execution_time_ms": 287.867434000006,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3459,7 +3459,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 285.34819300000436,
+      "execution_time_ms": 284.0170420000021,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3483,7 +3483,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 289.8298639999979,
+      "execution_time_ms": 280.7720890000098,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3507,7 +3507,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 289.6732819999954,
+      "execution_time_ms": 281.93929000001106,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3531,7 +3531,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 286.96841299999676,
+      "execution_time_ms": 284.1333089999978,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3555,7 +3555,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 303.6074059999976,
+      "execution_time_ms": 281.011565,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3579,7 +3579,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 294.0257239999937,
+      "execution_time_ms": 281.28866100000494,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3603,7 +3603,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 295.8540820000053,
+      "execution_time_ms": 280.91149899999834,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3627,7 +3627,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 279.68407999999556,
+      "execution_time_ms": 284.2061790000088,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3651,7 +3651,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 288.95908100000156,
+      "execution_time_ms": 286.7595870000059,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3675,7 +3675,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 280.64414699998963,
+      "execution_time_ms": 287.33500199999185,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3699,7 +3699,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 286.54733000000476,
+      "execution_time_ms": 284.5711650000027,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_on",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_enabled",
@@ -3717,7 +3717,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 284.8399500000056,
+      "execution_time_ms": 286.81122700000117,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_on",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_enabled",
@@ -3735,7 +3735,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 284.07244599999615,
+      "execution_time_ms": 286.29578700000025,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3749,7 +3749,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 289.87537499999405,
+      "execution_time_ms": 288.6977109999975,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3763,7 +3763,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 286.54370900000004,
+      "execution_time_ms": 281.5138809999951,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3787,7 +3787,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 284.57992600000637,
+      "execution_time_ms": 278.6581089999913,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3811,7 +3811,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 280.90921899999444,
+      "execution_time_ms": 285.97419800000523,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3835,7 +3835,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 284.74893599999973,
+      "execution_time_ms": 288.9315619999877,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3858,7 +3858,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 287.4775399999976,
+      "execution_time_ms": 288.1456519999972,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3881,7 +3881,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 279.6334930000057,
+      "execution_time_ms": 286.2494510000033,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3904,7 +3904,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 280.4499549999946,
+      "execution_time_ms": 283.2289349999968,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3927,7 +3927,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 278.7391100000036,
+      "execution_time_ms": 288.00625600000274,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -3950,7 +3950,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 284.81471300000294,
+      "execution_time_ms": 282.0660590000017,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3964,7 +3964,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 296.1025429999893,
+      "execution_time_ms": 285.30636800000764,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3978,7 +3978,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 282.17267699999127,
+      "execution_time_ms": 287.8258660000057,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -3992,7 +3992,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 279.1596419999962,
+      "execution_time_ms": 284.95329600001185,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4006,7 +4006,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 284.2399339999986,
+      "execution_time_ms": 287.0809690000016,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4020,7 +4020,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 282.6978240000102,
+      "execution_time_ms": 285.63312200000723,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4044,7 +4044,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 279.3168639999948,
+      "execution_time_ms": 282.0292509999973,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4067,7 +4067,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 283.8092359999962,
+      "execution_time_ms": 283.3614219999987,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4090,7 +4090,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 276.6378239999909,
+      "execution_time_ms": 279.20090700000344,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4113,7 +4113,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 299.17121999999097,
+      "execution_time_ms": 285.9014819999999,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4136,7 +4136,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 285.858220999998,
+      "execution_time_ms": 285.186932000002,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_off",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4159,7 +4159,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 287.1284990000049,
+      "execution_time_ms": 277.9202779999963,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_on",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_enabled",
@@ -4179,7 +4179,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 281.9144660000035,
+      "execution_time_ms": 278.53591099999164,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_explicit_on",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_enabled",
@@ -4199,7 +4199,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 281.23922700000037,
+      "execution_time_ms": 286.62601199999926,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4213,7 +4213,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 279.9897999999956,
+      "execution_time_ms": 285.2406320000114,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4227,7 +4227,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 283.93932899999186,
+      "execution_time_ms": 280.00983000001156,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4241,7 +4241,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 283.29774000000896,
+      "execution_time_ms": 279.36096100000896,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4255,7 +4255,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 283.3768480000032,
+      "execution_time_ms": 285.1730660000271,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4269,7 +4269,7 @@
       "operator": "arithmetic",
       "description": "/ to *",
       "killing_test": "unknown",
-      "execution_time_ms": 284.8302860000018,
+      "execution_time_ms": 290.3583439999977,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4283,7 +4283,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 281.9542689999963,
+      "execution_time_ms": 284.54195400001936,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed",
         "tests/test_pack_stats.py::test_main_with_actual_size"
@@ -4297,7 +4297,7 @@
       "operator": "comparison",
       "description": "<= to <",
       "killing_test": "unknown",
-      "execution_time_ms": 290.27012400000274,
+      "execution_time_ms": 283.39101699998537,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_error",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4319,7 +4319,7 @@
       "operator": "comparison",
       "description": "<= to >",
       "killing_test": "unknown",
-      "execution_time_ms": 275.332137999996,
+      "execution_time_ms": 286.1929550000184,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_error",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4341,7 +4341,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 234.94020299999363,
+      "execution_time_ms": 279.5310010000094,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_error",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4363,7 +4363,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 222.92674500000942,
+      "execution_time_ms": 189.1786029999878,
       "selected_tests": [
         "tests/test_pack_stats.py::test_main_error",
         "tests/test_pack_stats.py::test_main_with_loose_uncompressed_threshold_auto_disabled",
@@ -4385,7 +4385,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 299.599115999996,
+      "execution_time_ms": 306.5659149999931,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_config_path"
       ]
@@ -4398,7 +4398,7 @@
       "operator": "comparison",
       "description": "<= to <",
       "killing_test": "unknown",
-      "execution_time_ms": 287.80370799999844,
+      "execution_time_ms": 303.3413790000026,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_other_error",
@@ -4418,7 +4418,7 @@
       "operator": "comparison",
       "description": "<= to >",
       "killing_test": "unknown",
-      "execution_time_ms": 289.5690369999926,
+      "execution_time_ms": 285.88987000000543,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_other_error",
@@ -4438,7 +4438,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 287.4435349999942,
+      "execution_time_ms": 283.76396699999873,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_other_error",
@@ -4458,7 +4458,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 285.56627500000786,
+      "execution_time_ms": 290.68023099999607,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_truncation"
@@ -4472,7 +4472,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 286.9699250000082,
+      "execution_time_ms": 287.1336060000118,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_truncation"
@@ -4486,7 +4486,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 298.7209679999978,
+      "execution_time_ms": 283.0153999999965,
       "selected_tests": [
         "tests/test_repo_manager.py::test_truncate_string",
         "tests/test_repo_manager.py::test_main_status_truncation"
@@ -4500,7 +4500,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 285.6958309999982,
+      "execution_time_ms": 289.65675499999577,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain",
         "tests/test_repo_manager.py::test_get_repo_status_bare",
@@ -4517,7 +4517,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 309.83682100000465,
+      "execution_time_ms": 291.35251900000014,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain",
         "tests/test_repo_manager.py::test_get_repo_status_bare",
@@ -4533,7 +4533,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.23595000000546,
+      "execution_time_ms": 289.8462179999939,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4547,7 +4547,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 296.88390699999445,
+      "execution_time_ms": 283.60953299998926,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain"
       ]
@@ -4560,7 +4560,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 290.6914669999878,
+      "execution_time_ms": 284.76016500000867,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain"
       ]
@@ -4573,7 +4573,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 283.75455100000124,
+      "execution_time_ms": 288.5082659999938,
       "selected_tests": [
         "tests/test_repo_manager.py::test_parse_origin_domain"
       ]
@@ -4586,7 +4586,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 291.04385799999477,
+      "execution_time_ms": 288.8067890000059,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_entry_point_real"
       ]
@@ -4599,7 +4599,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 289.5544860000001,
+      "execution_time_ms": 286.940737000009,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo"
       ]
@@ -4612,7 +4612,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 282.858927999996,
+      "execution_time_ms": 288.84691000000373,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo"
       ]
@@ -4625,7 +4625,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 284.029426999993,
+      "execution_time_ms": 298.83738099999846,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo"
       ]
@@ -4638,7 +4638,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 287.6590039999911,
+      "execution_time_ms": 281.25202199998967,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_entry_point_real"
       ]
@@ -4651,7 +4651,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 286.86920600000576,
+      "execution_time_ms": 286.11427799999944,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_path_not_found",
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
@@ -4671,7 +4671,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 288.7672020000025,
+      "execution_time_ms": 285.45149999999353,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_path_not_found"
       ]
@@ -4684,7 +4684,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 283.55872099999146,
+      "execution_time_ms": 291.32601400000624,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_get_repo_status_errors",
@@ -4703,7 +4703,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 282.098672999993,
+      "execution_time_ms": 284.545836999996,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo"
       ]
@@ -4716,7 +4716,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 290.8054050000004,
+      "execution_time_ms": 287.7776950000026,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_errors",
         "tests/test_repo_manager.py::test_get_repo_status_fetch",
@@ -4734,7 +4734,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 300.20394999999667,
+      "execution_time_ms": 290.5672939999988,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_errors"
       ]
@@ -4747,7 +4747,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 286.2557789999869,
+      "execution_time_ms": 290.0051339999976,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4761,7 +4761,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 289.9769309999982,
+      "execution_time_ms": 289.29341200000636,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4775,7 +4775,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 288.3310170000044,
+      "execution_time_ms": 285.6236309999929,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4789,7 +4789,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 293.5862460000038,
+      "execution_time_ms": 287.34532,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4803,7 +4803,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 287.59548000000734,
+      "execution_time_ms": 292.904858,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4817,7 +4817,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 290.57692800000723,
+      "execution_time_ms": 289.6920710000046,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4831,7 +4831,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 288.22881600000017,
+      "execution_time_ms": 289.3707919999997,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4845,7 +4845,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 286.91678599999193,
+      "execution_time_ms": 285.63481500000876,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4859,7 +4859,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 290.42757700000266,
+      "execution_time_ms": 293.18652499999587,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4873,7 +4873,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 284.98430900000926,
+      "execution_time_ms": 289.34633299999746,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4887,7 +4887,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 294.51837500000977,
+      "execution_time_ms": 287.1198500000105,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4901,7 +4901,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 290.6293300000016,
+      "execution_time_ms": 284.86794699999507,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4915,7 +4915,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 335.359933999996,
+      "execution_time_ms": 287.1752839999999,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
         "tests/test_repo_manager.py::test_get_repo_status_success"
@@ -4929,7 +4929,7 @@
       "operator": "comparison",
       "description": "> to >=",
       "killing_test": "unknown",
-      "execution_time_ms": 300.068741000004,
+      "execution_time_ms": 295.13894500000504,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants"
       ]
@@ -4942,7 +4942,7 @@
       "operator": "comparison",
       "description": "> to <",
       "killing_test": "unknown",
-      "execution_time_ms": 297.2889309999971,
+      "execution_time_ms": 285.996621999999,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants"
       ]
@@ -4955,7 +4955,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 291.4127129999997,
+      "execution_time_ms": 290.86387899999977,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants"
       ]
@@ -4968,7 +4968,7 @@
       "operator": "boundary",
       "description": "boundary shift +/-1",
       "killing_test": "unknown",
-      "execution_time_ms": 302.9713109999932,
+      "execution_time_ms": 296.4140119999996,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants"
       ]
@@ -4981,7 +4981,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 300.47077500000796,
+      "execution_time_ms": 286.5039330000059,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_errors",
         "tests/test_repo_manager.py::test_get_repo_status_fetch"
@@ -4995,7 +4995,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 288.01339299999995,
+      "execution_time_ms": 289.40624900000955,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_bare",
         "tests/test_repo_manager.py::test_get_repo_status_remote_status_variants",
@@ -5011,7 +5011,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 284.1935100000086,
+      "execution_time_ms": 290.4587379999981,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_is_git_repo_bare",
@@ -5026,7 +5026,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 287.2600030000001,
+      "execution_time_ms": 285.2052390000068,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_is_git_repo_bare",
@@ -5041,7 +5041,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 287.57686199999455,
+      "execution_time_ms": 286.05365499998925,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_is_git_repo_bare",
@@ -5056,7 +5056,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 293.14788899999655,
+      "execution_time_ms": 287.63888699999995,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_is_git_repo"
@@ -5070,7 +5070,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.0139220000094,
+      "execution_time_ms": 287.5333569999867,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_repo_status_not_a_repo",
         "tests/test_repo_manager.py::test_is_git_repo"
@@ -5084,7 +5084,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 289.5937239999995,
+      "execution_time_ms": 291.6906529999892,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo_bare",
         "tests/test_repo_manager.py::test_is_git_repo"
@@ -5098,7 +5098,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 288.8091639999999,
+      "execution_time_ms": 292.7759159999965,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo"
       ]
@@ -5111,7 +5111,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 284.74965299999155,
+      "execution_time_ms": 278.3256590000036,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo"
       ]
@@ -5124,7 +5124,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 284.9486060000004,
+      "execution_time_ms": 287.5719759999953,
       "selected_tests": [
         "tests/test_repo_manager.py::test_is_git_repo_bare",
         "tests/test_repo_manager.py::test_is_git_repo"
@@ -5138,7 +5138,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 284.1248290000067,
+      "execution_time_ms": 287.9090730000087,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_exception",
         "tests/test_repo_manager.py::test_load_config_missing_file",
@@ -5160,7 +5160,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 283.74329599999726,
+      "execution_time_ms": 290.5279390000004,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_iteration_exception",
         "tests/test_repo_manager.py::test_load_config_empty_path",
@@ -5179,7 +5179,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 287.94163099999537,
+      "execution_time_ms": 287.145179999996,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_iteration_exception",
         "tests/test_repo_manager.py::test_load_config_empty_path",
@@ -5198,7 +5198,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 287.2340609999924,
+      "execution_time_ms": 287.3919799999953,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_empty_path",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
@@ -5216,7 +5216,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 294.4055179999907,
+      "execution_time_ms": 288.0317919999982,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config",
         "tests/test_repo_manager.py::test_load_config_multiple_sections",
@@ -5231,7 +5231,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 295.0471059999984,
+      "execution_time_ms": 283.23763400000246,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_empty_path",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
@@ -5249,7 +5249,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 288.15726099999495,
+      "execution_time_ms": 288.61446700000215,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_empty_path",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
@@ -5267,7 +5267,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 287.5139150000052,
+      "execution_time_ms": 291.9598200000024,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_empty_path",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
@@ -5285,7 +5285,7 @@
       "operator": "boolean",
       "description": "or to and",
       "killing_test": "unknown",
-      "execution_time_ms": 289.8241350000035,
+      "execution_time_ms": 282.3675289999983,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos_inactive_first",
@@ -5302,7 +5302,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.70570900000325,
+      "execution_time_ms": 282.3571800000053,
       "selected_tests": [
         "tests/test_repo_manager.py::test_load_config_empty_path",
         "tests/test_repo_manager.py::test_load_config_duplicate_repos",
@@ -5320,7 +5320,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 295.6549349999875,
+      "execution_time_ms": 288.1901930000055,
       "selected_tests": [
         "tests/test_repo_manager.py::test_scan_directories",
         "tests/test_repo_manager.py::test_scan_directories_not_found"
@@ -5334,7 +5334,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 296.82763800001055,
+      "execution_time_ms": 287.71974400000033,
       "selected_tests": [
         "tests/test_repo_manager.py::test_scan_directories",
         "tests/test_repo_manager.py::test_scan_directories_not_found"
@@ -5348,7 +5348,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 296.6278829999993,
+      "execution_time_ms": 284.3902469999904,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_repos_not_at_end",
         "tests/test_repo_manager.py::test_update_repos_section"
@@ -5362,7 +5362,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 297.15013599999907,
+      "execution_time_ms": 285.944654000005,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_repos_not_found_but_exists_in_file",
         "tests/test_repo_manager.py::test_update_repos_section"
@@ -5376,7 +5376,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 298.87420400000053,
+      "execution_time_ms": 288.78810199999805,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5393,7 +5393,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 301.07668099999785,
+      "execution_time_ms": 288.0568679999982,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5412,7 +5412,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 299.5964409999914,
+      "execution_time_ms": 290.45782199999337,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_between_sections",
@@ -5429,7 +5429,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 294.90912199999286,
+      "execution_time_ms": 288.1065979999988,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_between_sections",
         "tests/test_repo_manager.py::test_update_repos_section_repos_not_at_end",
@@ -5445,7 +5445,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 296.75466099999426,
+      "execution_time_ms": 287.6347020000054,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
@@ -5465,7 +5465,7 @@
       "operator": "comparison",
       "description": "!= to ==",
       "killing_test": "unknown",
-      "execution_time_ms": 294.36550900000213,
+      "execution_time_ms": 285.17479900000353,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5480,7 +5480,7 @@
       "operator": "boolean",
       "description": "and to or",
       "killing_test": "unknown",
-      "execution_time_ms": 293.2802549999991,
+      "execution_time_ms": 289.02820199999724,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5495,7 +5495,7 @@
       "operator": "arithmetic",
       "description": "- to +",
       "killing_test": "unknown",
-      "execution_time_ms": 288.7704679999956,
+      "execution_time_ms": 282.60838699999624,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5510,7 +5510,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 297.03527200000224,
+      "execution_time_ms": 285.803460000011,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
@@ -5530,7 +5530,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 295.3134610000063,
+      "execution_time_ms": 287.14474999999595,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
@@ -5550,7 +5550,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 297.6299559999944,
+      "execution_time_ms": 298.5393980000026,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_write_exception",
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
@@ -5570,7 +5570,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 317.21010300000785,
+      "execution_time_ms": 294.62556299999676,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5589,7 +5589,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.6125630000057,
+      "execution_time_ms": 285.78396499999315,
       "selected_tests": [
         "tests/test_repo_manager.py::test_update_repos_section_no_lines",
         "tests/test_repo_manager.py::test_update_repos_section_append_new",
@@ -5608,7 +5608,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 289.6174050000013,
+      "execution_time_ms": 289.4222519999943,
       "selected_tests": [
         "tests/test_repo_manager.py::test_get_parser_version_exception",
         "tests/test_repo_manager.py::test_get_parser_version_exception_extended",
@@ -5635,7 +5635,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 286.36795600000653,
+      "execution_time_ms": 290.99425399999745,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_entry_point",
         "tests/test_repo_manager.py::test_main_no_command",
@@ -5660,7 +5660,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 291.3971810000078,
+      "execution_time_ms": 295.53223599999967,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_scan_no_search_dirs",
         "tests/test_repo_manager.py::test_main_scan_no_changes",
@@ -5675,7 +5675,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 299.2857189999967,
+      "execution_time_ms": 288.83273499999973,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_entry_point",
         "tests/test_repo_manager.py::test_main_no_command",
@@ -5697,7 +5697,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 307.2026079999972,
+      "execution_time_ms": 297.61407399999484,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_no_active",
         "tests/test_repo_manager.py::test_main_status_other_error",
@@ -5717,7 +5717,7 @@
       "operator": "boolean",
       "description": "False to True",
       "killing_test": "unknown",
-      "execution_time_ms": 296.4296210000015,
+      "execution_time_ms": 299.7641999999985,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_exception",
@@ -5736,7 +5736,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 306.1574830000069,
+      "execution_time_ms": 308.080554,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_exception",
@@ -5755,7 +5755,7 @@
       "operator": "arithmetic",
       "description": "+ to -",
       "killing_test": "unknown",
-      "execution_time_ms": 300.92426599999555,
+      "execution_time_ms": 295.032073999991,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_exception",
@@ -5774,7 +5774,7 @@
       "operator": "boolean",
       "description": "or to and",
       "killing_test": "unknown",
-      "execution_time_ms": 309.4723690000052,
+      "execution_time_ms": 310.07087199999717,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_exception",
@@ -5792,7 +5792,7 @@
       "status": "survived",
       "operator": "boolean",
       "description": "True to False",
-      "execution_time_ms": 318.6623200000014,
+      "execution_time_ms": 321.96125200000836,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_exception",
         "tests/test_repo_manager.py::test_main_status_jobs_optional",
@@ -5809,7 +5809,7 @@
       "operator": "boolean",
       "description": "not x to x",
       "killing_test": "unknown",
-      "execution_time_ms": 304.47619799998904,
+      "execution_time_ms": 301.2181389999995,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_exception",
@@ -5828,7 +5828,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 302.25565399999255,
+      "execution_time_ms": 299.89176800000905,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_exception",
         "tests/test_repo_manager.py::test_main_status_jobs_optional",
@@ -5845,7 +5845,7 @@
       "operator": "arithmetic",
       "description": "* to /",
       "killing_test": "unknown",
-      "execution_time_ms": 298.2779740000012,
+      "execution_time_ms": 299.0379470000022,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_status_other_error",
         "tests/test_repo_manager.py::test_main_status_grouping_edge_cases",
@@ -5861,7 +5861,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "error_output": "usage: gremlin_lightweight_runner.py [-h] [-V] [-c CONFIG] {scan,status} ...\ngremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/test_repo_manager.py::test_main_entry_point_real' (choose from scan, status)\n",
-      "execution_time_ms": 291.5824250000014,
+      "execution_time_ms": 297.6519979999921,
       "selected_tests": [
         "tests/test_repo_manager.py::test_main_entry_point_real"
       ]
@@ -5874,7 +5874,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 265.3275990000026,
+      "execution_time_ms": 264.74810500000956,
       "selected_tests": [
         "tests/test_stats.py::test_get_parser",
         "tests/test_stats.py::test_get_parser_version_error",
@@ -5891,7 +5891,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 266.0393809999988,
+      "execution_time_ms": 261.7291950000009,
       "selected_tests": [
         "tests/test_stats.py::test_get_parser",
         "tests/test_stats.py::test_get_parser_version_error",
@@ -5908,7 +5908,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 249.206786000002,
+      "execution_time_ms": 257.141352000005,
       "selected_tests": [
         "tests/test_stats.py::test_run_commit",
         "tests/test_stats.py::test_run_pack",
@@ -5923,7 +5923,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "killing_test": "unknown",
-      "execution_time_ms": 298.8044509999952,
+      "execution_time_ms": 269.01907199999187,
       "selected_tests": [
         "tests/test_stats.py::test_run_pack"
       ]
@@ -5936,7 +5936,7 @@
       "operator": "comparison",
       "description": "== to !=",
       "error_output": "usage: gremlin_lightweight_runner.py [-h] [-V] {commit,pack} ...\ngremlin_lightweight_runner.py: error: argument command: invalid choice: 'tests/test_stats.py::test_module_main' (choose from commit, pack)\n",
-      "execution_time_ms": 282.64731999999526,
+      "execution_time_ms": 260.5421849999914,
       "selected_tests": [
         "tests/test_stats.py::test_module_main"
       ]
@@ -5949,7 +5949,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 241.59444199999314,
+      "execution_time_ms": 248.77749600000243,
       "selected_tests": [
         "tests/test_commit_stats.py::test_run_git_command_success",
         "tests/test_pack_stats.py::test_run_git_command_success",
@@ -5972,7 +5972,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 238.5294909999942,
+      "execution_time_ms": 246.13848200000632,
       "selected_tests": [
         "tests/test_commit_stats.py::test_run_git_command_success",
         "tests/test_pack_stats.py::test_run_git_command_success",
@@ -5995,7 +5995,7 @@
       "operator": "boolean",
       "description": "True to False",
       "killing_test": "unknown",
-      "execution_time_ms": 237.62509400000908,
+      "execution_time_ms": 244.43320599999652,
       "selected_tests": [
         "tests/test_commit_stats.py::test_run_git_command_success",
         "tests/test_pack_stats.py::test_run_git_command_success",
@@ -6018,7 +6018,7 @@
       "operator": "return",
       "description": "return value to None",
       "killing_test": "unknown",
-      "execution_time_ms": 246.82356300000663,
+      "execution_time_ms": 248.6980850000009,
       "selected_tests": [
         "tests/test_commit_stats.py::test_run_git_command_success",
         "tests/test_pack_stats.py::test_run_git_command_success",
