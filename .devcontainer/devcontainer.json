@@ -1,0 +1,30 @@
+{
+	"name": "Git Tools Dev Environment",
+	"image": "mcr.microsoft.com/devcontainers/python:3.12",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"charliermarsh.ruff",
+				"pdm-project.pdm-vscode"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "${containerWorkspaceFolder}/.venv/bin/python",
+				"python.testing.pytestEnabled": true,
+				"python.testing.pytestArgs": [
+					"tests"
+				],
+				"[python]": {
+					"editor.defaultFormatter": "charliermarsh.ruff",
+					"editor.formatOnSave": true,
+					"editor.codeActionsOnSave": {
+						"source.fixAll": "explicit",
+						"source.organizeImports": "explicit"
+					}
+				}
+			}
+		}
+	},
+	"postCreateCommand": "./.devcontainer/setup.sh",
+	"remoteUser": "vscode"
+}
