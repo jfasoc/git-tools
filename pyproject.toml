@@ -33,6 +33,8 @@ dev = [
     "ruff",
     "argcomplete",
     "shtab",
+    "commitizen",
+    "pre-commit",
 ]
 
 [tool.pytest.ini_options]
@@ -47,6 +49,14 @@ target-version = "py311"
 gremlins = false
 gremlin-workers = "auto"
 gremlin-report = ["term-missing"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_provider = "scm"
+tag_format = "v$version"
+update_changelog_on_bump = true
+annotated_tag = true
+bump_message = "chore(release): $new_version [skip ci]"
 
 [build-system]
 requires = ["pdm-backend"]
