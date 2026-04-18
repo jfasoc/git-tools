@@ -17,8 +17,10 @@ PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 # Add src to path
 sys.path.insert(0, os.path.join(PROJECT_ROOT, "src"))
 
-from git_tools.repo_manager import get_parser as get_repo_parser
-from git_tools.stats import get_parser as get_stats_parser
+from git_tools.repo_manager import (  # noqa: E402
+    get_parser as get_repo_parser,
+)
+from git_tools.stats import get_parser as get_stats_parser  # noqa: E402
 
 
 def get_zsh_functions(script):
