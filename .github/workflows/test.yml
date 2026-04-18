@@ -27,6 +27,10 @@ jobs:
       - name: Install dependencies
         run: pdm install
 
+      - name: Run Commitizen check
+        if: github.event_name == 'pull_request'
+        run: pdm run cz check --rev-range ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}
+
       - name: Run Ruff
         run: pdm run ruff check .
 
