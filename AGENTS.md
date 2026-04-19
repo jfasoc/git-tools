@@ -32,6 +32,10 @@ Welcome, Agent. This repository contains a collection of Git helper tools. Pleas
 
 ## 5. Tool Implementation Best Practices
 * Helper tools should be located in `src/git_tools/` and registered as scripts in `pyproject.toml`.
+* **Commit Message Validation:** All commits must follow the conventional commits format. To enforce this locally, ensure you install the commit-msg hook:
+    ```bash
+    pre-commit install --hook-type commit-msg
+    ```
 * **Minimal Main Pattern:** The `main()` function should be as simple as possible, typically a single call to a `run()` function. For example:
     ```python
     def main():
